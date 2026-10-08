@@ -77,6 +77,8 @@ struct IdleEars: View {
                 Spacer()
                 ear(model.idleValue(model.settings.idleRight, at: context.date))
             }
+            // Text is shorter than the artwork, so it keeps the same distance from the side wall as from the top and bottom.
+            .padding(.horizontal, 7)
         }
         .font(.system(size: 11, weight: .semibold).monospacedDigit())
         .foregroundStyle(.white)

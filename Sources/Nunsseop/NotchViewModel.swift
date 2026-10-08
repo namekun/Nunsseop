@@ -343,7 +343,7 @@ final class NotchViewModel: ObservableObject {
     /// while the sneak peek shows.
     static let hudEarWidth: CGFloat = 102
     /// Room for a short value such as "73%" or "16°" on each side while idle.
-    static let idleEarWidth: CGFloat = 64
+    static let idleEarWidth: CGFloat = 70
 
     var collapsedSize: CGSize {
         var size = geometry.collapsedSize
