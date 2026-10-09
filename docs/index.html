@@ -32,9 +32,9 @@
     --radius: 22px;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: clip; }
   body {
-    margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden;
+    margin: 0; background: var(--bg); color: var(--text); overflow-x: clip;
     font: 16px/1.6 "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
   }
@@ -74,7 +74,7 @@
   .lang-menu button[aria-selected="true"]::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--pink)); }
   @media (max-width: 720px) { .nav-links { display: none; } .lang { margin-left: auto; } }
 
-  .hero { position: relative; padding: 72px 0 40px; text-align: center; isolation: isolate; }
+  .hero { position: relative; padding: 72px 0 40px; text-align: center; isolation: isolate; overflow-x: clip; }
   .aurora { position: absolute; inset: -20% -10% auto; height: 900px; z-index: -1; pointer-events: none; filter: blur(80px); opacity: 0.55; }
   .aurora span { position: absolute; border-radius: 50%; animation: float 18s ease-in-out infinite alternate; }
   .aurora span:nth-child(1) { width: 520px; height: 520px; left: 10%; top: 0; background: #5b2a9a; }
