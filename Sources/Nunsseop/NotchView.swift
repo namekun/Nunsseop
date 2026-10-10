@@ -31,7 +31,8 @@ struct NotchView: View {
                     .zIndex(-1)
 
                 if !model.isExpanded && !model.geometry.hasNotch && model.hudLine == nil {
-                    EyebrowMark(lifted: model.browLifted)
+                    EyebrowMark(lift: model.browFaded ? -1 : model.browLifted ? 1 : 0)
+                        .animation(model.browFaded ? .easeIn(duration: 0.3) : motion.brow, value: model.browFaded)
                         .animation(motion.brow, value: model.browLifted)
                         .frame(width: model.geometry.collapsedSize.width, height: notchHeight)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: shift > 0 ? .topLeading : shift < 0 ? .topTrailing : .top)
@@ -150,7 +151,8 @@ struct NotchView: View {
             ))
             .offset(x: shift)
             .opacity(model.browFaded ? 0 : 1)
-            .animation(.easeInOut(duration: 0.4), value: model.browFaded)
+            // Fading out waits for the brow to lower first, like an eye closing; coming back shows at once.
+            .animation(model.browFaded ? .easeIn(duration: 0.3).delay(0.28) : .easeOut(duration: 0.2), value: model.browFaded)
             .padding(.top, model.isExpanded ? 0 : model.geometry.topInset)
             // Ears appearing is when the app's menus matter, so they are read again then.
             .onChange(of: model.collapsedSize.width) { old, new in

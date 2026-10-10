@@ -356,10 +356,11 @@ struct SpectrumBars: NSViewRepresentable {
 /// The app's eyebrow, shown in place of the camera housing on displays without a notch.
 /// It lifts and arches while the pointer is over it, like a raised brow.
 struct EyebrowMark: View {
-    let lifted: Bool
+    /// -1 lowered like a closing eye, 0 at rest, 1 raised.
+    let lift: CGFloat
 
     var body: some View {
-        EyebrowArch(lift: lifted ? 1 : 0)
+        EyebrowArch(lift: lift)
             .fill(Color(red: 0.957, green: 0.957, blue: 0.945))
             .frame(width: 24, height: 10)
             .accessibilityHidden(true)
@@ -367,9 +368,10 @@ struct EyebrowMark: View {
 }
 
 /// One brush stroke: a thick head on the left tapering to a thin tail, drawn on a 100 × 40 grid.
-/// Raising it lifts the whole stroke and arches it higher, with the tail rising the most.
+/// Raising it lifts the whole stroke and arches it higher, with the tail rising the most; lowering it drops and
+/// flattens it, the way a brow settles as the eye closes.
 struct EyebrowArch: Shape {
-    /// 0 at rest, 1 fully raised.
+    /// -1 lowered, 0 at rest, 1 fully raised.
     var lift: CGFloat
 
     var animatableData: CGFloat {
@@ -383,12 +385,17 @@ struct EyebrowArch: Shape {
     private static let raised: [CGFloat] = [4, 26, 16, 9, 42, 1, 67, 4, 80, 5, 90, 10, 97, 16,
                                             89, 13, 79, 12, 68, 13, 47, 14, 27, 20, 11, 31, 7, 33, 2, 30, 4, 26]
 
+    /// The rest pose pulled down and flattened toward a line near its lower edge.
+    private static let lowered: [CGFloat] = rest.enumerated().map { $0.offset.isMultiple(of: 2) ? $0.element : 33 + ($0.element - 30) * 0.4 }
+
     func path(in rect: CGRect) -> Path {
         let scale = min(rect.width / 100, rect.height / 40)
         let origin = CGPoint(x: rect.midX - 50 * scale, y: rect.midY - 20 * scale)
+        let target = lift < 0 ? Self.lowered : Self.raised
+        let amount = abs(lift)
         let point = { (i: Int) -> CGPoint in
-            let x = Self.rest[2 * i] + (Self.raised[2 * i] - Self.rest[2 * i]) * lift
-            let y = Self.rest[2 * i + 1] + (Self.raised[2 * i + 1] - Self.rest[2 * i + 1]) * lift
+            let x = Self.rest[2 * i] + (target[2 * i] - Self.rest[2 * i]) * amount
+            let y = Self.rest[2 * i + 1] + (target[2 * i + 1] - Self.rest[2 * i + 1]) * amount
             return CGPoint(x: origin.x + x * scale, y: origin.y + y * scale)
         }
         var p = Path()
