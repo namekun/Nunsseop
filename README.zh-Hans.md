@@ -8,9 +8,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=c86bfa&label=release" alt="最新版本"></a>
+  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=111111&label=release" alt="最新版本"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-black?logo=apple" alt="macOS 14 或更高版本">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ff5f8f" alt="MIT 许可证"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="MIT 许可证"></a>
   <img src="https://img.shields.io/badge/Swift-native-orange?logo=swift&logoColor=white" alt="原生 Swift">
 </p>
 
@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-需要 [Homebrew](https://brew.sh)。Homebrew 会清除隔离属性，所以应用可以直接打开。要更新，请运行 `brew upgrade --cask nunsseop`；有新版本时，设置 › 通用 › 更新中的“拷贝更新命令”会把这条命令拷贝到剪贴板。
+需要 [Homebrew](https://brew.sh)。Homebrew 会清除隔离属性，所以应用可以直接打开。要更新，请运行 `brew update && brew upgrade --cask nunsseop`；有新版本时，设置 › 通用 › 更新中的“拷贝更新命令”会把这条命令拷贝到剪贴板（如果应用是用旧的 dmg 安装的，拷贝的则是把它迁移到 Homebrew 的命令）。
 
 需要 macOS 14 Sonoma 或更高版本。支持 Apple 芯片和 Intel，也支持没有刘海的屏幕。
 
@@ -83,7 +83,8 @@ brew install --cask namekun/tap/nunsseop
 
 **🤖 面向开发者**
 - **AI 用量。** 显示 Claude 和 Codex 的用量上限与重置时间，以及过去 5 小时和 7 天的令牌用量，统计范围涵盖 Claude Code、Codex、gjc、omo 和 OpenCode。数据读取自这些工具已经保存在你 Mac 上的文件，所以无需登录任何账户。
-- **实时获取 Claude 用量上限（需手动开启）。** AI 标签会询问一次，是否通过 Claude Code 存在钥匙串里的登录信息，大约每小时从 Anthropic 获取一次你的 5 小时和每周 Claude 用量上限。你同意之前保持关闭；之后可在设置 › 服务中更改。
+- **来自 Claude Code 的 Claude 用量上限。** 在设置 › 服务 › AI 用量中连接 Claude Code 的状态栏。Claude Code 每次回答都会把你的 5 小时和每周用量上限交给它，所以你工作时 AI 标签始终保持最新，Nunsseop 也无需向 Anthropic 请求任何数据。你原来的状态栏照常显示，点按“断开连接”即可恢复原状。
+- **实时获取 Claude 用量上限（需手动开启）。** 如果你在别处使用 Claude，AI 标签会询问一次，是否通过 Claude Code 存在钥匙串里的登录信息，大约每小时从 Anthropic 获取一次你的 5 小时和每周 Claude 用量上限。你同意之前保持关闭；之后可在设置 › 服务中更改。以最新的那个来源为准。
 - **来自代理和终端的通知。** Claude Code、Codex、Gemini CLI 和 OpenCode 的钩子，Muxy、cmux 和 herdr 中的代理，以及 tmux 和 WezTerm 的响铃，都会显示在刘海里。点按通知，即可把对应的终端、窗格或标签页调到前台（[设置方法见下文](#代理与终端通知)）。
 - **通知标签。** 显示最近 30 条来自代理、终端和日历的通知，未读的带有角标；点按某一条就能回到它的来源。默认关闭（设置 › 刘海），且只保存在内存里。
 - **工作中的代理。** 收起时的刘海上有一个项目，显示有多少个编程代理在等你（黄色的手）；没有在等你的，则显示有多少个正在工作（绿色的闪电）。目前跟随 herdr。
@@ -91,7 +92,7 @@ brew install --cask namekun/tap/nunsseop
 **🧩 随心定制**
 - 自己选择标签及其顺序、顶部栏和收起的刘海显示什么，以及要哪些弹出提示。**关闭的功能就不会再运行。**
 - 在 macOS 26 上，展开的刘海和其中的卡片使用 Liquid Glass，背后的内容会柔和地透出来。你可以调节玻璃的深浅，调到 100% 就是纯黑的刘海，也可以直接关闭玻璃效果。
-- 在没有刘海的显示器上，收起的刘海是菜单栏里的一个小胶囊，里面是眉毛标志，也可以做成玻璃质感。闲置一段时间后它会淡出（3 到 60 秒，或者永不淡出），指针移到那里时又会回来；停留半秒就会展开。
+- 在没有刘海的显示器上，收起的刘海是菜单栏里的一个小胶囊，也可以做成玻璃质感，上面是眉毛，一道白色的笔触。指针移到上面时眉毛会抬起。闲置一段时间后（3 到 60 秒，或者永不），眉毛会像闭上的眼睛一样落下并淡出，指针移到那里时又会回来；停留半秒就会展开，并贴在屏幕顶部。在这样的屏幕上，HUD、通知、歌词和预览都显示为一行，图标紧挨着电平条、百分比或文字。
 - 可以选择显示器、尺寸和悬停延迟，设置登录时打开，以及在合上盖子时隐藏刘海。
 - 向下轻扫展开，向上轻扫收起，在主页左右轻扫切换曲目。
 - 支持 English、한국어、日本語、简体中文、Español、Deutsch 和 Français，并跟随你的 Mac 设置。
@@ -125,13 +126,13 @@ Nunsseop 显示的是 macOS 列为“正在播放”的内容，所以播放器�
 <details>
 <summary><b>我的 Mac 没有刘海。</b></summary>
 
-在没有刘海的显示器上（比如合上盖子使用的外接显示器），收起的刘海是浮在菜单栏里的一个小胶囊，里面是眉毛标志。指针移到上面时眉毛会抬起，展开后刘海会以常规尺寸贴在屏幕顶部。闲置时它会淡出；你可以在设置里关闭这一行为或更改延迟，也可以在那里选择它使用哪个显示器。
+在没有刘海的显示器上（比如合上盖子使用的外接显示器），收起的刘海是浮在菜单栏里的一个小胶囊，上面是眉毛，一道白色的笔触。指针移到上面时眉毛会抬起，展开后刘海会以常规尺寸贴在屏幕顶部。HUD、通知、歌词和预览会显示为一行，而不是环绕摄像头。闲置时，眉毛会像闭上的眼睛一样落下，胶囊随之淡出；你可以在设置里关闭这一行为或更改延迟，也可以在那里选择它使用哪个显示器。
 </details>
 
 <details>
 <summary><b>为什么 AI 用量显示的是旧的 Claude 用量上限？</b></summary>
 
-默认情况下，Claude 的 5 小时和每周百分比来自其他工具写入的缓存：在终端里使用 Claude Code 时来自 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) 的 HUD，或者来自 gjc。卡片上会显示它们上次更新的时间。在设置 › 服务中连接后，Claude 的用量上限也可以直接来自 Claude Code 的状态栏。如果想不依赖这些工具也让用量上限保持最新，请在 AI 标签或设置 › 服务中开启实时获取 Claude 用量上限。令牌总数始终是实时的。
+默认情况下，Claude 的 5 小时和每周百分比来自其他工具写入的缓存：在终端里使用 Claude Code 时来自 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) 的 HUD，或者来自 gjc。卡片上会显示它们上次更新的时间。想让用量上限保持最新，请在设置 › 服务 › AI 用量中连接 Claude Code 的状态栏：Claude Code 每次回答都会把用量上限交给它，而你自己的状态栏也照常工作。如果你在别处使用 Claude，请改为在 AI 标签或设置 › 服务中开启实时获取 Claude 用量上限。以最新的那个来源为准。令牌总数始终是实时的。
 </details>
 
 <details>
@@ -201,7 +202,7 @@ Nunsseop 不会收集或发送个人数据。它只会在以下情况下联网�
 - 通过 HTTPS 从已知的音乐服务下载封面，仅在 MediaRemote 辅助库不可用时；
 - 大约每小时向 `api.anthropic.com` 查询一次你的 Claude 用量上限，使用钥匙串中 Claude Code 的登录信息，仅在你开启实时获取 Claude 用量上限时。
 
-其余一切都留在你的 Mac 上。通知服务器只接受来自这台 Mac 的连接。除非你开启实时获取 Claude 用量上限，否则 AI 用量都读取自本地文件。通知标签中的通知只保存在内存里。录制的视频保存在截图所在的位置。相机预览只在镜子标签打开时运行，也绝不会被录制。Nunsseop 退出时，剪贴板历史会被清除。
+其余一切都留在你的 Mac 上。通知服务器只接受来自这台 Mac 的连接。AI 用量读取自本地文件，包括 Claude Code 状态栏保存在这台 Mac 上的用量上限，除非你开启实时获取 Claude 用量上限。通知标签中的通知只保存在内存里。录制的视频保存在截图所在的位置。相机预览只在镜子标签打开时运行，也绝不会被录制。Nunsseop 退出时，剪贴板历史会被清除。
 
 ## 正在播放的工作原理
 

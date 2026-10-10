@@ -8,9 +8,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=c86bfa&label=release" alt="Latest release"></a>
+  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=111111&label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-black?logo=apple" alt="macOS 14 or later">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ff5f8f" alt="MIT license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/Swift-native-orange?logo=swift&logoColor=white" alt="Native Swift">
 </p>
 
@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Needs [Homebrew](https://brew.sh). Homebrew clears the quarantine flag, so the app opens right away. To update, run `brew upgrade --cask nunsseop`; when an update is out, Settings › General › Updates copies that command to your clipboard.
+Needs [Homebrew](https://brew.sh). Homebrew clears the quarantine flag, so the app opens right away. To update, run `brew update && brew upgrade --cask nunsseop`; when an update is out, Settings › General › Updates copies that command to your clipboard (for an app installed from the old dmg, a command that moves it to Homebrew).
 
 Needs macOS 14 Sonoma or later. Works on Apple silicon and Intel, and on screens without a notch.
 
@@ -83,7 +83,8 @@ There's no Dock icon. Nunsseop lives in the notch.
 
 **🤖 For developers**
 - **AI usage.** Claude and Codex limits with reset times, and token use over the last 5 hours and 7 days, counted across Claude Code, Codex, gjc, omo and OpenCode. Read from files those tools already keep on your Mac, so there's nothing to sign in to.
-- **Live Claude limits (opt-in).** The AI tab asks once whether to fetch your 5-hour and weekly Claude limits from Anthropic, about once an hour, with the sign-in Claude Code keeps in the Keychain. Off until you say yes; change it later in Settings › Services.
+- **Claude limits from Claude Code.** In Settings › Services › AI usage, connect Claude Code's status line. Claude Code hands it your 5-hour and weekly limits with every answer, so the AI tab stays current while you work, without Nunsseop asking Anthropic for anything. The status line you already had keeps showing as before, and Disconnect puts it back.
+- **Live Claude limits (opt-in).** For when you use Claude elsewhere, the AI tab asks once whether to fetch your 5-hour and weekly Claude limits from Anthropic, about once an hour, with the sign-in Claude Code keeps in the Keychain. Off until you say yes; change it later in Settings › Services. Whichever source is most recent wins.
 - **Notifications from agents and terminals.** Claude Code, Codex, Gemini CLI and OpenCode hooks, agents in Muxy, cmux and herdr, and bells from tmux and WezTerm show in the notch. Click a notice to bring its terminal, pane or tab to the front ([setup below](#agent-and-terminal-notifications)).
 - **Notifications tab.** The last 30 notices from agents, terminals and your calendar, with a badge for unseen ones; click one to go back where it came from. Off by default (Settings › Notch), and kept in memory only.
 - **Agents at work.** A closed-notch item that shows how many coding agents wait for you (a yellow hand), or, when none wait, how many are working (a green bolt). It follows herdr for now.
@@ -91,7 +92,7 @@ There's no Dock icon. Nunsseop lives in the notch.
 **🧩 Make it yours**
 - Pick your tabs and their order, what the header and collapsed notch show, and which pop-ups you get. **Anything you turn off stops running.**
 - On macOS 26 the expanded notch and its cards use Liquid Glass, so what's behind shows through softly. You can set how dark the glass is, all the way to 100% for a solid black notch, or switch the glass off.
-- On displays without a notch, the closed notch is a small pill with the eyebrow logo inside the menu bar, in glass if you like. It fades out after it sits unused (3 to 60 seconds, or never) and comes back when the pointer reaches it; rest there for half a second and it opens.
+- On displays without a notch, the closed notch is a small pill in the menu bar, in glass if you like, with the eyebrow, a white brush stroke, on it. The eyebrow lifts when the pointer is over it. After it sits unused (3 to 60 seconds, or never) it lowers like a closing eye and fades out, and it comes back when the pointer reaches it; rest there for half a second and it opens, attached to the top edge. There, HUDs, notices, lyrics and the sneak peek are one line, with the symbol right beside the level bar, percent or text.
 - Choose the display, size and hover delay, launch at login, and hide the notch while the lid is closed.
 - Swipe down to open, up to close, sideways on Home to skip tracks.
 - Speaks English, 한국어, 日本語, 简体中文, Español, Deutsch and Français, following your Mac.
@@ -125,13 +126,13 @@ Right-click the notch → Settings → Notch, and switch off what you don't need
 <details>
 <summary><b>My Mac has no notch.</b></summary>
 
-On a display without a notch, such as an external monitor with the lid closed, the closed notch is a small pill with the eyebrow logo floating inside the menu bar. The eyebrow lifts when the pointer is over it, and opening it attaches the notch to the top edge at the usual size. It fades out when unused; turn that off or change the delay in Settings. Pick which display it uses there too.
+On a display without a notch, such as an external monitor with the lid closed, the closed notch is a small pill floating in the menu bar, with the eyebrow, a white brush stroke, on it. The eyebrow lifts when the pointer is over it, and opening it attaches the notch to the top edge at the usual size. HUDs, notices, lyrics and the sneak peek show on one line instead of around a camera. When unused, the eyebrow lowers like a closing eye and the pill fades out; turn that off or change the delay in Settings. Pick which display it uses there too.
 </details>
 
 <details>
 <summary><b>Why does AI usage show old Claude limits?</b></summary>
 
-By default, Claude's 5-hour and weekly percentages come from caches other tools write: the [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD while you use Claude Code in a terminal, or gjc. The card shows when they were last updated. Claude's limits can also come straight from Claude Code's status line once you connect it in Settings › Services. For limits that stay current without them, turn on live Claude limits in the AI tab or Settings › Services. Token totals are always live.
+By default, Claude's 5-hour and weekly percentages come from caches other tools write: the [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD while you use Claude Code in a terminal, or gjc. The card shows when they were last updated. For limits that stay current, connect Claude Code's status line in Settings › Services › AI usage: Claude Code hands it your limits with every answer, and your own status line keeps working. If you use Claude elsewhere, turn on live Claude limits in the AI tab or Settings › Services instead. The most recent source wins. Token totals are always live.
 </details>
 
 <details>
@@ -201,7 +202,7 @@ Nunsseop doesn't collect or send personal data. It goes online only to:
 - download artwork over HTTPS from known music services, only when the MediaRemote helper is unavailable;
 - ask `api.anthropic.com` for your Claude limits about once an hour, using Claude Code's sign-in from the Keychain, only if you turn live Claude limits on.
 
-Everything else stays on your Mac. The notification server only accepts connections from this Mac. AI usage is read from local files unless you turn on live Claude limits. Notices in the Notifications tab are kept in memory only. Recordings are saved next to your screenshots. The camera preview runs only while the Mirror tab is open and is never recorded. Clipboard history is cleared when Nunsseop quits.
+Everything else stays on your Mac. The notification server only accepts connections from this Mac. AI usage is read from local files, including the limits the Claude Code status line keeps on this Mac, unless you turn on live Claude limits. Notices in the Notifications tab are kept in memory only. Recordings are saved next to your screenshots. The camera preview runs only while the Mirror tab is open and is never recorded. Clipboard history is cleared when Nunsseop quits.
 
 ## How now playing works
 

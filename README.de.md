@@ -8,9 +8,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=c86bfa&label=release" alt="Neueste Version"></a>
+  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=111111&label=release" alt="Neueste Version"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-black?logo=apple" alt="macOS 14 oder neuer">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ff5f8f" alt="MIT-Lizenz"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="MIT-Lizenz"></a>
   <img src="https://img.shields.io/badge/Swift-native-orange?logo=swift&logoColor=white" alt="Natives Swift">
 </p>
 
@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Dafür brauchst du [Homebrew](https://brew.sh). Homebrew entfernt das Quarantäne-Flag, sodass sich die App sofort öffnen lässt. Zum Aktualisieren führst du `brew upgrade --cask nunsseop` aus; sobald ein Update verfügbar ist, kopiert Einstellungen › Allgemein › Updates diesen Befehl in deine Zwischenablage.
+Dafür brauchst du [Homebrew](https://brew.sh). Homebrew entfernt das Quarantäne-Flag, sodass sich die App sofort öffnen lässt. Zum Aktualisieren führst du `brew update && brew upgrade --cask nunsseop` aus; sobald ein Update verfügbar ist, kopiert Einstellungen › Allgemein › Updates diesen Befehl in deine Zwischenablage (bei einer App, die aus dem alten dmg installiert wurde, einen Befehl, der sie zu Homebrew umzieht).
 
 Erfordert macOS 14 Sonoma oder neuer. Läuft auf Apple Silicon und Intel sowie auf Bildschirmen ohne Notch.
 
@@ -83,7 +83,8 @@ Es gibt kein Dock-Symbol. Nunsseop lebt in der Notch.
 
 **🤖 Für Entwickler**
 - **KI-Nutzung.** Limits von Claude und Codex mit Zeitpunkten des Zurücksetzens sowie der Token-Verbrauch der letzten 5 Stunden und 7 Tage, gezählt über Claude Code, Codex, gjc, omo und OpenCode hinweg. Gelesen aus Dateien, die diese Tools ohnehin auf deinem Mac ablegen, daher musst du dich nirgends anmelden.
-- **Claude-Limits live (optional).** Der Tab „KI-Nutzung“ fragt einmal, ob deine 5-Stunden- und Wochenlimits von Claude etwa einmal pro Stunde bei Anthropic abgerufen werden sollen, mit der Anmeldung, die Claude Code im Schlüsselbund ablegt. Aus, bis du zustimmst; später änderbar unter Einstellungen › Dienste.
+- **Claude-Limits von Claude Code.** Verbinde unter Einstellungen › Dienste › KI-Nutzung die Statuszeile von Claude Code. Claude Code übergibt ihr deine 5-Stunden- und Wochenlimits bei jeder Antwort, sodass der Tab „KI-Nutzung“ aktuell bleibt, während du arbeitest, ohne dass Nunsseop dafür bei Anthropic nachfragt. Die Statuszeile, die du schon hattest, wird wie bisher angezeigt, und „Trennen“ stellt sie wieder her.
+- **Claude-Limits live (optional).** Für den Fall, dass du Claude anderswo nutzt, fragt der Tab „KI-Nutzung“ einmal, ob deine 5-Stunden- und Wochenlimits von Claude etwa einmal pro Stunde bei Anthropic abgerufen werden sollen, mit der Anmeldung, die Claude Code im Schlüsselbund ablegt. Aus, bis du zustimmst; später änderbar unter Einstellungen › Dienste. Es gilt die jeweils aktuellste Quelle.
 - **Mitteilungen von Agenten und Terminals.** Hooks von Claude Code, Codex, Gemini CLI und OpenCode, Agenten in Muxy, cmux und herdr sowie Glocken von tmux und WezTerm erscheinen in der Notch. Ein Klick auf eine Mitteilung bringt das zugehörige Terminal, den Bereich oder Tab in den Vordergrund ([Einrichtung weiter unten](#mitteilungen-von-agenten-und-terminals)).
 - **Tab „Mitteilungen“.** Die letzten 30 Mitteilungen von Agenten, Terminals und deinem Kalender, mit einem Badge für ungesehene; ein Klick führt dich dorthin zurück, woher sie kam. Standardmäßig aus (Einstellungen › Notch) und nur im Speicher gehalten.
 - **Aktive Agenten.** Ein Element der geschlossenen Notch, das anzeigt, wie viele Coding-Agenten auf dich warten (eine gelbe Hand) oder, wenn keiner wartet, wie viele arbeiten (ein grüner Blitz). Beobachtet vorerst herdr.
@@ -91,7 +92,7 @@ Es gibt kein Dock-Symbol. Nunsseop lebt in der Notch.
 **🧩 Mach sie zu deiner eigenen**
 - Wähle deine Tabs und ihre Reihenfolge, was Kopfzeile und eingeklappte Notch zeigen und welche Pop-ups du bekommst. **Alles, was du ausschaltest, läuft nicht mehr.**
 - Unter macOS 26 nutzen die ausgeklappte Notch und ihre Karten Liquid Glass, sodass der Hintergrund sanft durchscheint. Du kannst einstellen, wie dunkel das Glas ist, bis hin zu 100 % für eine tiefschwarze Notch, oder das Glas ganz ausschalten.
-- Auf Bildschirmen ohne Notch ist die geschlossene Notch eine kleine Pille mit dem Augenbrauen-Logo in der Menüleiste, auf Wunsch aus Glas. Sie blendet sich nach einer Weile ohne Nutzung aus (3 bis 60 Sekunden, oder nie) und kommt zurück, sobald der Zeiger sie erreicht; verweilst du eine halbe Sekunde darauf, öffnet sie sich.
+- Auf Bildschirmen ohne Notch ist die geschlossene Notch eine kleine Pille in der Menüleiste, auf Wunsch aus Glas, mit der Augenbraue als weißem Pinselstrich darauf. Die Augenbraue hebt sich, wenn der Zeiger darüber ist. Nach einer Weile ohne Nutzung (3 bis 60 Sekunden, oder nie) senkt sie sich wie ein sich schließendes Auge und blendet sich aus, und sie kommt zurück, sobald der Zeiger sie erreicht; verweilst du eine halbe Sekunde darauf, öffnet sie sich und setzt sich an den oberen Rand. Dort erscheinen HUDs, Mitteilungen, Songtexte und die Vorschau in einer Zeile, mit dem Symbol direkt neben der Pegelleiste, dem Prozentwert oder dem Text.
 - Wähle Bildschirm, Größe und Hover-Verzögerung, starte sie bei der Anmeldung und blende die Notch aus, solange der Deckel geschlossen ist.
 - Nach unten wischen zum Öffnen, nach oben zum Schließen, im Start-Tab zur Seite wischen, um Titel zu überspringen.
 - Spricht English, 한국어, 日本語, 简体中文, Español, Deutsch und Français, passend zu deinem Mac.
@@ -125,13 +126,13 @@ Rechtsklick auf die Notch → Einstellungen → Notch, und schalte aus, was du n
 <details>
 <summary><b>Mein Mac hat keine Notch.</b></summary>
 
-Auf einem Bildschirm ohne Notch, etwa einem externen Monitor bei geschlossenem Deckel, ist die geschlossene Notch eine kleine Pille mit dem Augenbrauen-Logo, die in der Menüleiste schwebt. Die Augenbraue hebt sich, wenn der Zeiger darüber ist, und beim Öffnen setzt sich die Notch in der üblichen Größe an den oberen Rand. Bei Nichtbenutzung blendet sie sich aus; schalte das ab oder ändere die Verzögerung in den Einstellungen. Dort wählst du auch, welchen Bildschirm sie nutzt.
+Auf einem Bildschirm ohne Notch, etwa einem externen Monitor bei geschlossenem Deckel, ist die geschlossene Notch eine kleine Pille, die in der Menüleiste schwebt, mit der Augenbraue als weißem Pinselstrich darauf. Die Augenbraue hebt sich, wenn der Zeiger darüber ist, und beim Öffnen setzt sich die Notch in der üblichen Größe an den oberen Rand. HUDs, Mitteilungen, Songtexte und die Vorschau erscheinen in einer Zeile statt rund um eine Kamera. Bei Nichtbenutzung senkt sich die Augenbraue wie ein sich schließendes Auge, und die Pille blendet sich aus; schalte das ab oder ändere die Verzögerung in den Einstellungen. Dort wählst du auch, welchen Bildschirm sie nutzt.
 </details>
 
 <details>
 <summary><b>Warum zeigt die KI-Nutzung veraltete Claude-Limits?</b></summary>
 
-Standardmäßig stammen die 5-Stunden- und Wochenwerte von Claude aus Caches, die andere Tools schreiben: das HUD von [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode), während du Claude Code in einem Terminal nutzt, oder gjc. Die Karte zeigt, wann sie zuletzt aktualisiert wurden. Claudes Limits können auch direkt aus der Statuszeile von Claude Code kommen, sobald du sie unter Einstellungen › Dienste verbindest. Für Limits, die auch ohne diese Tools aktuell bleiben, schalte die Live-Abfrage der Claude-Limits im Tab „KI-Nutzung“ oder unter Einstellungen › Dienste ein. Die Token-Summen sind immer live.
+Standardmäßig stammen die 5-Stunden- und Wochenwerte von Claude aus Caches, die andere Tools schreiben: das HUD von [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode), während du Claude Code in einem Terminal nutzt, oder gjc. Die Karte zeigt, wann sie zuletzt aktualisiert wurden. Für Limits, die aktuell bleiben, verbinde die Statuszeile von Claude Code unter Einstellungen › Dienste › KI-Nutzung: Claude Code übergibt ihr deine Limits bei jeder Antwort, und deine eigene Statuszeile funktioniert weiter. Wenn du Claude anderswo nutzt, schalte stattdessen die Live-Abfrage der Claude-Limits im Tab „KI-Nutzung“ oder unter Einstellungen › Dienste ein. Es gilt die jeweils aktuellste Quelle. Die Token-Summen sind immer live.
 </details>
 
 <details>
@@ -201,7 +202,7 @@ Nunsseop sammelt und sendet keine persönlichen Daten. Es geht nur für Folgende
 - Cover per HTTPS von bekannten Musikdiensten laden, nur wenn die MediaRemote-Hilfsbibliothek nicht verfügbar ist;
 - bei `api.anthropic.com` etwa einmal pro Stunde deine Claude-Limits abfragen, mit der Anmeldung von Claude Code aus dem Schlüsselbund, nur wenn du die Live-Abfrage der Claude-Limits einschaltest.
 
-Alles andere bleibt auf deinem Mac. Der Mitteilungsserver nimmt nur Verbindungen von diesem Mac an. Die KI-Nutzung wird aus lokalen Dateien gelesen, solange du die Live-Abfrage der Claude-Limits nicht einschaltest. Mitteilungen im Tab „Mitteilungen“ werden nur im Speicher gehalten. Aufnahmen werden neben deinen Bildschirmfotos gesichert. Die Kameravorschau läuft nur, solange der Spiegel-Tab geöffnet ist, und wird nie aufgezeichnet. Der Zwischenablage-Verlauf wird geleert, wenn Nunsseop beendet wird.
+Alles andere bleibt auf deinem Mac. Der Mitteilungsserver nimmt nur Verbindungen von diesem Mac an. Die KI-Nutzung wird aus lokalen Dateien gelesen, auch aus den Limits, die die Statuszeile von Claude Code auf diesem Mac ablegt, solange du die Live-Abfrage der Claude-Limits nicht einschaltest. Mitteilungen im Tab „Mitteilungen“ werden nur im Speicher gehalten. Aufnahmen werden neben deinen Bildschirmfotos gesichert. Die Kameravorschau läuft nur, solange der Spiegel-Tab geöffnet ist, und wird nie aufgezeichnet. Der Zwischenablage-Verlauf wird geleert, wenn Nunsseop beendet wird.
 
 ## So funktioniert die Anzeige der aktuellen Wiedergabe
 

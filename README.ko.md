@@ -8,9 +8,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=c86bfa&label=release" alt="최신 버전"></a>
+  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=111111&label=release" alt="최신 버전"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-black?logo=apple" alt="macOS 14 이상">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ff5f8f" alt="MIT 라이선스"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="MIT 라이선스"></a>
   <img src="https://img.shields.io/badge/Swift-native-orange?logo=swift&logoColor=white" alt="네이티브 Swift">
 </p>
 
@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-[Homebrew](https://brew.sh)가 필요합니다. Homebrew는 격리 플래그를 지워 주기 때문에 앱이 바로 열립니다. 업데이트는 `brew upgrade --cask nunsseop`으로 하세요. 새 버전이 나오면 설정 → 일반 → 업데이트에서 이 명령을 클립보드에 복사해 줍니다.
+[Homebrew](https://brew.sh)가 필요합니다. Homebrew는 격리 플래그를 지워 주기 때문에 앱이 바로 열립니다. 업데이트는 `brew update && brew upgrade --cask nunsseop`으로 하세요. 새 버전이 나오면 설정 → 일반 → 업데이트에서 이 명령을 클립보드에 복사해 줍니다(옛 dmg로 설치한 앱이라면 Homebrew로 옮기는 명령을 복사합니다).
 
 macOS 14 Sonoma 이상이면 됩니다. Apple 실리콘과 Intel 모두, 노치가 없는 화면에서도 동작합니다.
 
@@ -83,7 +83,8 @@ Dock 아이콘은 없습니다. Nunsseop은 노치에 삽니다.
 
 **🤖 개발자를 위해**
 - **AI 사용량.** Claude와 Codex의 한도와 초기화 시각, 최근 5시간·7일 토큰 사용량. Claude Code, Codex, gjc, omo, OpenCode 사용량을 모두 합칩니다. 두 도구가 이 Mac에 이미 남기는 파일을 읽으므로 로그인할 게 없습니다.
-- **Claude 실시간 한도 (선택).** AI 탭이 Anthropic에서 Claude의 5시간·주간 한도를 받아올지 한 번 묻습니다. 켜면 Claude Code가 키체인에 둔 로그인 정보로 한 시간에 한 번쯤 받아옵니다. 허락하기 전에는 꺼져 있고, 나중에 설정 → 서비스에서 바꿀 수 있습니다.
+- **Claude Code에서 가져오는 Claude 한도.** 설정 → 서비스 → AI 사용량에서 Claude Code의 상태 표시줄을 연결하세요. Claude Code가 답할 때마다 5시간·주간 한도를 넘겨 주므로, 작업하는 동안 AI 탭이 계속 최신으로 유지되고 Nunsseop이 Anthropic에 따로 묻지도 않습니다. 원래 쓰던 상태 표시줄은 그대로 보이고, 연결 해제를 누르면 원래대로 돌아갑니다.
+- **Claude 실시간 한도 (선택).** Claude를 다른 곳에서 쓴다면, AI 탭이 Anthropic에서 Claude의 5시간·주간 한도를 받아올지 한 번 묻습니다. 켜면 Claude Code가 키체인에 둔 로그인 정보로 한 시간에 한 번쯤 받아옵니다. 허락하기 전에는 꺼져 있고, 나중에 설정 → 서비스에서 바꿀 수 있습니다. 가장 최근 값이 우선합니다.
 - **에이전트와 터미널 알림.** Claude Code, Codex, Gemini CLI, OpenCode 훅, Muxy·cmux·herdr 안의 에이전트, tmux와 WezTerm의 벨이 노치에 뜹니다. 알림을 누르면 그 터미널, 창, 탭이 앞으로 나옵니다([설정 방법](#에이전트와-터미널-알림)).
 - **알림 탭.** 에이전트, 터미널, 캘린더에서 온 최근 알림 30개를 모아 두고, 아직 안 본 개수를 배지로 보여 줍니다. 누르면 알림이 온 곳으로 돌아갑니다. 기본으로는 꺼져 있고(설정 → 노치 구성), 메모리에만 둡니다.
 - **작업 중인 에이전트.** 닫힌 노치에 나를 기다리는 코딩 에이전트 수(노란 손)를 보여 주고, 기다리는 에이전트가 없으면 일하는 에이전트 수(초록 번개)를 보여 줍니다. 지금은 herdr를 따라갑니다.
@@ -91,7 +92,7 @@ Dock 아이콘은 없습니다. Nunsseop은 노치에 삽니다.
 **🧩 내게 맞게**
 - 탭과 순서, 헤더와 접힌 노치에 보일 것, 받을 알림을 고르세요. **꺼 둔 기능은 아예 동작하지 않습니다.**
 - macOS 26에서는 펼친 노치와 카드가 Liquid Glass로 그려져 뒤 화면이 은은하게 비칩니다. 유리의 농도를 조절할 수 있고, 100%로 올리면 완전히 검은 노치가 됩니다. 유리를 아예 끌 수도 있습니다.
-- 노치가 없는 화면에서는 닫힌 노치가 메뉴 막대 안에 떠 있는 눈썹 로고의 작은 알약이 됩니다. 원하면 유리로도 그려집니다. 한동안 쓰지 않으면 사라졌다가(3~60초, 또는 끄기) 마우스가 닿으면 다시 나타나고, 0.5초쯤 머무르면 열립니다.
+- 노치가 없는 화면에서는 닫힌 노치가 메뉴 막대 안의 작은 알약이 되고, 그 위에 흰 붓 자국 모양의 눈썹이 얹힙니다. 원하면 유리로도 그려집니다. 마우스를 올리면 눈썹이 치켜올라갑니다. 한동안 쓰지 않으면(3~60초, 또는 끄기) 눈 감듯 눈썹이 내려앉으며 사라지고, 마우스가 닿으면 다시 나타나며, 0.5초쯤 머무르면 화면 위 가장자리에 붙어 열립니다. 이런 화면에서는 HUD, 알림, 가사, 미리보기가 한 줄로 표시되고, 기호가 레벨 막대, 퍼센트, 텍스트 바로 옆에 붙습니다.
 - 표시할 화면, 크기, 열리는 지연 시간, 로그인 시 실행, 덮개를 닫았을 때 숨기기도 고를 수 있습니다.
 - 아래로 쓸면 열기, 위로 쓸면 닫기, 홈 탭에서 옆으로 쓸면 다음 곡.
 - English, 한국어, 日本語, 简体中文, Español, Deutsch, Français. Mac 언어 설정을 따릅니다.
@@ -125,13 +126,13 @@ Nunsseop은 macOS가 '지금 재생 중'으로 아는 것을 보여 줍니다. �
 <details>
 <summary><b>노치가 없는 Mac이에요.</b></summary>
 
-덮개를 닫고 쓰는 외장 모니터처럼 노치가 없는 화면에서는, 닫힌 노치가 메뉴 막대 안에 떠 있는 눈썹 로고의 작은 알약으로 나타납니다. 마우스를 올리면 눈썹이 치켜올라가고, 열면 화면 위 가장자리에 평소 크기의 노치로 붙습니다. 쓰지 않으면 사라지는데, 끄거나 시간을 바꾸는 건 설정에서 할 수 있습니다. 어느 화면에 띄울지도 설정에서 고르세요.
+덮개를 닫고 쓰는 외장 모니터처럼 노치가 없는 화면에서는, 닫힌 노치가 메뉴 막대 안에 떠 있는 작은 알약으로 나타나고, 그 위에 흰 붓 자국 모양의 눈썹이 얹힙니다. 마우스를 올리면 눈썹이 치켜올라가고, 열면 화면 위 가장자리에 평소 크기의 노치로 붙습니다. HUD, 알림, 가사, 미리보기는 카메라를 둘러싸지 않고 한 줄로 표시됩니다. 쓰지 않으면 눈 감듯 눈썹이 내려앉고 알약이 사라지는데, 끄거나 시간을 바꾸는 건 설정에서 할 수 있습니다. 어느 화면에 띄울지도 설정에서 고르세요.
 </details>
 
 <details>
 <summary><b>AI 사용량의 Claude 한도가 오래된 값이에요.</b></summary>
 
-기본으로는 Claude의 5시간·주간 %를 다른 도구가 남기는 캐시에서 읽습니다. 터미널에서 Claude Code를 쓸 때 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD가 저장하는 캐시나 gjc의 캐시입니다. 카드에 마지막 갱신 시각이 함께 나옵니다. 설정 → 서비스에서 연결하면 Claude 한도를 Claude Code의 상태 표시줄에서 바로 가져올 수도 있습니다. 그런 도구 없이도 최신 값을 보려면 AI 탭이나 설정 → 서비스에서 Claude 실시간 한도를 켜세요. 토큰 사용량은 항상 실시간입니다.
+기본으로는 Claude의 5시간·주간 %를 다른 도구가 남기는 캐시에서 읽습니다. 터미널에서 Claude Code를 쓸 때 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD가 저장하는 캐시나 gjc의 캐시입니다. 카드에 마지막 갱신 시각이 함께 나옵니다. 최신 값을 보려면 설정 → 서비스 → AI 사용량에서 Claude Code의 상태 표시줄을 연결하세요. Claude Code가 답할 때마다 한도를 넘겨 주고, 원래 쓰던 상태 표시줄도 계속 동작합니다. Claude를 다른 곳에서 쓴다면 대신 AI 탭이나 설정 → 서비스에서 Claude 실시간 한도를 켜세요. 가장 최근 값이 우선합니다. 토큰 사용량은 항상 실시간입니다.
 </details>
 
 <details>
@@ -201,7 +202,7 @@ Nunsseop은 개인 정보를 수집하거나 보내지 않습니다. 인터넷�
 - MediaRemote 헬퍼를 쓸 수 없을 때만, 알려진 음악 서비스에서 HTTPS로 앨범아트 받기
 - Claude 실시간 한도를 켰을 때만, 키체인에 있는 Claude Code 로그인 정보로 한 시간에 한 번쯤 `api.anthropic.com`에 Claude 한도 묻기
 
-나머지는 모두 이 Mac 안에서만 처리됩니다. 알림 서버는 이 Mac에서 오는 연결만 받고, AI 사용량은 Claude 실시간 한도를 켜지 않는 한 로컬 파일에서 읽고, 알림 탭의 알림은 메모리에만 두고, 녹화 파일은 스크린샷 옆에 저장됩니다. 카메라 미리보기는 미러 탭이 열려 있을 때만 켜지고 녹화되지 않습니다. 클립보드 기록은 Nunsseop을 끄면 지워집니다.
+나머지는 모두 이 Mac 안에서만 처리됩니다. 알림 서버는 이 Mac에서 오는 연결만 받고, AI 사용량은 Claude 실시간 한도를 켜지 않는 한 Claude Code 상태 표시줄이 이 Mac에 남기는 한도를 포함해 로컬 파일에서 읽고, 알림 탭의 알림은 메모리에만 두고, 녹화 파일은 스크린샷 옆에 저장됩니다. 카메라 미리보기는 미러 탭이 열려 있을 때만 켜지고 녹화되지 않습니다. 클립보드 기록은 Nunsseop을 끄면 지워집니다.
 
 ## 재생 정보를 읽는 방법
 

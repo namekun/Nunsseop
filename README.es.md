@@ -8,9 +8,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=c86bfa&label=release" alt="Última versión"></a>
+  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=111111&label=release" alt="Última versión"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-black?logo=apple" alt="macOS 14 o posterior">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ff5f8f" alt="Licencia MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="Licencia MIT"></a>
   <img src="https://img.shields.io/badge/Swift-native-orange?logo=swift&logoColor=white" alt="Swift nativo">
 </p>
 
@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Necesita [Homebrew](https://brew.sh). Homebrew quita la marca de cuarentena, así que la app se abre sin problemas. Para actualizar, ejecuta `brew upgrade --cask nunsseop`; cuando hay una versión nueva, Ajustes › General › Actualizaciones copia ese comando al portapapeles.
+Necesita [Homebrew](https://brew.sh). Homebrew quita la marca de cuarentena, así que la app se abre sin problemas. Para actualizar, ejecuta `brew update && brew upgrade --cask nunsseop`; cuando hay una versión nueva, Ajustes › General › Actualizaciones copia ese comando al portapapeles (si la app se instaló desde el dmg antiguo, un comando que la pasa a Homebrew).
 
 Requiere macOS 14 Sonoma o posterior. Funciona en Apple silicon e Intel, y también en pantallas sin notch.
 
@@ -83,7 +83,8 @@ No hay icono en el Dock. Nunsseop vive en el notch.
 
 **🤖 Para desarrolladores**
 - **Uso de IA.** Los límites de Claude y Codex con sus horas de restablecimiento, y el uso de tokens de las últimas 5 horas y los últimos 7 días, sumado entre Claude Code, Codex, gjc, omo y OpenCode. Se lee de archivos que esas herramientas ya guardan en tu Mac, así que no hay que iniciar sesión en nada.
-- **Límites de Claude en tiempo real (opcional).** La pestaña de IA pregunta una vez si quieres obtener de Anthropic tus límites de Claude de 5 horas y semanales, aproximadamente cada hora, con el inicio de sesión que Claude Code guarda en el llavero. Desactivado hasta que digas que sí; puedes cambiarlo después en Ajustes › Servicios.
+- **Límites de Claude desde Claude Code.** En Ajustes › Servicios › Uso de IA, conecta la línea de estado de Claude Code. Claude Code le pasa tus límites de 5 horas y semanales con cada respuesta, así que la pestaña de IA se mantiene al día mientras trabajas, sin que Nunsseop le pida nada a Anthropic. La línea de estado que ya tenías sigue mostrándose como antes, y Desconectar la restablece.
+- **Límites de Claude en tiempo real (opcional).** Para cuando usas Claude en otro sitio, la pestaña de IA pregunta una vez si quieres obtener de Anthropic tus límites de Claude de 5 horas y semanales, aproximadamente cada hora, con el inicio de sesión que Claude Code guarda en el llavero. Desactivado hasta que digas que sí; puedes cambiarlo después en Ajustes › Servicios. Gana la fuente más reciente.
 - **Notificaciones de agentes y terminales.** Los hooks de Claude Code, Codex, Gemini CLI y OpenCode, los agentes de Muxy, cmux y herdr, y las campanas de tmux y WezTerm aparecen en el notch. Haz clic en un aviso para traer al frente su terminal, panel o pestaña ([configuración más abajo](#notificaciones-de-agentes-y-terminales)).
 - **Pestaña Notificaciones.** Los últimos 30 avisos de agentes, terminales y tu calendario, con una insignia para los no vistos; haz clic en uno para volver al lugar de donde vino. Desactivada por defecto (Ajustes › Notch) y guardada solo en memoria.
 - **Agentes en marcha.** Un elemento del notch plegado que muestra cuántos agentes de programación te esperan (una mano amarilla) o, si ninguno espera, cuántos están trabajando (un rayo verde). Por ahora sigue a herdr.
@@ -91,7 +92,7 @@ No hay icono en el Dock. Nunsseop vive en el notch.
 **🧩 Hazlo tuyo**
 - Elige tus pestañas y su orden, qué muestran la cabecera y el notch plegado, y qué ventanas emergentes recibes. **Lo que desactivas deja de ejecutarse.**
 - En macOS 26, el notch desplegado y sus tarjetas usan Liquid Glass, de modo que lo que hay detrás se transparenta con suavidad. Puedes ajustar lo oscuro que es el cristal, hasta el 100 % para un notch negro sólido, o desactivar el cristal.
-- En pantallas sin notch, el notch plegado es una pequeña píldora con el logotipo de la ceja dentro de la barra de menús, de cristal si quieres. Se desvanece tras un tiempo sin uso (de 3 a 60 segundos, o nunca) y reaparece cuando el puntero llega hasta ella; si lo dejas medio segundo encima, se abre.
+- En pantallas sin notch, el notch plegado es una pequeña píldora en la barra de menús, de cristal si quieres, con la ceja, un trazo blanco de pincel, encima. La ceja se levanta cuando el puntero está encima. Tras un tiempo sin uso (de 3 a 60 segundos, o nunca) baja como un ojo que se cierra y se desvanece, y reaparece cuando el puntero llega hasta ella; si lo dejas medio segundo encima, se abre, unido al borde superior. Allí, los HUDs, los avisos, las letras y la vista previa ocupan una sola línea, con el símbolo junto a la barra de nivel, el porcentaje o el texto.
 - Elige la pantalla, el tamaño y el retraso al pasar el puntero, abre la app al iniciar sesión y oculta el notch con la tapa cerrada.
 - Desliza hacia abajo para abrir, hacia arriba para cerrar, y de lado en Inicio para cambiar de pista.
 - Disponible en English, 한국어, 日本語, 简体中文, Español, Deutsch y Français, según el idioma de tu Mac.
@@ -125,13 +126,13 @@ Haz clic derecho en el notch → Ajustes → Notch y desactiva lo que no necesit
 <details>
 <summary><b>Mi Mac no tiene notch.</b></summary>
 
-En una pantalla sin notch, como un monitor externo con la tapa cerrada, el notch plegado es una pequeña píldora con el logotipo de la ceja flotando dentro de la barra de menús. La ceja se levanta cuando el puntero está encima y, al abrirla, el notch se une al borde superior con su tamaño habitual. Se desvanece cuando no se usa; puedes desactivarlo o cambiar el retraso en Ajustes. Allí mismo eliges también qué pantalla usa.
+En una pantalla sin notch, como un monitor externo con la tapa cerrada, el notch plegado es una pequeña píldora que flota en la barra de menús, con la ceja, un trazo blanco de pincel, encima. La ceja se levanta cuando el puntero está encima y, al abrirla, el notch se une al borde superior con su tamaño habitual. Los HUDs, los avisos, las letras y la vista previa se muestran en una sola línea en lugar de alrededor de una cámara. Cuando no se usa, la ceja baja como un ojo que se cierra y la píldora se desvanece; puedes desactivarlo o cambiar el retraso en Ajustes. Allí mismo eliges también qué pantalla usa.
 </details>
 
 <details>
 <summary><b>¿Por qué el uso de IA muestra límites antiguos de Claude?</b></summary>
 
-Por defecto, los porcentajes de Claude de 5 horas y semanales salen de cachés que escriben otras herramientas: el HUD de [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) mientras usas Claude Code en un terminal, o gjc. La tarjeta indica cuándo se actualizaron por última vez. Los límites de Claude también pueden venir directamente de la línea de estado de Claude Code, una vez que la conectes en Ajustes › Servicios. Para tener límites al día sin ellas, activa los límites de Claude en tiempo real en la pestaña de IA o en Ajustes › Servicios. Los totales de tokens siempre están al día.
+Por defecto, los porcentajes de Claude de 5 horas y semanales salen de cachés que escriben otras herramientas: el HUD de [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) mientras usas Claude Code en un terminal, o gjc. La tarjeta indica cuándo se actualizaron por última vez. Para tener límites al día, conecta la línea de estado de Claude Code en Ajustes › Servicios › Uso de IA: Claude Code le pasa tus límites con cada respuesta y tu propia línea de estado sigue funcionando. Si usas Claude en otro sitio, activa en su lugar los límites de Claude en tiempo real en la pestaña de IA o en Ajustes › Servicios. Gana la fuente más reciente. Los totales de tokens siempre están al día.
 </details>
 
 <details>
@@ -201,7 +202,7 @@ Nunsseop no recopila ni envía datos personales. Solo se conecta a internet para
 - descargar carátulas por HTTPS desde servicios de música conocidos, solo cuando el helper de MediaRemote no está disponible;
 - pedir a `api.anthropic.com` tus límites de Claude aproximadamente cada hora, con el inicio de sesión de Claude Code guardado en el llavero, solo si activas los límites de Claude en tiempo real.
 
-Todo lo demás se queda en tu Mac. El servidor de notificaciones solo acepta conexiones de este Mac. El uso de IA se lee de archivos locales, salvo que actives los límites de Claude en tiempo real. Los avisos de la pestaña Notificaciones se guardan solo en memoria. Las grabaciones se guardan junto a tus capturas de pantalla. La vista previa de la cámara solo funciona mientras la pestaña Espejo está abierta y nunca se graba. El historial del portapapeles se borra al salir de Nunsseop.
+Todo lo demás se queda en tu Mac. El servidor de notificaciones solo acepta conexiones de este Mac. El uso de IA se lee de archivos locales, incluidos los límites que la línea de estado de Claude Code guarda en este Mac, salvo que actives los límites de Claude en tiempo real. Los avisos de la pestaña Notificaciones se guardan solo en memoria. Las grabaciones se guardan junto a tus capturas de pantalla. La vista previa de la cámara solo funciona mientras la pestaña Espejo está abierta y nunca se graba. El historial del portapapeles se borra al salir de Nunsseop.
 
 ## Cómo funciona «En reproducción»
 
