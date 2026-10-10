@@ -213,4 +213,33 @@ struct AgentHooksTests {
         hooks.reset()
         #expect(board.counts == AgentBoard.Counts(working: 1))
     }
+
+    @Test func comingToTheAppClearsOnlyItsFinishedHands() {
+        let (hooks, board) = make(frontmost: "com.apple.Terminal")
+        // activated() publishes at the real time, so the events are timed from it too.
+        let now = Date.now
+        hooks.apply(event("a", .finished, app: "com.mitchellh.ghostty"), now: now)
+        hooks.apply(event("b", .needsInput, app: "com.mitchellh.ghostty"), now: now)
+        hooks.apply(event("c", .finished), now: now)
+        hooks.apply(event("d", .working, app: "com.mitchellh.ghostty"), now: now)
+        #expect(board.counts == AgentBoard.Counts(working: 1, waiting: 3))
+
+        hooks.activated("com.apple.Terminal")
+        hooks.activated(nil)
+        #expect(board.counts == AgentBoard.Counts(working: 1, waiting: 3))
+
+        // The finished hand in ghostty is seen; the permission request and the working session stay.
+        hooks.activated("com.mitchellh.ghostty")
+        #expect(board.counts == AgentBoard.Counts(working: 1, waiting: 2))
+        hooks.activated("com.mitchellh.ghostty")
+        #expect(board.counts == AgentBoard.Counts(working: 1, waiting: 2))
+
+        // A finished session with no app (a background one) can't be seen by coming to any app; it times out.
+        board.recount(now: now.addingTimeInterval(Herdr.doneWindow - 1))
+        #expect(board.counts == AgentBoard.Counts(working: 1, waiting: 2))
+        board.recount(now: now.addingTimeInterval(Herdr.doneWindow + 1))
+        #expect(board.counts == AgentBoard.Counts(working: 1, waiting: 1))
+        board.recount(now: now.addingTimeInterval(AgentHooks.activeWindow + 1))
+        #expect(board.counts.isEmpty)
+    }
 }
