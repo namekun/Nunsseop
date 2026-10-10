@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> · <b>한국어</b> · <a href="https://namekun.github.io/Nunsseop/">홈페이지</a>
+  <a href="README.md">English</a> · <b>한국어</b> · <a href="README.ja.md">日本語</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.es.md">Español</a> · <a href="README.de.md">Deutsch</a> · <a href="README.fr.md">Français</a> · <a href="https://namekun.github.io/Nunsseop/">홈페이지</a>
 </p>
 
 <p align="center">
@@ -30,18 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-<details>
-<summary>직접 내려받고 싶다면</summary>
-
-1. [Releases](https://github.com/namekun/Nunsseop/releases/latest)에서 `Nunsseop-<버전>.dmg`를 받습니다.
-2. Nunsseop을 응용 프로그램 폴더로 끌어다 놓습니다.
-3. 아직 공증되지 않은 앱이라, 처음 실행하기 전에 한 번만 아래 명령을 실행하세요(Homebrew는 알아서 해 줍니다).
-
-   ```sh
-   xattr -dr com.apple.quarantine /Applications/Nunsseop.app
-   ```
-
-</details>
+[Homebrew](https://brew.sh)가 필요합니다. Homebrew는 격리 플래그를 지워 주기 때문에 앱이 바로 열립니다. 업데이트는 `brew upgrade --cask nunsseop`으로 하세요. 새 버전이 나오면 설정 → 일반 → 업데이트에서 이 명령을 클립보드에 복사해 줍니다.
 
 macOS 14 Sonoma 이상이면 됩니다. Apple 실리콘과 Intel 모두, 노치가 없는 화면에서도 동작합니다.
 
@@ -112,7 +101,7 @@ Dock 아이콘은 없습니다. Nunsseop은 노치에 삽니다.
 <details>
 <summary><b>"Nunsseop을 열 수 없습니다"라고 나와요.</b></summary>
 
-아직 공증되지 않은 앱이라 그렇습니다. Homebrew로 설치하거나, `xattr -dr com.apple.quarantine /Applications/Nunsseop.app`을 한 번 실행하세요.
+아직 공증되지 않은 앱이라 그렇습니다. Homebrew(`brew install --cask namekun/tap/nunsseop`)로 설치하세요. Homebrew는 격리 플래그를 지워 주기 때문에 앱이 바로 열립니다.
 </details>
 
 <details>

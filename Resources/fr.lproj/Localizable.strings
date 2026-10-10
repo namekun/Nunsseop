@@ -84,7 +84,6 @@
 "Updates" = "Mises à jour";
 "Check for updates automatically" = "Rechercher les mises à jour automatiquement";
 "Version %@ is available" = "La version %@ est disponible";
-"Download" = "Télécharger";
 "Checking…" = "Vérification…";
 "Couldn't check for updates" = "Impossible de rechercher les mises à jour";
 "Not checked yet" = "Pas encore vérifié";
@@ -341,3 +340,10 @@
 "Hide after" = "Masquer après";
 "Move the pointer to the top edge to bring it back." = "Placez le pointeur en haut de l’écran pour le faire revenir.";
 "Eyebrow glass tint" = "Teinte du verre du sourcil";
+
+/* Updates through Homebrew */
+"Copy Update Command" = "Copier la commande de mise à jour";
+"Copied" = "Copiée";
+"The command goes to the clipboard. Paste it in Terminal and press Return." = "La commande est copiée dans le presse-papiers. Collez-la dans Terminal et appuyez sur Retour.";
+"Get Homebrew" = "Obtenir Homebrew";
+"Updates come through Homebrew. Install it, then come back here to copy the update command." = "Les mises à jour passent par Homebrew. Installez-le, puis revenez ici copier la commande de mise à jour.";

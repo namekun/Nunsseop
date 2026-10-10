@@ -10,4 +10,9 @@ struct UpdateCheckerTests {
     func comparesVersions(candidate: String, current: String, newer: Bool) {
         #expect(UpdateChecker.isNewer(candidate, than: current) == newer)
     }
+
+    @Test func updateCommandUpgradesAHomebrewInstallAndReplacesAnyOther() {
+        #expect(UpdateChecker.brewCommand(installedWithBrew: true) == "brew upgrade --cask nunsseop")
+        #expect(UpdateChecker.brewCommand(installedWithBrew: false) == "brew install --cask --force namekun/tap/nunsseop")
+    }
 }
