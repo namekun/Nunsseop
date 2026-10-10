@@ -143,7 +143,8 @@
   .section-head p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--g3); }
 
   /* Tour: rows on the left, one black figure on the right */
-  .tour { display: grid; grid-template-columns: minmax(280px, 420px) minmax(0, 1fr); grid-template-areas: "head fig" "list fig"; grid-template-rows: auto 1fr; column-gap: 56px; align-items: start; }
+  /* The heading runs across; below it the list and the screen sit side by side at the same height. */
+  .tour { display: grid; grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); grid-template-areas: "head head" "list fig"; column-gap: 48px; align-items: stretch; }
   .tour .section-head { grid-area: head; margin-bottom: 28px; }
   .tour-list { grid-area: list; display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
   .tour-btn { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 48px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--rule); background: transparent; color: var(--g4); font-size: 16px; text-align: left; cursor: pointer; transition: padding-left .3s cubic-bezier(.2, .9, .25, 1), background-color .3s; }
@@ -153,8 +154,8 @@
   .tour-btn[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
   .tour-btn[aria-pressed="true"] .mark { background: var(--ink); }
   @media (hover: hover) { .tour-btn:hover { padding-left: 10px; background-color: var(--hover); } }
-  .tour-stage { grid-area: fig; position: sticky; top: 88px; margin: 0; background: var(--ink); color: var(--paper); border-radius: 10px; padding: 28px; }
-  .tour-screen { position: relative; aspect-ratio: 1478 / 422; }
+  .tour-stage { grid-area: fig; display: flex; flex-direction: column; margin: 0; background: var(--ink); color: var(--paper); border-radius: 10px; padding: 28px; }
+  .tour-screen { position: relative; aspect-ratio: 1478 / 422; margin-block: auto; }
   .tour-screen img { position: absolute; left: 50%; top: 0; max-width: none; height: auto; transform: translateX(-50%); opacity: 0; transition: opacity .35s ease; }
   .tour-screen img.on { opacity: 1; }
   .tour-copy { margin-top: 20px; }
