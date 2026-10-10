@@ -90,6 +90,9 @@
   .hero .wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
   .eyebrow { margin: 0; font: 400 13px/1.5 var(--mono); color: var(--g5); }
   .eyebrow b { font-weight: 500; color: var(--ink); margin-right: 10px; }
+  .eyebrow a { margin-right: 10px; color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+  .eyebrow a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+  .eyebrow a b { margin-right: 0; }
   .hero h1 { margin: 0; font-family: var(--head); font-weight: 800; font-size: clamp(44px, 7.5vw, 104px); line-height: 0.95; letter-spacing: -0.035em; overflow-wrap: break-word; max-width: 100%; }
   body[data-lang="ko"] .hero h1, body[data-lang="ja"] .hero h1, body[data-lang="zh"] .hero h1 { line-height: 1.08; letter-spacing: -0.02em; }
   .nn-word { display: inline-block; animation: nn-rise .8s cubic-bezier(.2, .9, .25, 1) both; }
@@ -102,6 +105,10 @@
   .btn.primary:hover { background: var(--g3); color: var(--paper); }
   .btn.ghost { background: transparent; color: var(--ink); }
   .btn.ghost:hover { background: var(--hover); color: var(--ink); }
+  .cta { align-items: flex-start; }
+  .brew-col { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; max-width: 100%; min-width: 0; }
+  .trouble { display: inline-block; padding: 8px 0; font-size: 14px; line-height: 1.4; color: var(--g4); text-decoration: underline; text-underline-offset: 3px; }
+  .trouble:hover { color: var(--ink); }
   .brew { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 8px 0 18px; border-radius: 8px; background: var(--ink); color: var(--paper); max-width: 100%; min-width: 0; }
   .brew code { flex: 1 1 auto; min-width: 0; font-size: 15px; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
   .brew code::-webkit-scrollbar { display: none; }
@@ -123,6 +130,15 @@
   @keyframes nn-brow { 0%, 10% { transform: none; opacity: 1; } 16%, 24% { transform: translateY(-2px) rotate(-6deg); opacity: 1; } 28%, 84% { opacity: 0; transform: translateY(-2px) rotate(-6deg); } 90%, 100% { opacity: 1; transform: none; } }
   .nn-shot { position: absolute; top: 0; left: 50%; max-width: none; width: calc(var(--nw) * 1.049); height: auto; transform: translateX(-50%); opacity: 0; animation: nn-shot 9s ease infinite; }
   @keyframes nn-shot { 0%, 32% { opacity: 0; } 40%, 74% { opacity: 1; } 80%, 100% { opacity: 0; } }
+  .nn-stage { cursor: default; }
+  .nn-stage:focus-visible { outline: 2px solid var(--paper); outline-offset: -5px; }
+  /* Pointer or keyboard focus on the stage: the loop stops and the notch settles open. Letting go eases it shut, then the loop picks up from its closed start. */
+  .nn-stage.held .nn-notch, .nn-stage.releasing .nn-notch { animation: none; transition: top .5s cubic-bezier(.3, 1, .4, 1), width .5s cubic-bezier(.3, 1, .4, 1), height .5s cubic-bezier(.3, 1, .4, 1), border-radius .5s cubic-bezier(.3, 1, .4, 1); }
+  .nn-stage.held .nn-shot, .nn-stage.releasing .nn-shot { animation: none; transition: opacity .4s ease; }
+  .nn-stage.held .nn-brow, .nn-stage.releasing .nn-brow { animation: none; transition: opacity .2s ease, transform .2s ease; }
+  .nn-stage.held .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; }
+  .nn-stage.held .nn-shot { opacity: 1; }
+  .nn-stage.held .nn-brow { opacity: 0; }
   .stage-band p { margin: 0 auto; max-width: 1200px; padding: 0 24px; text-align: center; font: 400 13px/1.6 var(--mono); color: var(--dim); }
 
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 32px; padding-top: 56px; }
@@ -231,6 +247,36 @@
   .perm div:nth-child(even) { padding-left: 20px; text-align: right; color: var(--g4); font: 400 13.5px/1.6 var(--mono); }
   @media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
 
+  /* Comparison: a plain ruled table, no cards */
+  .compare-wrap { max-width: 980px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; }
+  .compare th, .compare td { padding: 14px 16px 14px 0; text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+  .compare thead th { padding-top: 0; border-bottom: 2px solid var(--ink); font: 500 13px/1.5 var(--mono); color: var(--g5); }
+  .compare tbody th { font-weight: 600; white-space: nowrap; }
+  .compare tr.me th, .compare tr.me td { font-weight: 600; }
+  .compare td { color: var(--g3); }
+  .compare tr.me td { color: var(--ink); }
+  .compare .cl { display: none; }
+  #faq-open { scroll-margin-top: 28px; } /* offsets the .reveal translateY(28px) so the target settles under the 76px scroll-padding */
+  .compare-note { margin: 20px 0 0; font-size: 14px; line-height: 1.7; color: var(--g4); }
+  .compare-note .sites { white-space: normal; }
+  .short { max-width: 980px; margin-top: 48px; }
+  .short h3 { margin: 0 0 14px; padding-top: 18px; border-top: 2px solid var(--ink); font-size: 20px; font-weight: 600; }
+  .short ul { margin: 0; padding: 0; list-style: none; }
+  .short li { padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 15.5px; line-height: 1.6; color: var(--g3); }
+  .short li:first-child { border-top: 1px solid var(--rule); }
+  @media (max-width: 720px) {
+    .compare thead { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .compare, .compare tbody, .compare tr, .compare th, .compare td { display: block; }
+    .compare tr { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+    .compare tbody tr:first-child { border-top: 2px solid var(--ink); }
+    .compare th, .compare td { padding: 0; border: 0; }
+    .compare tbody th { margin-bottom: 6px; font-size: 17px; }
+    .compare td { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 12px; padding: 3px 0; }
+    .compare .cl { display: block; font: 400 13px/1.6 var(--mono); color: var(--g5); }
+    body[data-lang="de"] .compare td, body[data-lang="fr"] .compare td, body[data-lang="es"] .compare td { grid-template-columns: 9rem minmax(0, 1fr); }
+  }
+
   /* FAQ */
   .faq { max-width: 820px; border-top: 1px solid var(--rule); }
   .faq details { border-bottom: 1px solid var(--rule); }
@@ -300,7 +346,7 @@
 
 <header class="hero" id="top">
   <div class="wrap">
-    <p class="eyebrow"><b>v0.23.0</b><span class="en">Free &amp; open source · macOS 14+</span><span class="ko">무료 오픈소스 · macOS 14 이상</span><span class="ja">無料・オープンソース · macOS 14 以上</span><span class="zh">免费开源 · macOS 14 及以上</span><span class="es">Gratis y de código abierto · macOS 14+</span><span class="de">Kostenlos &amp; Open Source · macOS 14+</span><span class="fr">Gratuit &amp; open source · macOS 14+</span></p>
+    <p class="eyebrow"><a href="https://github.com/namekun/Nunsseop/releases/latest"><b>v0.23.0</b></a><span class="en">Free &amp; open source · macOS 14+</span><span class="ko">무료 오픈소스 · macOS 14 이상</span><span class="ja">無料・オープンソース · macOS 14 以上</span><span class="zh">免费开源 · macOS 14 及以上</span><span class="es">Gratis y de código abierto · macOS 14+</span><span class="de">Kostenlos &amp; Open Source · macOS 14+</span><span class="fr">Gratuit &amp; open source · macOS 14+</span></p>
     <h1 class="en"><span class="nn-word">Your</span> <span class="nn-word" style="animation-delay:0.08s">notch,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">finally</span> <span class="nn-word" style="animation-delay:0.24s">useful.</span></span></h1>
     <h1 class="ko"><span class="nn-word">노치,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">이제</span> <span class="nn-word" style="animation-delay:0.16s">쓸모</span> <span class="nn-word" style="animation-delay:0.24s">있게.</span></span></h1>
     <h1 class="ja"><span class="nn-word">あなたのノッチが、</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">ついに役立つ。</span></span></h1>
@@ -320,16 +366,19 @@
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.4.8 2.3-1.3 3.1-2.5c1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"/></svg>
         <span class="en">Install for Mac</span><span class="ko">Mac에 설치하기</span><span class="ja">Mac にインストール</span><span class="zh">安装到 Mac</span><span class="es">Instalar en Mac</span><span class="de">Auf dem Mac installieren</span><span class="fr">Installer sur Mac</span>
       </a>
+      <div class="brew-col">
       <div class="brew">
         <code>brew install --cask namekun/tap/nunsseop</code>
         <button class="copy" type="button" data-copy="brew install --cask namekun/tap/nunsseop"><span class="en">Copy</span><span class="ko">복사</span><span class="ja">コピー</span><span class="zh">复制</span><span class="es">Copiar</span><span class="de">Kopieren</span><span class="fr">Copier</span></button>
+      </div>
+        <a class="trouble" href="#faq-open"><span class="en">Trouble opening it?</span><span class="ko">열리지 않나요?</span><span class="ja">開けませんか？</span><span class="zh">打不开？</span><span class="es">¿No se abre?</span><span class="de">Lässt sich nicht öffnen?</span><span class="fr">Impossible de l’ouvrir ?</span></a>
       </div>
     </div>
   </div>
 </header>
 
 <section class="stage-band" aria-label="The notch opening">
-  <div class="nn-stage">
+  <div class="nn-stage" tabindex="0" role="group" aria-label="Show the open notch">
     <div class="nn-bar" aria-hidden="true"><div class="l"><b>Nunsseop</b><span class="en">File</span><span class="ko">파일</span><span class="ja">ファイル</span><span class="zh">文件</span><span class="es">Archivo</span><span class="de">Datei</span><span class="fr">Fichier</span><span class="en">Edit</span><span class="ko">편집</span><span class="ja">編集</span><span class="zh">编辑</span><span class="es">Editar</span><span class="de">Bearbeiten</span><span class="fr">Édition</span></div><div class="r"><span>100%</span><span>9:41</span></div></div>
     <div class="nn-notch">
       <svg class="nn-brow" viewBox="0 0 100 40" aria-hidden="true"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z" fill="#F4F4F1"/></svg>
@@ -671,6 +720,40 @@ open build/Nunsseop.app</pre></div>
     </div>
   </section>
 
+<section class="block" id="compare">
+    <div class="wrap">
+    <div class="section-head">
+      <div class="kicker en">Side by side</div><div class="kicker ko">나란히 비교</div><div class="kicker ja">並べて比べる</div><div class="kicker zh">并排对比</div><div class="kicker es">Cara a cara</div><div class="kicker de">Nebeneinander</div><div class="kicker fr">Côte à côte</div>
+      <h2 class="en">How it compares.</h2><h2 class="ko">다른 앱과 비교하면.</h2><h2 class="ja">ほかのアプリと比べると。</h2><h2 class="zh">与其他应用相比。</h2><h2 class="es">Cómo se compara.</h2><h2 class="de">So schneidet sie ab.</h2><h2 class="fr">Comparé aux autres.</h2>
+      <p class="en">Three things people ask about, checked as far as we could. A dash means we couldn’t confirm it.</p><p class="ko">자주 묻는 세 가지를 확인할 수 있는 범위에서 정리했습니다. “—”는 확인하지 못했다는 뜻입니다.</p><p class="ja">よく聞かれる3点を、確認できた範囲でまとめました。「—」は確認できなかったという意味です。</p><p class="zh">把常被问到的三件事，按我们能确认的范围列了出来。“—”表示未能确认。</p><p class="es">Tres cosas por las que suelen preguntar, comprobadas hasta donde pudimos. Un guion significa que no pudimos confirmarlo.</p><p class="de">Drei Dinge, nach denen oft gefragt wird, soweit wir sie prüfen konnten. Ein Strich bedeutet: nicht bestätigt.</p><p class="fr">Trois points souvent demandés, vérifiés autant que possible. Un tiret signifie que nous n’avons pas pu le confirmer.</p>
+    </div>
+    <div class="compare-wrap reveal">
+      <table class="compare">
+        <thead>
+        <tr><th scope="col"><span class="en">App</span><span class="ko">앱</span><span class="ja">アプリ</span><span class="zh">应用</span><span class="es">App</span><span class="de">App</span><span class="fr">App</span></th><th scope="col"><span class="en">Price</span><span class="ko">가격</span><span class="ja">価格</span><span class="zh">价格</span><span class="es">Precio</span><span class="de">Preis</span><span class="fr">Prix</span></th><th scope="col"><span class="en">Open source</span><span class="ko">오픈소스</span><span class="ja">オープンソース</span><span class="zh">开源</span><span class="es">Código abierto</span><span class="de">Open Source</span><span class="fr">Open source</span></th><th scope="col"><span class="en">Homebrew install</span><span class="ko">Homebrew 설치</span><span class="ja">Homebrew でインストール</span><span class="zh">Homebrew 安装</span><span class="es">Instalar con Homebrew</span><span class="de">Installation per Homebrew</span><span class="fr">Installation via Homebrew</span></th></tr>
+        </thead>
+        <tbody>
+        <tr class="me"><th scope="row">Nunsseop</th><td><span class="cl" aria-hidden="true"><span class="en">Price</span><span class="ko">가격</span><span class="ja">価格</span><span class="zh">价格</span><span class="es">Precio</span><span class="de">Preis</span><span class="fr">Prix</span></span><span class="cv"><span class="en">Free</span><span class="ko">무료</span><span class="ja">無料</span><span class="zh">免费</span><span class="es">Gratis</span><span class="de">Kostenlos</span><span class="fr">Gratuit</span></span></td><td><span class="cl" aria-hidden="true"><span class="en">Open source</span><span class="ko">오픈소스</span><span class="ja">オープンソース</span><span class="zh">开源</span><span class="es">Código abierto</span><span class="de">Open Source</span><span class="fr">Open source</span></span><span class="cv"><span class="en">Yes (MIT)</span><span class="ko">예 (MIT)</span><span class="ja">はい（MIT）</span><span class="zh">是（MIT）</span><span class="es">Sí (MIT)</span><span class="de">Ja (MIT)</span><span class="fr">Oui (MIT)</span></span></td><td><span class="cl" aria-hidden="true"><span class="en">Homebrew install</span><span class="ko">Homebrew 설치</span><span class="ja">Homebrew でインストール</span><span class="zh">Homebrew 安装</span><span class="es">Instalar con Homebrew</span><span class="de">Installation per Homebrew</span><span class="fr">Installation via Homebrew</span></span><span class="cv"><span class="en">Yes (own tap)</span><span class="ko">예 (자체 탭)</span><span class="ja">はい（独自タップ）</span><span class="zh">是（自有 tap）</span><span class="es">Sí (tap propio)</span><span class="de">Ja (eigener Tap)</span><span class="fr">Oui (tap maison)</span></span></td></tr>
+        <tr><th scope="row">Crest</th><td><span class="cl" aria-hidden="true"><span class="en">Price</span><span class="ko">가격</span><span class="ja">価格</span><span class="zh">价格</span><span class="es">Precio</span><span class="de">Preis</span><span class="fr">Prix</span></span><span class="cv"><span class="en">Free tier; Pro $24.99 once or $2.99/month</span><span class="ko">무료 플랜, Pro는 $24.99 한 번 결제 또는 월 $2.99</span><span class="ja">無料プランあり。Pro は $24.99 の買い切り、または月 $2.99</span><span class="zh">有免费版；Pro 一次性 $24.99，或每月 $2.99</span><span class="es">Plan gratuito; Pro por $24.99 una vez o $2.99/mes</span><span class="de">Gratis-Stufe; Pro einmalig $24.99 oder $2.99/Monat</span><span class="fr">Offre gratuite ; Pro à $24.99 une fois ou $2.99/mois</span></span></td><td><span class="cl" aria-hidden="true"><span class="en">Open source</span><span class="ko">오픈소스</span><span class="ja">オープンソース</span><span class="zh">开源</span><span class="es">Código abierto</span><span class="de">Open Source</span><span class="fr">Open source</span></span><span class="cv">—</span></td><td><span class="cl" aria-hidden="true"><span class="en">Homebrew install</span><span class="ko">Homebrew 설치</span><span class="ja">Homebrew でインストール</span><span class="zh">Homebrew 安装</span><span class="es">Instalar con Homebrew</span><span class="de">Installation per Homebrew</span><span class="fr">Installation via Homebrew</span></span><span class="cv"><span class="en">Yes</span><span class="ko">예</span><span class="ja">はい</span><span class="zh">是</span><span class="es">Sí</span><span class="de">Ja</span><span class="fr">Oui</span></span></td></tr>
+        <tr><th scope="row">boring.notch</th><td><span class="cl" aria-hidden="true"><span class="en">Price</span><span class="ko">가격</span><span class="ja">価格</span><span class="zh">价格</span><span class="es">Precio</span><span class="de">Preis</span><span class="fr">Prix</span></span><span class="cv"><span class="en">Free</span><span class="ko">무료</span><span class="ja">無料</span><span class="zh">免费</span><span class="es">Gratis</span><span class="de">Kostenlos</span><span class="fr">Gratuit</span></span></td><td><span class="cl" aria-hidden="true"><span class="en">Open source</span><span class="ko">오픈소스</span><span class="ja">オープンソース</span><span class="zh">开源</span><span class="es">Código abierto</span><span class="de">Open Source</span><span class="fr">Open source</span></span><span class="cv"><span class="en">Yes (GPL-3.0)</span><span class="ko">예 (GPL-3.0)</span><span class="ja">はい（GPL-3.0）</span><span class="zh">是（GPL-3.0）</span><span class="es">Sí (GPL-3.0)</span><span class="de">Ja (GPL-3.0)</span><span class="fr">Oui (GPL-3.0)</span></span></td><td><span class="cl" aria-hidden="true"><span class="en">Homebrew install</span><span class="ko">Homebrew 설치</span><span class="ja">Homebrew でインストール</span><span class="zh">Homebrew 安装</span><span class="es">Instalar con Homebrew</span><span class="de">Installation per Homebrew</span><span class="fr">Installation via Homebrew</span></span><span class="cv"><span class="en">Yes (third-party tap)</span><span class="ko">예 (서드파티 탭)</span><span class="ja">はい（サードパーティのタップ）</span><span class="zh">是（第三方 tap）</span><span class="es">Sí (tap de terceros)</span><span class="de">Ja (Tap eines Drittanbieters)</span><span class="fr">Oui (tap tiers)</span></span></td></tr>
+        <tr><th scope="row">Alcove</th><td><span class="cl" aria-hidden="true"><span class="en">Price</span><span class="ko">가격</span><span class="ja">価格</span><span class="zh">价格</span><span class="es">Precio</span><span class="de">Preis</span><span class="fr">Prix</span></span><span class="cv">$14.99</span></td><td><span class="cl" aria-hidden="true"><span class="en">Open source</span><span class="ko">오픈소스</span><span class="ja">オープンソース</span><span class="zh">开源</span><span class="es">Código abierto</span><span class="de">Open Source</span><span class="fr">Open source</span></span><span class="cv">—</span></td><td><span class="cl" aria-hidden="true"><span class="en">Homebrew install</span><span class="ko">Homebrew 설치</span><span class="ja">Homebrew でインストール</span><span class="zh">Homebrew 安装</span><span class="es">Instalar con Homebrew</span><span class="de">Installation per Homebrew</span><span class="fr">Installation via Homebrew</span></span><span class="cv"><span class="en">Yes</span><span class="ko">예</span><span class="ja">はい</span><span class="zh">是</span><span class="es">Sí</span><span class="de">Ja</span><span class="fr">Oui</span></span></td></tr>
+        <tr><th scope="row">Vibe Island</th><td><span class="cl" aria-hidden="true"><span class="en">Price</span><span class="ko">가격</span><span class="ja">価格</span><span class="zh">价格</span><span class="es">Precio</span><span class="de">Preis</span><span class="fr">Prix</span></span><span class="cv"><span class="en">$19.99 once, free trial</span><span class="ko">$19.99 한 번 결제, 무료 체험 있음</span><span class="ja">$19.99 の買い切り、無料体験あり</span><span class="zh">一次性 $19.99，可免费试用</span><span class="es">$19.99 una vez, prueba gratuita</span><span class="de">Einmalig $19.99, kostenlos testen</span><span class="fr">$19.99 une fois, essai gratuit</span></span></td><td><span class="cl" aria-hidden="true"><span class="en">Open source</span><span class="ko">오픈소스</span><span class="ja">オープンソース</span><span class="zh">开源</span><span class="es">Código abierto</span><span class="de">Open Source</span><span class="fr">Open source</span></span><span class="cv">—</span></td><td><span class="cl" aria-hidden="true"><span class="en">Homebrew install</span><span class="ko">Homebrew 설치</span><span class="ja">Homebrew でインストール</span><span class="zh">Homebrew 安装</span><span class="es">Instalar con Homebrew</span><span class="de">Installation per Homebrew</span><span class="fr">Installation via Homebrew</span></span><span class="cv"><span class="en">Yes</span><span class="ko">예</span><span class="ja">はい</span><span class="zh">是</span><span class="es">Sí</span><span class="de">Ja</span><span class="fr">Oui</span></span></td></tr>
+        <tr><th scope="row">DynamicLake Pro</th><td><span class="cl" aria-hidden="true"><span class="en">Price</span><span class="ko">가격</span><span class="ja">価格</span><span class="zh">价格</span><span class="es">Precio</span><span class="de">Preis</span><span class="fr">Prix</span></span><span class="cv">$16.90</span></td><td><span class="cl" aria-hidden="true"><span class="en">Open source</span><span class="ko">오픈소스</span><span class="ja">オープンソース</span><span class="zh">开源</span><span class="es">Código abierto</span><span class="de">Open Source</span><span class="fr">Open source</span></span><span class="cv">—</span></td><td><span class="cl" aria-hidden="true"><span class="en">Homebrew install</span><span class="ko">Homebrew 설치</span><span class="ja">Homebrew でインストール</span><span class="zh">Homebrew 安装</span><span class="es">Instalar con Homebrew</span><span class="de">Installation per Homebrew</span><span class="fr">Installation via Homebrew</span></span><span class="cv">—</span></td></tr>
+        </tbody>
+      </table>
+      <p class="compare-note"><span class="en">Checked on the apps’ own sites and on Homebrew in October 2026.</span><span class="ko">2026년 10월에 각 앱의 공식 사이트와 Homebrew에서 확인했습니다.</span><span class="ja">2026年10月に各アプリの公式サイトと Homebrew で確認しました。</span><span class="zh">2026 年 10 月在各应用自己的官网和 Homebrew 上核对。</span><span class="es">Comprobado en los sitios de cada app y en Homebrew en octubre de 2026.</span><span class="de">Im Oktober 2026 auf den Websites der Apps selbst und bei Homebrew geprüft.</span><span class="fr">Vérifié sur les sites des applications elles-mêmes et sur Homebrew en octobre 2026.</span> <span class="sites"><a href="https://crestnotch.app/">Crest</a> · <a href="https://github.com/TheBoredTeam/boring.notch">boring.notch</a> · <a href="https://tryalcove.com">Alcove</a> · <a href="https://vibeisland.app/">Vibe Island</a> · <a href="https://dynamiclake.com">DynamicLake</a></span></p>
+    </div>
+    <div class="short reveal">
+      <h3><span class="en">Where Nunsseop falls short</span><span class="ko">Nunsseop이 부족한 점</span><span class="ja">Nunsseop が及ばないところ</span><span class="zh">Nunsseop 的不足之处</span><span class="es">Dónde se queda corto Nunsseop</span><span class="de">Wo Nunsseop zurückbleibt</span><span class="fr">Où Nunsseop est en retrait</span></h3>
+      <ul>
+        <li><span class="en">It isn’t notarized, which is why it installs through Homebrew.</span><span class="ko">공증을 받지 않아서 Homebrew로 설치합니다.</span><span class="ja">公証を受けていないため、Homebrew 経由でインストールします。</span><span class="zh">它没有经过公证，所以通过 Homebrew 安装。</span><span class="es">No está notarizada, por eso se instala con Homebrew.</span><span class="de">Sie ist nicht notarisiert, deshalb wird sie über Homebrew installiert.</span><span class="fr">Elle n’est pas notarisée, c’est pourquoi elle s’installe avec Homebrew.</span></li>
+        <li><span class="en">No lock-screen widgets.</span><span class="ko">잠금 화면 위젯이 없습니다.</span><span class="ja">ロック画面のウィジェットはありません。</span><span class="zh">没有锁屏小组件。</span><span class="es">No tiene widgets en la pantalla de bloqueo.</span><span class="de">Keine Widgets auf dem Sperrbildschirm.</span><span class="fr">Pas de widgets sur l’écran verrouillé.</span></li>
+        <li><span class="en">No plugins.</span><span class="ko">플러그인이 없습니다.</span><span class="ja">プラグインはありません。</span><span class="zh">没有插件。</span><span class="es">No admite plugins.</span><span class="de">Keine Plugins.</span><span class="fr">Pas de plugins.</span></li>
+      </ul>
+    </div>
+    </div>
+  </section>
+
 <section class="block" id="faq">
     <div class="wrap">
     <div class="section-head">
@@ -694,7 +777,7 @@ open build/Nunsseop.app</pre></div>
         <div class="a es">Sí. En una pantalla sin notch, como un monitor externo con la tapa cerrada, el notch plegado es una pequeña píldora con la ceja dentro de la barra de menús, y se abre igual. Se desvanece cuando no la usas (puedes desactivarlo o cambiar el tiempo), y puedes elegir en qué pantalla aparece.</div>
         <div class="a de">Ja. Auf einem Bildschirm ohne Notch, etwa einem externen Monitor bei geschlossenem Deckel, ist die eingeklappte Notch eine kleine Pille mit dem Augenbrauen-Logo in der Menüleiste, die sich genauso öffnet. Unbenutzt blendet sie aus (abschaltbar, Dauer einstellbar), und du kannst wählen, auf welchem Bildschirm sie erscheint.</div>
         <div class="a fr">Oui. Sur un écran sans encoche, comme un moniteur externe capot fermé, l’encoche repliée devient une petite pastille avec le logo sourcil dans la barre des menus, qui s’ouvre de la même façon. Elle s’efface quand vous ne l’utilisez pas (désactivable, délai réglable), et vous pouvez choisir sur quel écran elle apparaît.</div></details>
-      <details><summary><span class="en">macOS says the app can't be opened.</span><span class="ko">"앱을 열 수 없습니다"라고 나와요.</span><span class="ja">macOS で「アプリを開けません」と表示されます。</span><span class="zh">macOS 提示“无法打开应用”。</span><span class="es">macOS dice que la app no se puede abrir.</span><span class="de">macOS sagt, die App kann nicht geöffnet werden.</span><span class="fr">macOS dit que l’app ne peut pas être ouverte.</span></summary>
+      <details id="faq-open"><summary><span class="en">macOS says the app can't be opened.</span><span class="ko">"앱을 열 수 없습니다"라고 나와요.</span><span class="ja">macOS で「アプリを開けません」と表示されます。</span><span class="zh">macOS 提示“无法打开应用”。</span><span class="es">macOS dice que la app no se puede abrir.</span><span class="de">macOS sagt, die App kann nicht geöffnet werden.</span><span class="fr">macOS dit que l’app ne peut pas être ouverte.</span></summary>
         <div class="a en">The app isn't notarized yet. Install it with Homebrew, which clears the quarantine flag for you so the app opens right away.</div>
         <div class="a ko">아직 공증되지 않은 앱이라 그렇습니다. Homebrew로 설치하면 격리 표시를 알아서 지워 주기 때문에 바로 실행됩니다.</div>
         <div class="a ja">まだ公証されていないアプリのためです。Homebrew でインストールすると隔離フラグが自動で解除されるので、すぐに起動できます。</div>
@@ -859,9 +942,9 @@ open build/Nunsseop.app</pre></div>
 
   var tourData = [
     { w: 100, img: 'home.png', en: ['Home', 'What’s playing from any app or browser, with artwork, controls and a seekable bar, next to your week and today’s events.'], ko: ['홈', '어떤 앱이나 브라우저에서 재생하든 앨범아트, 컨트롤, 진행바가 나오고, 옆에는 이번 주와 오늘 일정이 보입니다.'], ja: ['ホーム', 'どのアプリやブラウザで再生していても、アートワーク・操作ボタン・シークバーを表示。すぐ横には今週と今日の予定も。'], zh: ['主页', '任何应用或浏览器正在播放的内容，附带封面、控制按钮和可拖动的进度条，旁边还有本周安排和今日日程。'], es: ['Inicio', 'Lo que suena en cualquier app o navegador, con carátula, controles y una barra de progreso, junto a tu semana y los eventos de hoy.'], de: ['Start', 'Was in jeder App oder jedem Browser läuft, mit Cover, Steuerung und einer Fortschrittsleiste, daneben deine Woche und die heutigen Termine.'], fr: ['Accueil', 'Ce qui joue depuis n’importe quelle app ou navigateur, avec pochette, commandes et une barre de progression, à côté de votre semaine et des évènements du jour.'] },
+    { w: 83, img: 'tab-ai.png', en: ['AI usage', 'Claude Code and Codex limits with reset times, plus Claude Code’s recent token use. No login needed; live Claude limits from Anthropic are opt-in.'], ko: ['AI 사용량', 'Claude Code와 Codex의 한도와 초기화 시각, Claude Code의 최근 토큰 사용량. 로그인은 필요 없고, Anthropic에서 Claude 실시간 한도를 받아오는 건 선택입니다.'], ja: ['AI 使用量', 'Claude Code と Codex の使用上限と初期化時刻、そして Claude Code の最近のトークン使用量。ログインは不要。Anthropic からリアルタイムで Claude の上限を取得するのは任意です。'], zh: ['AI 用量', 'Claude Code 和 Codex 的额度与重置时间，以及 Claude Code 最近的令牌使用量。不需要登录；从 Anthropic 获取实时 Claude 额度是可选的。'], es: ['Uso de IA', 'Los límites de Claude Code y Codex con sus horas de reinicio, más el uso reciente de tokens de Claude Code. Sin iniciar sesión; los límites de Claude en directo desde Anthropic son opcionales.'], de: ['KI-Nutzung', 'Claude Code- und Codex-Limits mit Zurücksetzungszeiten, plus Claude Codes zuletzt genutzte Tokens. Kein Login nötig; Live-Limits für Claude von Anthropic sind optional.'], fr: ['Usage de l’IA', 'Les limites de Claude Code et Codex avec leurs horaires de réinitialisation, plus l’usage récent des tokens de Claude Code. Pas de connexion requise ; les limites de Claude en direct depuis Anthropic sont optionnelles.'] },
     { w: 83, img: 'tab-search.png', en: ['Search', 'A launcher that can stand in for Spotlight or Raycast: apps, files, commands, settings, clipboard, emoji and sums. <kbd>⇧⌘Space</kbd> by default, or record your own, even <kbd>⌘Space</kbd>.'], ko: ['검색', 'Spotlight나 Raycast 대신 쓸 수 있는 검색. 앱, 파일, 명령, 설정, 클립보드, 이모지, 계산까지. 기본 단축키는 <kbd>⇧⌘Space</kbd>이고, <kbd>⌘Space</kbd>를 포함해 원하는 키로 바꿀 수 있습니다.'], ja: ['検索', 'Spotlight や Raycast の代わりになるランチャー。アプリ、ファイル、コマンド、設定、クリップボード、絵文字、計算まで。デフォルトは <kbd>⇧⌘Space</kbd>、<kbd>⌘Space</kbd> を含め好きなショートカットに変更できます。'], zh: ['搜索', '一款可以代替 Spotlight 或 Raycast 的启动器：应用、文件、命令、设置、剪贴板、表情符号和计算结果，默认快捷键是 <kbd>⇧⌘Space</kbd>，也可以自行录制，包括 <kbd>⌘Space</kbd>。'], es: ['Buscar', 'Un lanzador que puede sustituir a Spotlight o Raycast: apps, archivos, comandos, ajustes, portapapeles, emoji y sumas. <kbd>⇧⌘Space</kbd> por defecto, o graba el tuyo, incluso <kbd>⌘Space</kbd>.'], de: ['Suche', 'Ein Launcher, der Spotlight oder Raycast ersetzen kann: Apps, Dateien, Befehle, Einstellungen, Zwischenablage, Emoji und Rechenergebnisse. Standardmäßig <kbd>⇧⌘Space</kbd>, oder nimm deinen eigenen Kurzbefehl auf, auch <kbd>⌘Space</kbd>.'], fr: ['Rechercher', 'Un lanceur capable de remplacer Spotlight ou Raycast : apps, fichiers, commandes, réglages, presse-papiers, emoji et calculs. <kbd>⇧⌘Space</kbd> par défaut, ou enregistrez le vôtre, même <kbd>⌘Space</kbd>.'] },
     { w: 87, img: 'shelf.png', en: ['Shelf', 'Drop files on the notch and drag them out later. Drop them on the AirDrop tile to send them straight away.'], ko: ['선반', '파일을 노치에 놓아 두고 나중에 끌어내세요. AirDrop 칸에 놓으면 바로 보내집니다.'], ja: ['シェルフ', 'ファイルをノッチにドロップしておけば、あとで取り出せます。AirDrop のタイルにドロップすれば、そのまま送信されます。'], zh: ['架子', '把文件拖到刘海上先存着，以后再拖出来用。拖到 AirDrop 卡片上即可立即发送。'], es: ['Estante', 'Suelta archivos en el notch y arrástralos fuera más tarde. Suéltalos en la tarjeta de AirDrop para enviarlos al instante.'], de: ['Ablage', 'Lege Dateien auf der Notch ab und zieh sie später wieder heraus. Lege sie auf der AirDrop-Kachel ab, um sie sofort zu senden.'], fr: ['Étagère', 'Déposez des fichiers sur l’encoche et ressortez-les plus tard. Déposez-les sur la tuile AirDrop pour les envoyer immédiatement.'] },
-    { w: 83, img: 'tab-ai.png', en: ['AI usage', 'Claude Code and Codex limits with reset times, plus Claude Code’s recent token use. No login needed; live Claude limits from Anthropic are opt-in.'], ko: ['AI 사용량', 'Claude Code와 Codex의 한도와 초기화 시각, Claude Code의 최근 토큰 사용량. 로그인은 필요 없고, Anthropic에서 Claude 실시간 한도를 받아오는 건 선택입니다.'], ja: ['AI 使用量', 'Claude Code と Codex の使用上限と初期化時刻、そして Claude Code の最近のトークン使用量。ログインは不要。Anthropic からリアルタイムで Claude の上限を取得するのは任意です。'], zh: ['AI 用量', 'Claude Code 和 Codex 的额度与重置时间，以及 Claude Code 最近的令牌使用量。不需要登录；从 Anthropic 获取实时 Claude 额度是可选的。'], es: ['Uso de IA', 'Los límites de Claude Code y Codex con sus horas de reinicio, más el uso reciente de tokens de Claude Code. Sin iniciar sesión; los límites de Claude en directo desde Anthropic son opcionales.'], de: ['KI-Nutzung', 'Claude Code- und Codex-Limits mit Zurücksetzungszeiten, plus Claude Codes zuletzt genutzte Tokens. Kein Login nötig; Live-Limits für Claude von Anthropic sind optional.'], fr: ['Usage de l’IA', 'Les limites de Claude Code et Codex avec leurs horaires de réinitialisation, plus l’usage récent des tokens de Claude Code. Pas de connexion requise ; les limites de Claude en direct depuis Anthropic sont optionnelles.'] },
     { w: 100, img: 'tab-timer.png', en: ['Timer', 'Countdown, Pomodoro and stopwatch around a ring that empties as time runs out. Scroll or type to set any length, and the time left stays on the collapsed notch.'], ko: ['타이머', '시간이 줄어들수록 비워지는 링으로 보는 카운트다운, 뽀모도로, 스톱워치. 스크롤하거나 직접 입력해 원하는 길이로 맞추고, 접힌 노치에도 남은 시간이 그대로 보입니다.'], ja: ['タイマー', '時間が減るほど空いていくリングで表示するカウントダウン、ポモドーロ、ストップウォッチ。スクロールまたは入力で好きな長さに設定でき、残り時間は折りたたんだノッチにも表示されます。'], zh: ['计时器', '倒计时、番茄钟和秒表，用一个随时间流逝逐渐清空的圆环呈现。滚动或输入即可设置任意时长，剩余时间还会留在收起的刘海上。'], es: ['Temporizador', 'Cuenta atrás, Pomodoro y cronómetro alrededor de un anillo que se vacía a medida que pasa el tiempo. Desplázate o escribe para fijar cualquier duración, y el tiempo restante se queda en el notch plegado.'], de: ['Timer', 'Countdown, Pomodoro und Stoppuhr um einen Ring, der sich leert, während die Zeit abläuft. Scrollen oder eingeben, um jede Länge einzustellen, und die Restzeit bleibt auf der eingeklappten Notch sichtbar.'], fr: ['Minuteur', 'Compte à rebours, Pomodoro et chronomètre autour d’un anneau qui se vide à mesure que le temps s’écoule. Faites défiler ou saisissez une durée, et le temps restant reste visible sur l’encoche repliée.'] },
     { w: 100, img: 'tab-tools.png', en: ['Tools', 'Switch speakers, mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from the screen and copy text out of any part of it.'], ko: ['도구', '스피커 전환, 마이크 음소거, 잠자기 방지, 화면 녹화, 드라이브 꺼내기, 화면에서 색 찍기와 글자 복사.'], ja: ['ツール', 'スピーカーの切り替え、マイクのミュート、スリープ防止、画面収録、ドライブの取り出し、画面から色を取得、画面上のテキストをコピー。'], zh: ['工具', '切换输出设备、静音麦克风、保持 Mac 唤醒、录制屏幕、推出磁盘、从屏幕上取色，以及从屏幕任意位置复制文字。'], es: ['Herramientas', 'Cambia de altavoces, silencia el micrófono, mantén el Mac despierto, graba la pantalla, expulsa discos, toma un color de la pantalla y copia texto de cualquier parte de ella.'], de: ['Werkzeuge', 'Lautsprecher wechseln, Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe vom Bildschirm aufnehmen und Text aus jedem Bereich davon kopieren.'], fr: ['Outils', 'Changez de haut-parleurs, coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur à l’écran et copiez du texte depuis n’importe quelle zone.'] },
     { w: 83, img: 'tab-system.png', en: ['System', 'CPU, memory, disk and network at a glance, plus your mouse and keyboard batteries.'], ko: ['시스템', 'CPU, 메모리, 디스크, 네트워크를 한눈에. 마우스와 키보드 배터리도 함께.'], ja: ['システム', 'CPU、メモリ、ディスク、ネットワークを一目で。マウスとキーボードのバッテリーも。'], zh: ['系统', '一目了然的 CPU、内存、磁盘和网络状态，还有鼠标和键盘的电量。'], es: ['Sistema', 'CPU, memoria, disco y red de un vistazo, además de la batería del ratón y el teclado.'], de: ['System', 'CPU, Speicher, Festplatte und Netzwerk auf einen Blick, plus Akkustand von Maus und Tastatur.'], fr: ['Système', 'CPU, mémoire, disque et réseau en un coup d’œil, plus les batteries de votre souris et clavier.'] },
@@ -902,6 +985,51 @@ open build/Nunsseop.app</pre></div>
   if (!reduce) timer = setInterval(function () { if (!held && !hover && onscreen && !document.hidden) show((current + 1) % tourData.length); }, 4000);
   langListeners.push(function () { show(current); });
   show(0);
+
+  // Hero stage: pointer or keyboard focus holds the notch open on the screenshot; letting go lets the loop resume.
+  var stage = document.querySelector('.nn-stage');
+  var STAGE_LABEL = { en: 'Show the open notch', ko: '열린 노치 보기', ja: '開いたノッチを表示', zh: '查看展开的刘海', es: 'Ver el notch abierto', de: 'Geöffnete Notch zeigen', fr: 'Afficher l’encoche ouverte' };
+  function stageLabel() { stage.setAttribute('aria-label', STAGE_LABEL[document.body.dataset.lang] || STAGE_LABEL.en); }
+  langListeners.push(stageLabel); stageLabel();
+  if (!reduce) {
+    var frozen = [[stage.querySelector('.nn-notch'), ['top', 'width', 'height', 'borderRadius']], [stage.querySelector('.nn-shot'), ['opacity']], [stage.querySelector('.nn-brow'), ['opacity', 'transform']]];
+    var over = false, kbd = false, tapped = false, open = false, relTimer = 0;
+    var syncStage = function () {
+      var want = over || kbd || tapped;
+      if (want === open) return;
+      open = want;
+      clearTimeout(relTimer);
+      if (want) {
+        if (!stage.classList.contains('releasing')) {
+          // Pin the running animation's current values so the notch eases from where it is instead of jumping.
+          frozen.forEach(function (f) { var cs = getComputedStyle(f[0]); f[1].forEach(function (p) { f[0].style[p] = cs[p]; }); });
+        }
+        stage.classList.add('held'); stage.classList.remove('releasing');
+        stage.offsetWidth;
+        frozen.forEach(function (f) { f[1].forEach(function (p) { f[0].style[p] = ''; }); });
+      } else {
+        stage.classList.remove('held'); stage.classList.add('releasing');
+        relTimer = setTimeout(function () { stage.classList.remove('releasing'); }, 550);
+      }
+    };
+    stage.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') { over = true; syncStage(); } });
+    stage.addEventListener('pointerleave', function () { over = false; syncStage(); });
+    stage.addEventListener('focus', function () { kbd = stage.matches(':focus-visible'); syncStage(); });
+    stage.addEventListener('blur', function () { kbd = false; syncStage(); });
+    // Touch has no hover: a tap holds it open, another tap lets go.
+    stage.addEventListener('pointerup', function (e) { if (e.pointerType === 'touch') { tapped = !tapped; syncStage(); } });
+  }
+
+  // Links into a closed FAQ item open it.
+  function openFaq(id) {
+    var el = id && document.getElementById(id);
+    if (el && el.tagName === 'DETAILS') el.open = true;
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function () { openFaq(a.getAttribute('href').slice(1)); });
+  });
+  window.addEventListener('hashchange', function () { openFaq(location.hash.slice(1)); });
+  openFaq(location.hash.slice(1));
 })();
 </script>
 </body>
