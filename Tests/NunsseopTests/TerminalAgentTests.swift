@@ -413,7 +413,15 @@ struct TmuxWatcherTests {
 
         for index in names.indices { _ = tmux(socket, "respawn-pane", "-k", "-t", "work:\(index).0", "printf '\\a'; sleep 60") }
         let bodies = { (try? FileManager.default.contentsOfDirectory(atPath: requests.path))?.filter { $0.hasSuffix(".body") } ?? [] }
+        let started = Date()
         await waitUntil { bodies().count >= names.count }
+        // This has failed now and then in a busy full run, always missing the first window's bell; what tmux held then
+        // says why, for next time.
+        let diagnostics = {
+            let windows = tmux(socket, "list-windows", "-t", "work",
+                               "-F", "#{window_index} #{window_id} #{window_name} bell=#{window_bell_flag} #{pane_current_command}") ?? "none"
+            return "waited \(String(format: "%.1f", Date().timeIntervalSince(started))) s; hooks: \(tmux(socket, "show-hooks", "-g") ?? "none")windows:\n\(windows)"
+        }
 
         var sent: [String: [String]] = [:]
         for file in bodies() {
@@ -421,7 +429,7 @@ struct TmuxWatcherTests {
             let body = try String(contentsOf: base.appendingPathExtension("body"), encoding: .utf8)
             sent[body] = try String(contentsOf: base.appendingPathExtension("args"), encoding: .utf8).split(separator: "\n").map(String.init)
         }
-        #expect(Set(sent.keys) == Set(names.map { "work · \($0)" }))
+        #expect(Set(sent.keys) == Set(names.map { "work · \($0)" }), "\(diagnostics())")
         for (body, args) in sent {
             #expect(!args.contains("X-Agent: claude") && !args.contains("X-Title: claude"), "\(body): \(args)")
             #expect(args.contains { $0.hasPrefix("X-Target: tmux:@") }, "\(body): \(args)")
