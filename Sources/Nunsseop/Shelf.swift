@@ -25,9 +25,9 @@ final class ShelfStore: ObservableObject {
     }
 
     func add(_ urls: [URL]) {
-        let existing = Set(items.map { $0.url.standardizedFileURL })
+        var seen = Set(items.map { $0.url.standardizedFileURL })
         let fresh = urls
-            .filter { $0.isFileURL && !existing.contains($0.standardizedFileURL) }
+            .filter { $0.isFileURL && seen.insert($0.standardizedFileURL).inserted }
             .map { ShelfItem(id: UUID(), url: $0) }
         guard !fresh.isEmpty else { return }
         // Newest first: the tiles scroll sideways from the left, so a new one at the end sat out of sight once the row was full.

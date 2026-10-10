@@ -382,6 +382,7 @@ final class NotchWindowController {
     /// Puts every app back to full volume before quitting.
     func prepareToQuit() {
         model.appVolume.shutdown()
+        model.notes.flush()
     }
 
     private func relayout() {

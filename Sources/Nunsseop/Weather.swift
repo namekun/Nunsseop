@@ -19,6 +19,12 @@ final class WeatherModel: ObservableObject {
     private var city = ""
     private var timer: Timer?
     private let useFahrenheit = Locale.current.measurementSystem == .us
+    /// Stands in for the network lookup.
+    private let lookUp: ((String) -> Void)?
+
+    init(lookUp: ((String) -> Void)? = nil) {
+        self.lookUp = lookUp
+    }
 
     nonisolated private static let session: URLSession = {
         let configuration = URLSessionConfiguration.ephemeral
@@ -43,6 +49,7 @@ final class WeatherModel: ObservableObject {
 
     private func refresh() {
         let city = city
+        if let lookUp { lookUp(city); return }
         var geo = URLComponents(string: "https://geocoding-api.open-meteo.com/v1/search")!
         geo.queryItems = [URLQueryItem(name: "name", value: city), URLQueryItem(name: "count", value: "1"),
                           URLQueryItem(name: "language", value: Locale.current.language.languageCode?.identifier ?? "en")]
@@ -57,7 +64,7 @@ final class WeatherModel: ObservableObject {
             }
             guard let self else { return }
             Self.fetchForecast(latitude: lat, longitude: lon, name: place["name"] as? String ?? city,
-                               fahrenheit: fahrenheit, into: self)
+                               fahrenheit: fahrenheit, city: city, into: self)
         }.resume()
     }
 
@@ -70,13 +77,14 @@ final class WeatherModel: ObservableObject {
                     return
                 }
                 Self.fetchForecast(latitude: coordinate.latitude, longitude: coordinate.longitude,
-                                   name: placemark.locality ?? placemark.name ?? city, fahrenheit: fahrenheit, into: self)
+                                   name: placemark.locality ?? placemark.name ?? city, fahrenheit: fahrenheit,
+                                   city: city, into: self)
             }
         }
     }
 
     nonisolated private static func fetchForecast(latitude lat: Double, longitude lon: Double, name: String,
-                                                  fahrenheit: Bool, into model: WeatherModel) {
+                                                  fahrenheit: Bool, city: String, into model: WeatherModel) {
         var forecast = URLComponents(string: "https://api.open-meteo.com/v1/forecast")!
         forecast.queryItems = [
             URLQueryItem(name: "latitude", value: String(lat)), URLQueryItem(name: "longitude", value: String(lon)),
@@ -86,21 +94,27 @@ final class WeatherModel: ObservableObject {
             URLQueryItem(name: "temperature_unit", value: fahrenheit ? "fahrenheit" : "celsius"),
         ]
         session.dataTask(with: forecast.url!) { [weak model] data, _, _ in
-            guard let data, let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let now = json["current"] as? [String: Any], let daily = json["daily"] as? [String: Any],
-                  let temperature = now["temperature_2m"] as? Double else {
-                DispatchQueue.main.async { model?.failed = true }
-                return
-            }
-            let result = Current(place: name, temperature: temperature,
-                                 high: (daily["temperature_2m_max"] as? [Double])?.first ?? temperature,
-                                 low: (daily["temperature_2m_min"] as? [Double])?.first ?? temperature,
-                                 code: now["weather_code"] as? Int ?? 0)
-            DispatchQueue.main.async {
-                model?.current = result
-                model?.failed = false
-            }
+            let result = data.flatMap { parse(forecast: $0, name: name) }
+            DispatchQueue.main.async { model?.receive(result, for: city) }
         }.resume()
+    }
+
+    /// Whether `city` is still the one asked for: an answer for an earlier city, or one that arrives
+    /// after the chip was turned off, is dropped.
+    func receive(_ result: Current?, for city: String) {
+        guard city == self.city else { return }
+        current = result
+        failed = result == nil
+    }
+
+    nonisolated static func parse(forecast data: Data, name: String) -> Current? {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let now = json["current"] as? [String: Any], let daily = json["daily"] as? [String: Any],
+              let temperature = now["temperature_2m"] as? Double else { return nil }
+        return Current(place: name, temperature: temperature,
+                       high: (daily["temperature_2m_max"] as? [Double])?.first ?? temperature,
+                       low: (daily["temperature_2m_min"] as? [Double])?.first ?? temperature,
+                       code: now["weather_code"] as? Int ?? 0)
     }
 
     /// SF Symbol for a WMO weather code.

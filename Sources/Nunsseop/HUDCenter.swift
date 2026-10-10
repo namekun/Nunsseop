@@ -59,18 +59,10 @@ final class HUDCenter: ObservableObject {
         powerMonitor.onChange = { [weak self] state in
             guard let self else { return }
             let previous = self.power
-            let pluggedChanged = previous?.onAC != state.onAC
             self.power = state
-            if pluggedChanged && self.settings.chargingHUDEnabled {
-                self.show(.power(state), duration: 2.5)
-            } else if self.settings.batteryAlerts, let previous {
-                if !state.onAC && previous.percent > 20 && state.percent <= 20 {
-                    self.show(.notice(symbol: "battery.25percent", title: String(localized: "Battery low"),
-                                      detail: "\(state.percent)%"), duration: 5)
-                } else if state.onAC && previous.percent < 100 && state.percent >= 100 {
-                    self.show(.notice(symbol: "battery.100percent.bolt", title: String(localized: "Fully charged"),
-                                      detail: nil), duration: 4)
-                }
+            if let shown = Self.powerEvent(previous: previous, state: state, chargingHUD: self.settings.chargingHUDEnabled,
+                                           batteryAlerts: self.settings.batteryAlerts) {
+                self.show(shown.event, duration: shown.duration)
             }
         }
         powerMonitor.start()
@@ -107,6 +99,23 @@ final class HUDCenter: ObservableObject {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.show(demo, duration: 30) }
         }
         #endif
+    }
+
+    nonisolated static func powerEvent(previous: PowerState?, state: PowerState, chargingHUD: Bool,
+                           batteryAlerts: Bool) -> (event: HUDEvent, duration: Double)? {
+        let pluggedChanged = previous?.onAC != state.onAC
+        if pluggedChanged && chargingHUD {
+            return (.power(state), 2.5)
+        } else if batteryAlerts, let previous {
+            if !state.onAC && previous.percent > 20 && state.percent <= 20 {
+                return (.notice(symbol: "battery.25percent", title: String(localized: "Battery low"),
+                                detail: "\(state.percent)%"), 5)
+            } else if state.onAC && previous.percent < 100 && state.percent >= 100 {
+                return (.notice(symbol: "battery.100percent.bolt", title: String(localized: "Fully charged"),
+                                detail: nil), 4)
+            }
+        }
+        return nil
     }
 
     func retryInterception() {
@@ -173,12 +182,7 @@ final class HUDCenter: ObservableObject {
             }
         case .keyboardUp, .keyboardDown, .keyboardToggle:
             guard let level = KeyboardBacklight.level else { return }
-            let new: Float
-            switch key {
-            case .keyboardUp: new = min(1, level + step)
-            case .keyboardDown: new = max(0, level - step)
-            default: new = level > 0 ? 0 : lastKeyboardLevel
-            }
+            let new = Self.keyboardLevel(for: key, level: level, last: lastKeyboardLevel, step: step)
             if level > 0 { lastKeyboardLevel = level }
             KeyboardBacklight.set(new)
             show(.keyboard(new))
@@ -189,6 +193,22 @@ final class HUDCenter: ObservableObject {
         }
     }
 
+    /// The level after a keyboard backlight key; the toggle goes to 0, or back to `last` from 0.
+    nonisolated static func keyboardLevel(for key: MediaKey, level: Float, last: Float, step: Float) -> Float {
+        switch key {
+        case .keyboardUp: return min(1, level + step)
+        case .keyboardDown: return max(0, level - step)
+        default: return level > 0 ? 0 : last
+        }
+    }
+
+    /// The display external brightness keys act on: only when at most one external screen is connected
+    /// and exactly one display answers DDC.
+    nonisolated static func externalBrightnessTarget<Display>(externalScreenCount: Int, ddcDisplays: [Display]) -> Display? {
+        guard externalScreenCount <= 1, ddcDisplays.count == 1 else { return nil }
+        return ddcDisplays[0]
+    }
+
     /// DDC services can't be matched to screens here, so external brightness is only
     /// handled when exactly one external screen is connected and it answers DDC.
     private var externalTarget: (service: CFTypeRef, max: Int)? {
@@ -196,8 +216,7 @@ final class HUDCenter: ObservableObject {
             guard let id = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID else { return false }
             return CGDisplayIsBuiltin(id) == 0
         }
-        guard externalScreens.count <= 1, externalDisplays.count == 1 else { return nil }
-        return externalDisplays[0]
+        return Self.externalBrightnessTarget(externalScreenCount: externalScreens.count, ddcDisplays: externalDisplays)
     }
 
     private var pointerIsOnBuiltInDisplay: Bool {

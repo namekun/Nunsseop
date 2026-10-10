@@ -151,21 +151,21 @@ final class AppSettings: ObservableObject {
 
     // Unset keys fall back to the default; set ones read the way UserDefaults always did,
     // so a "NO" passed as a launch argument still turns a switch off.
-    nonisolated private static func load(_ key: String, default value: Bool) -> Bool {
-        UserDefaults.standard.object(forKey: key) == nil ? value : UserDefaults.standard.bool(forKey: key)
+    nonisolated static func load(_ key: String, default value: Bool, from defaults: UserDefaults = .standard) -> Bool {
+        defaults.object(forKey: key) == nil ? value : defaults.bool(forKey: key)
     }
 
-    nonisolated private static func load(_ key: String, default value: Double) -> Double {
-        UserDefaults.standard.object(forKey: key) == nil ? value : UserDefaults.standard.double(forKey: key)
+    nonisolated static func load(_ key: String, default value: Double, from defaults: UserDefaults = .standard) -> Double {
+        defaults.object(forKey: key) == nil ? value : defaults.double(forKey: key)
     }
 
     /// Sizes saved before the minimums were raised come back clamped.
-    nonisolated private static func load(_ key: String, default value: Double, in range: ClosedRange<Double>) -> Double {
-        min(max(load(key, default: value), range.lowerBound), range.upperBound)
+    nonisolated static func load(_ key: String, default value: Double, in range: ClosedRange<Double>, from defaults: UserDefaults = .standard) -> Double {
+        min(max(load(key, default: value, from: defaults), range.lowerBound), range.upperBound)
     }
 
-    nonisolated private static func load(_ key: String, default value: String) -> String {
-        UserDefaults.standard.string(forKey: key) ?? value
+    nonisolated private static func load(_ key: String, default value: String, from defaults: UserDefaults = .standard) -> String {
+        defaults.string(forKey: key) ?? value
     }
 
     nonisolated private static func load(_ key: String, default value: [String]) -> [String] {
@@ -180,16 +180,18 @@ final class AppSettings: ObservableObject {
         AIWindow(rawValue: load(key, default: value.rawValue)) ?? value
     }
 
-    nonisolated private static func loadSearchHotKey() -> HotKeyCombo {
-        let defaults = UserDefaults.standard
+    nonisolated static func loadSearchHotKey(from defaults: UserDefaults = .standard) -> HotKeyCombo {
         guard let name = defaults.string(forKey: "searchHotKeyName") else { return .defaultSearch }
         return HotKeyCombo(keyCode: UInt32(defaults.integer(forKey: "searchHotKeyCode")),
                            modifiers: UInt32(defaults.integer(forKey: "searchHotKeyModifiers")), key: name)
     }
 
     /// Every tab after Home in the user's order, including tabs added in newer versions.
-    var orderedTabs: [NotchTab] {
-        let saved = tabOrder.compactMap(NotchTab.init(rawValue:)).filter { $0 != .home }
+    var orderedTabs: [NotchTab] { Self.orderedTabs(saved: tabOrder) }
+
+    nonisolated static func orderedTabs(saved order: [String]) -> [NotchTab] {
+        var seen = Set<NotchTab>()
+        let saved = order.compactMap(NotchTab.init(rawValue:)).filter { $0 != .home && seen.insert($0).inserted }
         let missing = NotchTab.allCases.filter { $0 != .home && !saved.contains($0) }
         return saved + missing
     }
@@ -233,12 +235,18 @@ final class AppSettings: ObservableObject {
     }
 
     func moveTab(_ tab: NotchTab, by offset: Int) {
-        var order = orderedTabs
-        guard let index = order.firstIndex(of: tab) else { return }
-        let target = index + offset
-        guard order.indices.contains(target) else { return }
-        order.swapAt(index, target)
+        guard let order = Self.moved(tab, by: offset, in: orderedTabs) else { return }
         tabOrder = order.map(\.rawValue)
+    }
+
+    /// `order` with `tab` swapped with the tab `offset` places away; nil when that is off either end.
+    nonisolated static func moved(_ tab: NotchTab, by offset: Int, in order: [NotchTab]) -> [NotchTab]? {
+        var order = order
+        guard let index = order.firstIndex(of: tab) else { return nil }
+        let target = index + offset
+        guard order.indices.contains(target) else { return nil }
+        order.swapAt(index, target)
+        return order
     }
 
     func resetSizes() {

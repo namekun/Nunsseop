@@ -167,6 +167,16 @@ final class CalendarModel: ObservableObject {
         (0..<7).compactMap { Calendar.current.date(byAdding: .day, value: $0, to: Calendar.current.startOfDay(for: .now)) }
     }
 
+    /// The start of each of `days` days from `first` that any of the event spans (start, end) touches.
+    nonisolated static func busyDays(spans: [(start: Date, end: Date)], from first: Date, days: Int, calendar: Calendar) -> Set<Date> {
+        let firstDay = calendar.startOfDay(for: first)
+        return Set((0..<days).compactMap { offset -> Date? in
+            guard let day = calendar.date(byAdding: .day, value: offset, to: firstDay),
+                  let next = calendar.date(byAdding: .day, value: 1, to: day) else { return nil }
+            return spans.contains { $0.start < next && ($0.end > day || $0.start >= day) } ? day : nil
+        })
+    }
+
     /// The calendars to show: nil means every calendar, and an empty list none at all
     /// (to EventKit an empty list would also mean every calendar).
     private var shownCalendars: [EKCalendar]? {
@@ -236,7 +246,7 @@ final class CalendarModel: ObservableObject {
         if calendars?.isEmpty == true { items = []; busyDays = []; return }
         if let first = week.first, let last = week.last, let weekEnd = Calendar.current.date(byAdding: .day, value: 1, to: last) {
             let weekEvents = store.events(matching: store.predicateForEvents(withStart: first, end: weekEnd, calendars: calendars))
-            busyDays = Set(weekEvents.map { Calendar.current.startOfDay(for: max($0.startDate, first)) })
+            busyDays = Self.busyDays(spans: weekEvents.map { ($0.startDate, $0.endDate) }, from: first, days: 7, calendar: .current)
         }
         let start = selectedDay
         guard let end = Calendar.current.date(byAdding: .day, value: 1, to: start) else { return }
