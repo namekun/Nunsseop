@@ -97,8 +97,10 @@ final class AIUsageModel: ObservableObject {
                 }
             }
             let totals = includeTokens ? Self.tokenTotals() : nil
+            // Read again: Anthropic may have answered or given up while the logs were added up.
+            let settled = ClaudeUsageAPI.status
             await MainActor.run {
-                self.publish(limits: limits, anthropic: anthropic, totals: totals)
+                self.publish(limits: limits, anthropic: settled, totals: totals)
                 self.countingTokens = false
                 self.loading = false
                 if self.tokensPending {
@@ -631,7 +633,7 @@ private struct UsageBars: View {
     }
 }
 
-/// Where a limit bar goes while Anthropic hasn't answered yet, laid out like `UsageBar`.
+/// Where a limit bar goes while a request to Anthropic is out, laid out like `UsageBar`.
 private struct UsageBarSkeleton: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
