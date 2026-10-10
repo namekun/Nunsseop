@@ -351,8 +351,18 @@ final class NotchViewModel: ObservableObject {
         return HUDContent.line(for: event)
     }
 
+    /// On a display without a notch every HUD is one line: the symbol beside its text, level bar or percent.
+    var hudSingleRow: Bool {
+        guard !geometry.hasNotch, let event = hud.event else { return false }
+        return HUDContent.line(for: event) != nil || HUDContent.compactValueWidth(for: event) != nil
+    }
+
     var collapsedSize: CGSize {
         var size = geometry.collapsedSize
+        if !geometry.hasNotch, let event = hud.event, let value = HUDContent.compactValueWidth(for: event) {
+            size.width = max(size.width, 2 * 18 + HUDContent.lineSymbolWidth + HUDContent.lineGap + value)
+            return size
+        }
         if let line = hudLine {
             // The symbol, the gap after it and the side padding, then the text; long lines truncate at a third of the screen.
             let text = ceil((line as NSString).size(withAttributes: [.font: HUDContent.lineFont]).width)

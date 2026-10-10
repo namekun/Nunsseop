@@ -30,7 +30,7 @@ struct NotchView: View {
                     // Without this, content being removed is drawn under the black body and vanishes instead of fading.
                     .zIndex(-1)
 
-                if !model.isExpanded && !model.geometry.hasNotch && model.hudLine == nil {
+                if !model.isExpanded && !model.geometry.hasNotch && !model.hudSingleRow {
                     EyebrowMark(lift: model.browFaded ? -1 : model.browLifted ? 1 : 0)
                         .animation(model.browFaded ? .easeIn(duration: 0.3) : motion.brow, value: model.browFaded)
                         .animation(motion.brow, value: model.browLifted)
@@ -95,7 +95,7 @@ struct NotchView: View {
                     .transition(motion.expandedContent)
                 } else if let event = model.hud.event {
                     HUDContent(event: event, height: notchHeight, earWidth: NotchViewModel.hudEarWidth, leadingInset: earLead,
-                               singleLine: model.hudLine != nil)
+                               singleLine: model.hudSingleRow)
                         .padding(.horizontal, topRadius + 12)
                         .transition(motion.hudContent)
                 } else if model.showsLiveActivity || model.showsSneakPeek || model.showsIdleEars {
