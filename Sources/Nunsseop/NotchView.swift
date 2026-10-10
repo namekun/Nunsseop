@@ -109,7 +109,7 @@ struct NotchView: View {
                                                   showsMusic: model.settings.collapsedMusic, showsTimer: model.settings.collapsedTimer,
                                                   showsDownloads: model.settings.collapsedDownloads)
                                 .padding(.leading, earLead)
-                            } else if model.showsIdleEars {
+                            } else if model.showsIdleEars && !model.sneakPeekInline {
                                 IdleEars(model: model, height: notchHeight)
                                     .padding(.leading, earLead)
                             } else {
@@ -117,6 +117,8 @@ struct NotchView: View {
                             }
                             if model.sneakPeekInline {
                                 peekLine
+                                    // A line longer than its room gives up a little size before it truncates.
+                                    .minimumScaleFactor(0.9)
                                     .frame(width: model.inlinePeekWidth, height: notchHeight)
                                     .transition(.opacity)
                             }
@@ -166,6 +168,7 @@ struct NotchView: View {
         .animation(model.showsLiveActivity ? motion.earsGrow : motion.earsShrink, value: model.showsLiveActivity)
         .animation(model.showsSneakPeek ? motion.earsGrow : motion.earsShrink, value: model.showsSneakPeek)
         .animation(model.showsIdleEars ? motion.earsGrow : motion.earsShrink, value: model.showsIdleEars)
+        .animation(motion.earsGrow, value: model.inlinePeekWidth)
         .animation(model.hud.event != nil ? motion.earsGrow : motion.earsShrink, value: model.hud.event)
         // The shape slides over when the left ear hides or shows, rather than jumping.
         .animation(motion.earsGrow, value: model.collapsedShift)

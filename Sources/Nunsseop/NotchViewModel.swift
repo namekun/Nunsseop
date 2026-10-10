@@ -407,7 +407,7 @@ final class NotchViewModel: ObservableObject {
         }
         if showsLiveActivity {
             size.width += 2 * earWidth
-        } else if showsIdleEars {
+        } else if showsIdleEars && !sneakPeekInline {
             size.width += (idleOneSide == nil ? 2 : 1) * Self.idleEarWidth
         }
         if sneakPeekInline {
@@ -427,6 +427,8 @@ final class NotchViewModel: ObservableObject {
     /// True when the collapsed notch's left side would cover the frontmost app's menus. It then grows to the right only,
     /// and what the left side showed moves to the right of the camera. Left as is when the menus reach the right side too.
     var hidesLeftEar: Bool {
+        // The inline peek is centred on the line, so it can't make room for the menus by growing right only.
+        if sneakPeekInline { return false }
         let notch = geometry.collapsedSize.width
         let width = collapsedSize.width
         guard width > notch else { return false }
