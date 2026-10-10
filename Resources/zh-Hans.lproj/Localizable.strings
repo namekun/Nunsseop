@@ -345,3 +345,5 @@
 "Copy Update Command" = "拷贝更新命令";
 "Copied" = "已拷贝";
 "The command goes to the clipboard. Paste it in Terminal and press Return." = "命令会拷贝到剪贴板。粘贴到“终端”中并按下 Return 键。";
+"Get Homebrew" = "获取 Homebrew";
+"Updates come through Homebrew. Install it, then come back here to copy the update command." = "更新通过 Homebrew 进行。请先安装 Homebrew，再回到这里拷贝更新命令。";

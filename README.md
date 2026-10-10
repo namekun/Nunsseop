@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <b>English</b> · <a href="README.ko.md">한국어</a> · <a href="https://namekun.github.io/Nunsseop/">Website</a>
+  <b>English</b> · <a href="README.ko.md">한국어</a> · <a href="README.ja.md">日本語</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.es.md">Español</a> · <a href="README.de.md">Deutsch</a> · <a href="README.fr.md">Français</a> · <a href="https://namekun.github.io/Nunsseop/">Website</a>
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Homebrew clears the quarantine flag, so the app opens right away. To update, run `brew upgrade --cask nunsseop`; when an update is out, Settings › General › Updates copies that command to your clipboard.
+Needs [Homebrew](https://brew.sh). Homebrew clears the quarantine flag, so the app opens right away. To update, run `brew upgrade --cask nunsseop`; when an update is out, Settings › General › Updates copies that command to your clipboard.
 
 Needs macOS 14 Sonoma or later. Works on Apple silicon and Intel, and on screens without a notch.
 

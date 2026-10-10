@@ -73,6 +73,11 @@ final class UpdateChecker: ObservableObject {
         ["/opt/homebrew/Caskroom/nunsseop", "/usr/local/Caskroom/nunsseop"].contains { FileManager.default.fileExists(atPath: $0) }
     }
 
+    /// Homebrew itself, at the prefix of either kind of Mac. Without it there is no command to copy.
+    nonisolated static var brewInstalled: Bool {
+        ["/opt/homebrew/bin/brew", "/usr/local/bin/brew"].contains { FileManager.default.isExecutableFile(atPath: $0) }
+    }
+
     func copyUpdateCommand() {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(Self.brewCommand(installedWithBrew: Self.installedWithBrew), forType: .string)

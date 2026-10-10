@@ -345,3 +345,5 @@
 "Copy Update Command" = "アップデートコマンドをコピー";
 "Copied" = "コピーしました";
 "The command goes to the clipboard. Paste it in Terminal and press Return." = "コマンドがクリップボードにコピーされます。ターミナルに貼り付けて Return キーを押してください。";
+"Get Homebrew" = "Homebrew を入手";
+"Updates come through Homebrew. Install it, then come back here to copy the update command." = "アップデートは Homebrew で行います。Homebrew をインストールしてから、ここでアップデートコマンドをコピーしてください。";
