@@ -111,7 +111,7 @@
 "Copy Claude Code hook command" = "Copiar el comando del hook de Claude Code";
 "Connect" = "Conectar";
 "Disconnect" = "Desconectar";
-"Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here." = "Al conectar se cambia el archivo de ajustes de la herramienta y el anterior se guarda con la extensión `.nunsseop-backup`. Las sesiones que se inicien después enviarán aquí sus notificaciones.";
+"Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here. Claude Code also reports its sessions for the agents count in the closed notch, which works while notifications from local tools are on." = "Al conectar se cambia el archivo de ajustes de la herramienta y el anterior se guarda con la extensión `.nunsseop-backup`. Las sesiones que se inicien después enviarán aquí sus notificaciones. Claude Code también informa de sus sesiones para el recuento de agentes del notch plegado, algo que funciona mientras los avisos de herramientas locales estén activados.";
 "Couldn't change %@. Copy the hook command and add it by hand." = "No se pudo cambiar %@. Copia el comando del hook y añádelo a mano.";
 "Copy command for scripts" = "Copiar el comando para scripts";
 "Timer" = "Temporizador";

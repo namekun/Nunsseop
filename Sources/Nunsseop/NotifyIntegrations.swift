@@ -37,6 +37,15 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
         return FileManager.default.fileExists(atPath: folder.path)
     }
 
+    /// The hooks Nunsseop keeps in a JSON tool's settings. Claude Code also reports its sessions for the agents
+    /// count; Gemini CLI's event names aren't known well enough for that.
+    var hooks: JSONHook.Table {
+        let notice = (event: "Notification", command: NotifyServer.hookCommand(title: name))
+        guard self == .claudeCode else { return [notice] }
+        let agent = NotifyServer.agentHookCommand
+        return [notice] + ["Notification", "UserPromptSubmit", "Stop", "StopFailure", "SessionEnd"].map { ($0, agent) }
+    }
+
     var isInstalled: Bool {
         switch self {
         case .claudeCode, .gemini:
@@ -61,7 +70,7 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
         switch self {
         case .claudeCode, .gemini:
             let settings = try Self.loadJSON(at: configURL)
-            guard let updated = try JSONHook.updating(NotifyServer.hookCommand(title: name), in: settings) else { return }
+            guard let updated = try JSONHook.updating(hooks, in: settings) else { return }
             try Self.writeJSON(updated, to: configURL)
         case .codex:
             let text = try Self.loadText(at: configURL)
@@ -80,10 +89,17 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Updates every connected tool to this version's hook, script or plugin, in the background; the rest stay untouched.
+    /// Updates every connected tool to this version's hook, script or plugin, in the background; the rest stay
+    /// untouched, except for agent hooks of ours that a deleted notice hook left behind in a JSON tool's settings.
     static func updateConnected() {
         queue.async {
-            for tool in allCases where tool.isInstalled { try? tool.installNow() }
+            for tool in allCases {
+                if tool.isInstalled {
+                    try? tool.installNow()
+                } else if tool == .claudeCode || tool == .gemini {
+                    try? tool.uninstallNow()
+                }
+            }
         }
     }
 
@@ -91,7 +107,8 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
         switch self {
         case .claudeCode, .gemini:
             let settings = try Self.loadJSON(at: configURL)
-            guard JSONHook.isInstalled(in: settings) else { return }
+            // Any of our hooks, not only the notice one, so agent hooks left behind by a deleted notice hook go too.
+            guard JSONHook.holdsAny(in: settings) else { return }
             try Self.writeJSON(JSONHook.removing(from: settings), to: configURL)
         case .codex:
             let text = try Self.loadText(at: configURL)
@@ -164,10 +181,24 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
         """
 }
 
-/// Claude Code and Gemini CLI both read `hooks.Notification` groups from a JSON settings file.
+/// Claude Code and Gemini CLI both read hooks from a JSON settings file, as groups per event name.
 /// A group can hold other tools' hooks and a matcher besides Nunsseop's, so everything here works on single hooks.
 enum JSONHook {
-    private static func isOurs(hook: Any) -> Bool {
+    /// The hooks a tool should have: an event name and the command it runs, once each.
+    typealias Table = [(event: String, command: String)]
+
+    private static let noticeEvent = "Notification"
+
+    /// Any of Nunsseop's hooks: the one for the agents count (`/agent`), which is ours under any event, or the
+    /// notice one (`/notify`), which is ours only under Notification. Under another event it's a command the user
+    /// pasted from "Copy command for scripts", and stays.
+    private static func isOurs(hook: Any, event: String) -> Bool {
+        guard let command = (hook as? [String: Any])?["command"] as? String else { return false }
+        return command.contains("127.0.0.1:\(NotifyServer.port)/agent")
+            || (event == noticeEvent && command.contains("127.0.0.1:\(NotifyServer.port)/notify"))
+    }
+
+    private static func isNotice(hook: Any) -> Bool {
         ((hook as? [String: Any])?["command"] as? String)?.contains("127.0.0.1:\(NotifyServer.port)/notify") == true
     }
 
@@ -175,55 +206,86 @@ enum JSONHook {
     /// Nunsseop's hooks and written back as it was, instead of making the whole array look empty.
     private static func hooks(in group: Any) -> [Any] { (group as? [String: Any])?["hooks"] as? [Any] ?? [] }
 
-    private static func holdsOurs(_ group: Any) -> Bool { hooks(in: group).contains(where: isOurs(hook:)) }
-
-    private static func groups(in settings: [String: Any]) -> [Any] {
-        (settings["hooks"] as? [String: Any])?["Notification"] as? [Any] ?? []
+    private static func holdsOurs(_ group: Any, event: String) -> Bool {
+        hooks(in: group).contains { isOurs(hook: $0, event: event) }
     }
 
+    /// Whether any of Nunsseop's hooks is there, notice or not; what Disconnect has to clear.
+    static func holdsAny(in settings: [String: Any]) -> Bool {
+        (settings["hooks"] as? [String: Any] ?? [:]).contains { event, groups in
+            ((groups as? [Any]) ?? []).contains { holdsOurs($0, event: event) }
+        }
+    }
+
+    private static func groups(in settings: [String: Any], event: String) -> [Any] {
+        (settings["hooks"] as? [String: Any])?[event] as? [Any] ?? []
+    }
+
+    /// Whether the notice hook is there, which is what makes a tool count as connected.
     static func isInstalled(in settings: [String: Any]) -> Bool {
-        groups(in: settings).contains(where: holdsOurs)
+        groups(in: settings, event: noticeEvent).contains { hooks(in: $0).contains(where: isNotice(hook:)) }
     }
 
-    /// The settings with exactly one Nunsseop hook running `command`, replacing an older one;
-    /// nil when that's already so.
+    /// The settings with exactly the hooks in `table`, replacing older ones of Nunsseop's; nil when that's already so.
+    static func updating(_ table: Table, in settings: [String: Any]) throws -> [String: Any]? {
+        guard !isCurrent(table, in: settings) else { return nil }
+        return try adding(table, to: removing(from: settings))
+    }
+
     static func updating(_ command: String, in settings: [String: Any]) throws -> [String: Any]? {
-        guard !isCurrent(command, in: settings) else { return nil }
-        return try adding(command, to: removing(from: settings))
+        try updating([(noticeEvent, command)], in: settings)
     }
 
-    /// Whether, across all groups, there's exactly one Nunsseop hook and it runs this command.
+    /// Whether, across all events, Nunsseop's hooks are exactly the ones in `table`.
+    static func isCurrent(_ table: Table, in settings: [String: Any]) -> Bool {
+        let events = settings["hooks"] as? [String: Any] ?? [:]
+        let ours = events.flatMap { event, groups in
+            ((groups as? [Any]) ?? []).flatMap { hooks(in: $0).filter { isOurs(hook: $0, event: event) } }
+                .map { "\(event)\n\(($0 as? [String: Any])?["command"] as? String ?? "")" }
+        }
+        return ours.sorted() == table.map { "\($0.event)\n\($0.command)" }.sorted()
+    }
+
     static func isCurrent(_ command: String, in settings: [String: Any]) -> Bool {
-        let ours = groups(in: settings).flatMap { hooks(in: $0).filter(isOurs(hook:)) }
-        return ours.count == 1 && (ours[0] as? [String: Any])?["command"] as? String == command
+        isCurrent([(noticeEvent, command)], in: settings)
     }
 
-    /// The settings with the hook added next to any Notification hooks already there.
-    static func adding(_ command: String, to settings: [String: Any]) throws -> [String: Any] {
+    /// The settings with the hooks added next to any hooks already under those events.
+    static func adding(_ table: Table, to settings: [String: Any]) throws -> [String: Any] {
         var settings = settings
-        guard var hooks = (settings["hooks"] ?? [String: Any]()) as? [String: Any],
-              var groups = (hooks["Notification"] ?? [Any]()) as? [Any]
-        else { throw NotifyIntegration.IntegrationError.unreadableConfig }
-        groups.append(["hooks": [["type": "command", "command": command]]])
-        hooks["Notification"] = groups
+        guard var hooks = (settings["hooks"] ?? [String: Any]()) as? [String: Any] else {
+            throw NotifyIntegration.IntegrationError.unreadableConfig
+        }
+        for (event, command) in table {
+            guard var groups = (hooks[event] ?? [Any]()) as? [Any] else { throw NotifyIntegration.IntegrationError.unreadableConfig }
+            groups.append(["hooks": [["type": "command", "command": command]]])
+            hooks[event] = groups
+        }
         settings["hooks"] = hooks
         return settings
     }
 
-    /// The settings without Nunsseop's hooks. Other hooks in the same group, its matcher, and entries that aren't
-    /// objects stay; a group is dropped only when nothing is left in it, and keys only when they end up empty.
+    static func adding(_ command: String, to settings: [String: Any]) throws -> [String: Any] {
+        try adding([(noticeEvent, command)], to: settings)
+    }
+
+    /// The settings without Nunsseop's hooks, under every event. Other hooks in the same group, its matcher, and
+    /// entries that aren't objects stay; a group is dropped only when nothing is left in it, and keys only when
+    /// they end up empty.
     static func removing(from settings: [String: Any]) -> [String: Any] {
         var settings = settings
-        guard var events = settings["hooks"] as? [String: Any],
-              let groups = events["Notification"] as? [Any] else { return settings }
-        let kept = groups.compactMap { entry -> Any? in
-            guard var group = entry as? [String: Any], holdsOurs(group) else { return entry }
-            let others = hooks(in: group).filter { !isOurs(hook: $0) }
-            guard !others.isEmpty else { return nil }
-            group["hooks"] = others
-            return group
+        guard var events = settings["hooks"] as? [String: Any], holdsAny(in: settings) else { return settings }
+        for (event, value) in events {
+            guard let groups = value as? [Any], groups.contains(where: { holdsOurs($0, event: event) }) else { continue }
+            let kept = groups.compactMap { entry -> Any? in
+                guard var group = entry as? [String: Any], holdsOurs(group, event: event) else { return entry }
+                let others = hooks(in: group).filter { !isOurs(hook: $0, event: event) }
+                guard !others.isEmpty else { return nil }
+                group["hooks"] = others
+                return group
+            }
+            events[event] = kept.isEmpty ? nil : kept
         }
-        events["Notification"] = kept.isEmpty ? nil : kept
         settings["hooks"] = events.isEmpty ? nil : events
         return settings
     }

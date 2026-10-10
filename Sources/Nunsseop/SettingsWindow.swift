@@ -298,7 +298,7 @@ private struct AlertsPane: View {
                             .disabled(!settings.localNotifications && !connected.contains(tool))
                     }
                 }
-                Text("Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here.")
+                Text("Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here. Claude Code also reports its sessions for the agents count in the closed notch, which works while notifications from local tools are on.")
                     .font(.caption).foregroundStyle(.secondary)
                 if let failed {
                     Text("Couldn't change \(failed.configURL.path.replacingOccurrences(of: NSHomeDirectory(), with: "~")). Copy the hook command and add it by hand.")

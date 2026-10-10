@@ -111,7 +111,7 @@
 "Copy Claude Code hook command" = "Claude Code フックのコマンドをコピー";
 "Connect" = "接続";
 "Disconnect" = "接続解除";
-"Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here." = "接続するとツール自身の設定ファイルを変更し、元のファイルを `.nunsseop-backup` 拡張子で残します。この後に始めたセッションの通知がノッチに表示されます。";
+"Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here. Claude Code also reports its sessions for the agents count in the closed notch, which works while notifications from local tools are on." = "接続するとツール自身の設定ファイルを変更し、元のファイルを `.nunsseop-backup` 拡張子で残します。この後に始めたセッションの通知がノッチに表示されます。Claude Code は、折りたたんだノッチの作業中エージェント数にもセッションを知らせます。これはローカルツールの通知がオンの間に働きます。";
 "Couldn't change %@. Copy the hook command and add it by hand." = "%@ を変更できませんでした。フックのコマンドをコピーして手動で追加してください。";
 "Copy command for scripts" = "スクリプト用のコマンドをコピー";
 "Timer" = "タイマー";
