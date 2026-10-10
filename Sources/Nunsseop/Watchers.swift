@@ -210,7 +210,8 @@ final class NotifyServer: @unchecked Sendable {
     }
 
     static var tokenURL: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        (NotifyIntegration.homeOverride?.appendingPathComponent("Library/Application Support")
+            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0])
             .appendingPathComponent("Nunsseop/notify-token")
     }
 
@@ -276,14 +277,14 @@ final class NotifyServer: @unchecked Sendable {
         }
     }
 
-    private struct Request {
+    struct Request {
         let method: String
         let path: String
         let headers: [String: String]
         let body: Data
     }
 
-    private static func parse(_ data: Data) -> Request? {
+    static func parse(_ data: Data) -> Request? {
         guard let separator = data.range(of: Data("\r\n\r\n".utf8)),
               let head = String(data: data[..<separator.lowerBound], encoding: .utf8) else { return nil }
         let lines = head.components(separatedBy: "\r\n")
@@ -300,26 +301,43 @@ final class NotifyServer: @unchecked Sendable {
         return Request(method: String(parts[0]), path: String(parts[1]), headers: headers, body: Data(body.prefix(length)))
     }
 
+    /// What a request asks the app to do, once it is answered.
+    enum Effect {
+        case none
+        case notice(Notice)
+        case agent(AgentEvent)
+    }
+
     private func respond(to request: Request, on connection: NWConnection) {
+        let (status, effect) = route(request)
+        switch effect {
+        case .none: break
+        case .agent(let event):
+            let handler = onAgent
+            DispatchQueue.main.async { MainActor.assumeIsolated { handler?(event) } }
+        case .notice(let notice):
+            let handler = onNotify
+            DispatchQueue.main.async { MainActor.assumeIsolated { handler?(notice) } }
+        }
+        reply(connection, status: status)
+    }
+
+    func route(_ request: Request) -> (status: String, effect: Effect) {
         guard request.method == "POST", request.path == "/notify" || request.path == "/agent" else {
-            return reply(connection, status: "404 Not Found")
+            return ("404 Not Found", .none)
         }
         guard Self.constantTimeEqual(request.headers["authorization"] ?? "", "Bearer \(token)") else {
-            return reply(connection, status: "401 Unauthorized")
+            return ("401 Unauthorized", .none)
         }
         if request.path == "/agent" {
-            if let event = AgentHook.event(headers: request.headers) {
-                let handler = onAgent
-                DispatchQueue.main.async { MainActor.assumeIsolated { handler?(event) } }
-            }
-            return reply(connection, status: "204 No Content")
+            return ("204 No Content", AgentHook.event(headers: request.headers).map(Effect.agent) ?? .none)
         }
         // The body is either JSON {"title", "message"} or plain text with the title in X-Title.
         let json = (try? JSONSerialization.jsonObject(with: request.body)) as? [String: Any]
         // Sent by tools that relay several agents (tmux): one whose own hook is connected already notifies.
         if let agent = json?["agent"] as? String ?? request.headers["x-agent"],
            NotifyIntegration.forAgent(agent)?.isInstalled == true {
-            return reply(connection, status: "204 No Content")
+            return ("204 No Content", .none)
         }
         let text = json == nil ? String(data: request.body, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) : nil
         let title = String((json?["title"] as? String ?? request.headers["x-title"] ?? "Notification").prefix(80))
@@ -331,12 +349,10 @@ final class NotifyServer: @unchecked Sendable {
         let notice = Notice(title: title, message: message,
                             app: clean(json?["app"] as? String ?? request.headers["x-app"], .bundleIDCharacters),
                             target: clean(json?["target"] as? String ?? request.headers["x-target"], .targetCharacters))
-        let handler = onNotify
-        DispatchQueue.main.async { MainActor.assumeIsolated { handler?(notice) } }
-        reply(connection, status: "204 No Content")
+        return ("204 No Content", .notice(notice))
     }
 
-    private static func constantTimeEqual(_ a: String, _ b: String) -> Bool {
+    static func constantTimeEqual(_ a: String, _ b: String) -> Bool {
         let x = Array(a.utf8), y = Array(b.utf8)
         var difference = UInt8(x.count == y.count ? 0 : 1)
         for i in 0..<max(x.count, y.count) {

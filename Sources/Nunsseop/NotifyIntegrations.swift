@@ -18,7 +18,10 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
         }
     }
 
-    private static var home: URL { FileManager.default.homeDirectoryForCurrentUser }
+    /// Where tests point the tools' config folders (and, through `NotifyServer.tokenURL`, Application Support).
+    @TaskLocal static var homeOverride: URL?
+
+    private static var home: URL { homeOverride ?? FileManager.default.homeDirectoryForCurrentUser }
 
     /// The file Nunsseop changes or adds.
     var configURL: URL {
@@ -66,7 +69,7 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
 
     func uninstall() throws { try Self.queue.sync { try uninstallNow() } }
 
-    private func installNow() throws {
+    func installNow() throws {
         switch self {
         case .claudeCode, .gemini:
             let settings = try Self.loadJSON(at: configURL)
@@ -92,18 +95,20 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
     /// Updates every connected tool to this version's hook, script or plugin, in the background; the rest stay
     /// untouched, except for agent hooks of ours that a deleted notice hook left behind in a JSON tool's settings.
     static func updateConnected() {
-        queue.async {
-            for tool in allCases {
-                if tool.isInstalled {
-                    try? tool.installNow()
-                } else if tool == .claudeCode || tool == .gemini {
-                    try? tool.uninstallNow()
-                }
+        queue.async { updateConnectedNow() }
+    }
+
+    static func updateConnectedNow() {
+        for tool in allCases {
+            if tool.isInstalled {
+                try? tool.installNow()
+            } else if tool == .claudeCode || tool == .gemini {
+                try? tool.uninstallNow()
             }
         }
     }
 
-    private func uninstallNow() throws {
+    func uninstallNow() throws {
         switch self {
         case .claudeCode, .gemini:
             let settings = try Self.loadJSON(at: configURL)

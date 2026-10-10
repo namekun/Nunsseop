@@ -82,7 +82,7 @@ final class AgentHooks {
         board.clear(source: Self.source)
     }
 
-    private func activated(_ app: String?) {
+    func activated(_ app: String?) {
         guard let app, entries.values.contains(where: { $0.finished && $0.app == app }) else { return }
         entries = entries.filter { !($0.value.finished && $0.value.app == app) }
         publish(now: .now)
