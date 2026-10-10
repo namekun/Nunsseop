@@ -792,7 +792,7 @@ struct TmuxSlotTests {
     @Test(.enabled(if: Tmux.isInstalled)) func someoneElsesHookInTheSlotStays() async throws {
         try await withServer { socket in
             _ = tmux(socket, "set-hook", "-g", Tmux.hook, "run-shell 'say mine'")
-            let script = URL(fileURLWithPath: "/tmp/nunsseop-test slot/terminal-notify.sh")
+            let script = URL(fileURLWithPath: "/tmp/nunsseop-test slot \(UUID().uuidString.prefix(8))/terminal-notify.sh")
             let watcher = TmuxWatcher(socketName: socket, scriptURL: script)
             watcher.start()
             try await Task.sleep(for: .milliseconds(400))
