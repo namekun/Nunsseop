@@ -35,8 +35,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Rosetta
         run: /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
+      # The whole toolchain under Rosetta, so the test runner is x86_64 too and can load the x86_64 tests.
       - name: Test as x86_64
-        run: swift test --triple x86_64-apple-macosx14.0
+        run: |
+          arch -x86_64 swift test
+          file .build/x86_64-apple-macosx/debug/NunsseopPackageTests.xctest/Contents/MacOS/NunsseopPackageTests
 
   bundle:
     runs-on: macos-26
