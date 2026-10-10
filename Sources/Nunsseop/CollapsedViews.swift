@@ -78,7 +78,8 @@ struct IdleEars: View {
                 ear(model.idleValue(model.settings.idleRight, at: context.date))
             }
             // Text is shorter than the artwork, so it keeps the same distance from the side wall as from the top and bottom.
-            .padding(.horizontal, 7)
+            // A single side instead keeps the eyebrow's own 10 from the wall, inside the content's 13.
+            .padding(.horizontal, model.idleOneSide == nil ? 7 : NotchViewModel.idleOneSideMargin - 13)
         }
         .font(.system(size: 11, weight: .semibold).monospacedDigit())
         .foregroundStyle(.white)

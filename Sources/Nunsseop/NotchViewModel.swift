@@ -420,7 +420,7 @@ final class NotchViewModel: ObservableObject {
         if showsLiveActivity {
             size.width += 2 * earWidth
         } else if showsIdleEars && !sneakPeekInline {
-            size.width += (idleOneSide == nil ? 2 : 1) * Self.idleEarWidth
+            size.width += idleOneSide == nil ? 2 * Self.idleEarWidth : idleOneSideWidth
         }
         if sneakPeekInline {
             size.width = max(size.width, (showsLiveActivity ? 2 * earWidth : 0) + inlinePeekWidth + 2 * 13)
@@ -454,8 +454,28 @@ final class NotchViewModel: ObservableObject {
         return covers(left - ear, left) && !covers(right, right + 2 * ear)
     }
 
+    /// The room the eyebrow's stroke leaves at each end of its frame, which a single idle side keeps from the wall too.
+    static let idleOneSideMargin: CGFloat = 10
+
+    /// How far a single idle side grows the shape: its value as IdleEars draws it and 8 between it and the eyebrow's
+    /// stroke. Its margin from the wall is the one the stroke leaves empty at the end facing it, so the two cancel out.
+    private var idleOneSideWidth: CGFloat {
+        let item = idleOneSide == -1 ? settings.idleLeft : settings.idleRight
+        guard let value = idleValue(item) else { return Self.idleEarWidth }
+        return Self.idleEarWidth(for: value)
+    }
+
+    nonisolated static func idleEarWidth(for value: IdleValue) -> CGFloat {
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .semibold)
+        let text = (value.text as NSString).size(withAttributes: [.font: font]).width
+        let symbol = value.symbol
+            .flatMap { NSImage(systemSymbolName: $0, accessibilityDescription: nil)?.withSymbolConfiguration(.init(pointSize: 11, weight: .semibold)) }
+            .map { $0.size.width + 3 } ?? 0
+        return ceil(symbol + text) + 8
+    }
+
     /// On a display without a notch, a single idle side grows the shape on that side only: -1 left, 1 right.
-    private var idleOneSide: Int? {
+    var idleOneSide: Int? {
         guard !geometry.hasNotch, hud.event == nil, !showsLiveActivity, !showsSneakPeek, showsIdleEars else { return nil }
         let left = idleValue(settings.idleLeft) != nil, right = idleValue(settings.idleRight) != nil
         return left == right ? nil : (left ? -1 : 1)
@@ -463,7 +483,7 @@ final class NotchViewModel: ObservableObject {
 
     /// How far right the collapsed shape moves so its left edge stays at the camera's.
     var collapsedShift: CGFloat {
-        if let side = idleOneSide { return CGFloat(side) * Self.idleEarWidth / 2 }
+        if let side = idleOneSide { return CGFloat(side) * idleOneSideWidth / 2 }
         return hidesLeftEar ? (collapsedSize.width - geometry.collapsedSize.width) / 2 : 0
     }
 
