@@ -11,6 +11,8 @@ const installCmd = 'brew install --cask namekun/tap/nunsseop';
 const upgradeCmd = 'brew update && brew upgrade --cask nunsseop';
 const tourImages = ['home.png', 'tab-ai.png', 'tab-search.png', 'shelf.png', 'tab-timer.png', 'tab-tools.png', 'tab-system.png', 'tab-emoji.png'];
 const enTourTitles = ['Home', 'AI usage', 'Search', 'Shelf', 'Timer', 'Tools', 'System', 'Emoji'];
+// Titles that really are the same word in that language (loanwords); every other title and every text must differ from English.
+const sameAsEnglish = new Set(['de:Timer', 'de:System', 'es:Emoji', 'de:Emoji', 'fr:Emoji']);
 const failures = [];
 const check = (ok, msg) => { if (!ok) failures.push(msg); };
 const pickLang = async (page, lang) => {
@@ -88,14 +90,13 @@ const pickLang = async (page, lang) => {
   check(meta.twCard === 'summary_large_image', `twitter:card is ${meta.twCard}`);
   check(meta.ogUrl === 'https://namekun.github.io/Nunsseop/', `og:url is ${meta.ogUrl}`);
   check(meta.twImage === meta.ogImage, `twitter:image ${meta.twImage} differs from og:image ${meta.ogImage}`);
-  const og = /^https:\/\/namekun\.github\.io\/Nunsseop\/(images\/og\.png)\?v=\d+$/.exec(meta.ogImage || '');
+  const og = /^https:\/\/namekun\.github\.io\/Nunsseop\/(images\/og\.png)(\?v=\d+)?$/.exec(meta.ogImage || '');
   check(og, `og:image is ${meta.ogImage}`);
   if (og) {
     const png = fs.readFileSync(path.join(root, 'docs', og[1]));
     check(png.subarray(1, 4).toString() === 'PNG', 'docs/images/og.png is not a PNG');
     const size = `${png.readUInt32BE(16)}x${png.readUInt32BE(20)}`;
-    check(size === `${meta.ogWidth}x${meta.ogHeight}`, `og.png is ${size}, og:image:width/height say ${meta.ogWidth}x${meta.ogHeight}`);
-    check(size === '1200x630', `og.png is ${size}, expected 1200x630`);
+    check(size === '1200x630' && `${meta.ogWidth}x${meta.ogHeight}` === size, `og.png is ${size}, og:image:width/height say ${meta.ogWidth}x${meta.ogHeight}, expected 1200x630`);
   }
 
   // Links leave the page only for known places.
@@ -122,6 +123,7 @@ const pickLang = async (page, lang) => {
   const tourBtns = await page.$$eval('#tourList .tour-btn', bs => bs.length);
   check(tourBtns === tourImages.length, `tour has ${tourBtns} items, expected ${tourImages.length}`);
   for (const f of tourImages) check(fs.existsSync(path.join(root, 'docs/images', f)), 'tour image missing: docs/images/' + f);
+  const enTour = [];
   for (const lang of langs) {
     await pickLang(page, lang);
     for (let i = 0; i < tourImages.length; i++) {
@@ -140,6 +142,11 @@ const pickLang = async (page, lang) => {
       check(t.title && t.title !== 'undefined', `${where}: empty title`);
       check(t.title === t.label, `${where}: title "${t.title}" differs from button label "${t.label}"`);
       check(t.text && t.text !== 'undefined', `${where}: empty text`);
+      if (lang === 'en') enTour[i] = { title: t.title, text: t.text };
+      else if (enTour[i]) {
+        check(t.title !== enTour[i].title || sameAsEnglish.has(`${lang}:${t.title}`), `${where}: title is still the English "${t.title}"`);
+        check(t.text !== enTour[i].text, `${where}: text is still the English text`);
+      }
       if (lang === 'en') check(t.title === enTourTitles[i], `${where}: title is "${t.title}", expected "${enTourTitles[i]}"`);
       check(t.pressed.join() === tourImages.map((_, j) => String(j === i)).join(), `${where}: aria-pressed is ${t.pressed.join()}`);
       check(t.imgs.length === 1 && t.imgs[0].src === 'images/' + tourImages[i] && t.imgs[0].width > 0,
@@ -165,6 +172,8 @@ const pickLang = async (page, lang) => {
   // Copy buttons put the command the page shows on the clipboard. A fake clock stands in for the 1.4 s label reset.
   const cctx = await browser.newContext({ locale: 'en-US', permissions: ['clipboard-read', 'clipboard-write'] });
   const cp = await cctx.newPage();
+  cp.on('pageerror', e => failures.push('copy page error: ' + e.message));
+  cp.on('console', m => { if (m.type() === 'error') failures.push('copy page console error: ' + m.text()); });
   await cp.clock.install();
   await cp.goto(url);
   const copies = await cp.$$eval('[data-copy]', bs => bs.map(b => ({
