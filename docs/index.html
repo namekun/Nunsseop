@@ -15,249 +15,262 @@
 <meta property="og:image:alt" content="Nunsseop: the expanded notch showing now playing and calendar, with the headline Your notch, finally useful.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://namekun.github.io/Nunsseop/images/og.png">
-<meta name="theme-color" content="#08070b">
+<meta name="theme-color" content="#ECECE8">
 <link rel="icon" href="images/icon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap">
 <style>
   :root {
-    --bg: #08070b;
-    --bg-2: #0e0c14;
-    --card: rgba(255,255,255,0.035);
-    --card-border: rgba(255,255,255,0.08);
-    --text: #f4f3f7;
-    --muted: #a19fae;
-    --faint: #7e7b8c;
-    --pink: #ff5f8f;
-    --violet: #c86bfa;
-    --radius: 22px;
+    --bg: #ECECE8;
+    --ink: #121212;
+    --g3: #333333;
+    --g4: #4A4A4A;
+    --g5: #555555;
+    --g6: #6B6B66;
+    --rule: #C9C9C3;
+    --hover: #E2E2DD;
+    --paper: #F4F4F1;
+    --dim: #A3A3A0;
+    --amber: #F2A93B;
+    --nw: min(740px, 92vw);
+    --nh: calc(var(--nw) * .2783);
+    --sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "PingFang SC", "Segoe UI", sans-serif;
+    --head: Archivo, "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "PingFang SC", "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    color-scheme: light;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: clip; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 76px; overflow-x: clip; }
   body {
-    margin: 0; background: var(--bg); color: var(--text); overflow-x: clip;
-    font: 16px/1.6 "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    margin: 0; background: var(--bg); color: var(--ink); overflow-x: clip;
+    font: 400 16px/1.6 var(--sans);
     -webkit-font-smoothing: antialiased;
   }
   /* Korean wraps between words, not inside them. */
   body[data-lang="ko"] { word-break: keep-all; }
-  a { color: inherit; text-decoration: none; }
+  a { color: var(--ink); text-underline-offset: 3px; }
+  a:hover { color: var(--g5); }
   img { max-width: 100%; display: block; }
-  code, pre { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
-  .grad-text {
-    background: linear-gradient(100deg, #fff 10%, var(--violet) 55%, var(--pink) 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  code, pre { font-family: var(--mono); }
+  button { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  @media (max-width: 600px) { .wrap { padding: 0 20px; } }
 
-  nav.top {
-    position: sticky; top: 0; z-index: 50;
-    backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px);
-    background: rgba(8,7,11,0.6); border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  nav.top .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
-  .brand img { width: 28px; height: 28px; }
-  .brand small { color: var(--faint); font-weight: 500; }
-  .nav-links { display: flex; gap: 22px; margin-left: auto; font-size: 14px; color: var(--muted); }
-  .nav-links a:hover { color: var(--text); }
+  /* Navigation */
+  nav.top { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--rule); }
+  nav.top .wrap { display: flex; align-items: center; gap: 24px; min-height: 64px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .brand { display: flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; }
+  .brand .mark { width: 32px; height: 32px; border-radius: 8px; background: #111; display: flex; align-items: center; justify-content: center; flex: none; }
+  .brand .name { font-family: var(--head); font-weight: 800; font-size: 19px; letter-spacing: -0.01em; }
+  .brand small { font-size: 14px; color: var(--g5); }
+  .nn-logo-brow { transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); transform-origin: 30% 70%; }
+  .nn-logo:hover .nn-logo-brow, .nn-logo:focus-visible .nn-logo-brow { transform: translateY(-1.5px) rotate(-7deg); }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; font-size: 15px; }
+  .nav-links a { text-decoration: none; }
   .lang { position: relative; }
-  .lang-btn { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px 0 11px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card); color: var(--muted); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: color .15s, background .15s, border-color .15s, transform .15s; }
-  .lang-btn:hover, .lang.open .lang-btn { color: var(--text); background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); }
+  .lang-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: transparent; color: var(--ink); font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color .15s; }
+  .lang-btn:hover, .lang.open .lang-btn { background: var(--hover); }
   .lang-btn svg { width: 15px; height: 15px; flex: none; }
-  .lang-btn .chev { width: 11px; height: 11px; opacity: .7; transition: transform .2s; }
+  .lang-btn .chev { width: 11px; height: 11px; transition: transform .2s; }
   .lang.open .lang-btn .chev { transform: rotate(180deg); }
-  .lang-menu { position: absolute; right: 0; top: calc(100% + 8px); min-width: 172px; margin: 0; padding: 6px; list-style: none; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(20,18,28,0.88); backdrop-filter: saturate(160%) blur(20px); -webkit-backdrop-filter: saturate(160%) blur(20px); box-shadow: 0 24px 60px -12px rgba(0,0,0,0.7); opacity: 0; visibility: hidden; transform: translateY(-4px) scale(.98); transform-origin: top right; transition: opacity .16s, transform .16s, visibility 0s .16s; }
+  .lang-menu { position: absolute; right: 0; top: calc(100% + 8px); min-width: 176px; margin: 0; padding: 6px; list-style: none; border-radius: 8px; border: 1px solid var(--ink); background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .16s, transform .16s, visibility 0s .16s; }
   .lang.open .lang-menu { opacity: 1; visibility: visible; transform: none; transition: opacity .16s, transform .16s; }
-  .lang-menu button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 14px; text-align: left; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
-  .lang-menu button:hover, .lang-menu button:focus-visible { background: rgba(255,255,255,0.07); color: var(--text); outline: none; }
-  .lang-menu button[aria-selected="true"] { color: var(--text); font-weight: 600; }
-  .lang-menu button[aria-selected="true"]::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--pink)); }
+  .lang-menu button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; border: 0; background: transparent; color: var(--g4); font-size: 15px; text-align: left; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+  .lang-menu button:hover { background: var(--hover); color: var(--ink); }
+  .lang-menu button:focus-visible { background: var(--hover); color: var(--ink); outline: 2px solid var(--ink); outline-offset: -2px; }
+  .lang-menu button[aria-selected="true"] { color: var(--ink); font-weight: 600; }
+  .lang-menu button[aria-selected="true"]::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
   @media (max-width: 720px) { .nav-links { display: none; } .lang { margin-left: auto; } }
 
-  .hero { position: relative; padding: 72px 0 40px; text-align: center; isolation: isolate; overflow-x: clip; }
-  .aurora { position: absolute; inset: -20% -10% auto; height: 900px; z-index: -1; pointer-events: none; filter: blur(80px); opacity: 0.55; }
-  .aurora span { position: absolute; border-radius: 50%; animation: float 18s ease-in-out infinite alternate; }
-  .aurora span:nth-child(1) { width: 520px; height: 520px; left: 10%; top: 0; background: #5b2a9a; }
-  .aurora span:nth-child(2) { width: 460px; height: 460px; right: 8%; top: 60px; background: #a8326a; animation-delay: -6s; }
-  .aurora span:nth-child(3) { width: 380px; height: 380px; left: 40%; top: 240px; background: #23407a; animation-delay: -12s; }
-  @keyframes float { to { transform: translate3d(40px, 60px, 0) scale(1.12); } }
-  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card); color: var(--muted); font-size: 13px; }
-  .eyebrow b { color: var(--text); font-weight: 600; }
-  .hero h1 { font-size: clamp(44px, 8.4vw, 92px); line-height: 1.02; letter-spacing: -0.045em; margin: 22px auto 18px; max-width: 900px; font-weight: 800; }
-  .hero .lead { font-size: clamp(17px, 2.2vw, 21px); color: var(--muted); max-width: 640px; margin: 0 auto 32px; }
-  .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; align-items: center; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; border-radius: 999px; font-weight: 650; font-size: 15px; border: 1px solid var(--card-border); transition: transform .15s, background .15s; }
-  @media (hover: hover) { .btn:hover { transform: translateY(-1px); } }
-  .btn.primary { background: #fff; color: #0b0a0f; border-color: #fff; }
-  .btn.ghost { background: var(--card); }
-  .btn svg { width: 18px; height: 18px; }
-  .brew { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 8px 0 18px; border-radius: 999px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.35); font-size: 14px; color: var(--muted); max-width: 100%; }
-  .brew code { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .copy { border: 0; background: rgba(255,255,255,0.08); color: var(--text); border-radius: 999px; height: 34px; padding: 0 14px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; flex: none; transition: transform .15s; }
-  .copy:hover { background: rgba(255,255,255,0.16); }
+  /* Hero */
+  .hero { padding: 72px 0 56px; }
+  .hero .wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
+  .eyebrow { margin: 0; font: 400 13px/1.5 var(--mono); color: var(--g5); }
+  .eyebrow b { font-weight: 500; color: var(--ink); margin-right: 10px; }
+  .hero h1 { margin: 0; font-family: var(--head); font-weight: 800; font-size: clamp(44px, 7.5vw, 104px); line-height: 0.95; letter-spacing: -0.035em; overflow-wrap: break-word; max-width: 100%; }
+  body[data-lang="ko"] .hero h1, body[data-lang="ja"] .hero h1, body[data-lang="zh"] .hero h1 { line-height: 1.08; letter-spacing: -0.02em; }
+  .nn-word { display: inline-block; animation: nn-rise .8s cubic-bezier(.2, .9, .25, 1) both; }
+  @keyframes nn-rise { from { opacity: 0; transform: translateY(.45em); } }
+  .hero .lead { margin: 0; font-size: 19px; line-height: 1.6; max-width: 36rem; color: var(--g3); }
+  .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; max-width: 100%; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 22px; border-radius: 8px; border: 1.5px solid var(--ink); font-weight: 600; font-size: 16px; text-decoration: none; transition: background-color .2s, color .2s; }
+  .btn svg { width: 18px; height: 18px; flex: none; }
+  .btn.primary { background: var(--ink); color: var(--paper); }
+  .btn.primary:hover { background: var(--g3); color: var(--paper); }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn.ghost:hover { background: var(--hover); color: var(--ink); }
+  .brew { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 8px 0 18px; border-radius: 8px; background: var(--ink); color: var(--paper); max-width: 100%; min-width: 0; }
+  .brew code { flex: 1 1 auto; min-width: 0; font-size: 15px; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .brew code::-webkit-scrollbar { display: none; }
+  /* On a phone the command wraps at its slashes instead of hiding its end. */
+  @media (max-width: 520px) { .brew { padding-top: 10px; padding-bottom: 10px; } .brew code { white-space: normal; overflow-wrap: anywhere; font-size: 14px; line-height: 1.5; } }
+  .copy { flex: none; min-width: 44px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 6px; background: #2A2A2A; color: var(--paper); font-size: 13px; font-weight: 500; cursor: pointer; transition: background-color .15s; }
+  .copy:hover { background: #3A3A3A; }
+  .copy:focus-visible { outline-color: var(--paper); }
 
-  .device { position: relative; margin: 64px auto 0; max-width: 1000px; aspect-ratio: 1100 / 400; -webkit-mask-image: linear-gradient(#000 70%, transparent); mask-image: linear-gradient(#000 70%, transparent); border-radius: 26px 26px 18px 18px; padding: 10px 10px 0; background: linear-gradient(#1b1a21, #111016); border: 1px solid rgba(255,255,255,0.09); box-shadow: 0 60px 140px -40px rgba(140, 70, 220, 0.45), 0 0 0 1px rgba(0,0,0,0.6) inset; }
-  .screen { position: relative; height: 100%; border-radius: 18px 18px 6px 6px; overflow: hidden;
-    background: radial-gradient(120% 90% at 20% 110%, #ff7aa8 0%, transparent 55%), radial-gradient(90% 80% at 85% 100%, #6a5cff 0%, transparent 60%), radial-gradient(70% 60% at 50% 20%, #2a1a4a 0%, transparent 70%), linear-gradient(160deg, #1d1534, #0c0a14); }
-  .menubar { position: absolute; inset: 0 0 auto; height: calc(32 * var(--pt)); display: flex; align-items: center; justify-content: space-between; padding: 0 2.2%; font-size: clamp(8px, 1.1vw, 12px); color: rgba(255,255,255,0.85); background: rgba(0,0,0,0.18); }
-  .menubar .l, .menubar .r { display: flex; gap: 1.6em; }
-  .menubar .l b { font-weight: 700; }
-  /* The demo notch uses the app's real geometry, shown on the middle 1100 pt of a 14-inch MacBook Pro screen:
-     collapsed while music plays 272 × 32 pt, expanded 739 × 196 pt, with the same flared top corners.
-     It moves on the app's springs too (NotchMotion): opening is spring(response 0.4, damping 0.75), about 3% overshoot;
-     closing is spring(response 0.3, damping 1), no overshoot, 40 ms late. The outline, body and corners share one curve. */
-  .screen { container-type: inline-size; --pt: calc(100cqw / 1100); }
-  .live-notch { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: calc(272 * var(--pt)); height: calc(32 * var(--pt)); --tr: calc(6 * var(--pt)); cursor: pointer; --ease: cubic-bezier(.25,1,.5,1); --dur: .45s; --delay: .04s; transition: width var(--dur) var(--ease) var(--delay), height var(--dur) var(--ease) var(--delay); filter: drop-shadow(0 10px 30px rgba(0,0,0,0.35)); }
-  .live-notch .body { position: absolute; top: 0; bottom: 0; left: calc(6 * var(--pt)); right: calc(6 * var(--pt)); background: #000; border-radius: 0 0 calc(14 * var(--pt)) calc(14 * var(--pt)); transition: left var(--dur) var(--ease) var(--delay), right var(--dur) var(--ease) var(--delay), border-radius var(--dur) var(--ease) var(--delay); }
-  .live-notch::before, .live-notch::after { content: ""; position: absolute; top: 0; width: calc(6 * var(--pt)); height: calc(6 * var(--pt)); transition: width var(--dur) var(--ease) var(--delay), height var(--dur) var(--ease) var(--delay); }
-  .live-notch::before { left: 0; background: radial-gradient(circle at 0 100%, transparent 70.7%, #000 71%); }
-  .live-notch::after { right: 0; background: radial-gradient(circle at 100% 100%, transparent 70.7%, #000 71%); }
-  .live-notch img { position: absolute; left: 0; top: 0; width: 100%; height: auto; transition: opacity .25s; }
-  .live-notch .full { opacity: 0; transition-delay: 0s; }
-  .live-notch.open { width: calc(739 * var(--pt)); height: calc(196 * var(--pt)); --ease: cubic-bezier(.3,1.22,.5,1); --dur: .51s; --delay: 0s; }
-  @supports (transition-timing-function: linear(0, 1)) {
-    .live-notch { --ease: linear(0, 0.064, 0.198, 0.348, 0.488, 0.607, 0.704, 0.78, 0.839, 0.883, 0.915, 0.939, 0.957, 0.969, 0.978, 0.985, 0.989, 0.992, 0.995, 0.996, 0.997, 0.998, 0.999, 1); }
-    .live-notch.open { --ease: linear(0, 0.041, 0.139, 0.265, 0.4, 0.531, 0.648, 0.749, 0.831, 0.896, 0.944, 0.979, 1.003, 1.017, 1.025, 1.028, 1.028, 1.026, 1.022, 1.019, 1.015, 1.011, 1.008, 1.006, 1.004, 1.002, 1); }
+  /* The notch opening: a menu-bar strip, the eyebrow pill lifts its brow, the notch opens into the real screenshot. 9 s loop. */
+  .stage-band { background: var(--ink); padding-bottom: 48px; }
+  .nn-stage { position: relative; height: calc(var(--nh) + 40px); background: var(--ink); overflow: hidden; }
+  .nn-bar { position: absolute; left: 0; right: 0; top: 0; height: 36px; background: #1D1D1F; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font: 400 12px var(--mono); color: #8A8A86; white-space: nowrap; }
+  .nn-bar .l, .nn-bar .r { display: flex; gap: 1.6em; }
+  .nn-bar b { font-weight: 500; color: #C8C8C4; }
+  .nn-notch { position: absolute; left: 50%; top: 5px; width: 72px; height: 26px; border-radius: 13px; background: #000; transform: translateX(-50%); overflow: hidden; z-index: 2; animation: nn-open 9s cubic-bezier(.32, 1.12, .4, 1) infinite; }
+  @keyframes nn-open { 0%, 24% { top: 5px; width: 72px; height: 26px; border-radius: 13px; } 34%, 78% { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; } 88%, 100% { top: 5px; width: 72px; height: 26px; border-radius: 13px; } }
+  .nn-brow { position: absolute; left: 50%; top: 50%; width: 40px; height: 16px; margin: -8px 0 0 -20px; animation: nn-brow 9s ease-in-out infinite; }
+  @keyframes nn-brow { 0%, 10% { transform: none; opacity: 1; } 16%, 24% { transform: translateY(-2px) rotate(-6deg); opacity: 1; } 28%, 84% { opacity: 0; transform: translateY(-2px) rotate(-6deg); } 90%, 100% { opacity: 1; transform: none; } }
+  .nn-shot { position: absolute; top: 0; left: 50%; max-width: none; width: calc(var(--nw) * 1.049); height: auto; transform: translateX(-50%); opacity: 0; animation: nn-shot 9s ease infinite; }
+  @keyframes nn-shot { 0%, 32% { opacity: 0; } 40%, 74% { opacity: 1; } 80%, 100% { opacity: 0; } }
+  .stage-band p { margin: 0 auto; max-width: 1200px; padding: 0 24px; text-align: center; font: 400 13px/1.6 var(--mono); color: var(--dim); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 32px; padding-top: 56px; }
+  .stats > div { border-top: 2px solid var(--ink); padding-top: 14px; }
+  .stats b { display: block; font-family: var(--head); font-weight: 800; font-size: 44px; line-height: 1; letter-spacing: -0.03em; margin-bottom: 8px; }
+  .stats span { display: block; font-size: 15px; color: var(--g4); }
+
+  .works { padding-top: 72px; }
+  .works p { margin: 0 0 16px; font: 400 13px/1.5 var(--mono); color: var(--g5); }
+  .players { list-style: none; margin: 0; padding: 16px 0 0; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 8px 28px; font: 400 14px/1.5 var(--mono); color: var(--g3); }
+
+  /* Sections */
+  section.block { padding: 96px 0 0; }
+  .section-head { max-width: 46rem; margin: 0 0 40px; }
+  .section-head .kicker { font: 400 13px/1.5 var(--mono); color: var(--g5); margin-bottom: 16px; }
+  .section-head h2 { margin: 0 0 20px; font-family: var(--head); font-weight: 800; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter-spacing: -0.03em; text-wrap: balance; overflow-wrap: break-word; }
+  body[data-lang="ko"] .section-head h2, body[data-lang="ja"] .section-head h2, body[data-lang="zh"] .section-head h2 { line-height: 1.15; letter-spacing: -0.02em; }
+  .section-head p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--g3); }
+
+  /* Tour: rows on the left, one black figure on the right */
+  .tour { display: grid; grid-template-columns: minmax(280px, 420px) minmax(0, 1fr); grid-template-areas: "head fig" "list fig"; grid-template-rows: auto 1fr; column-gap: 56px; align-items: start; }
+  .tour .section-head { grid-area: head; margin-bottom: 28px; }
+  .tour-list { grid-area: list; display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
+  .tour-btn { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 48px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--rule); background: transparent; color: var(--g4); font-size: 16px; text-align: left; cursor: pointer; transition: padding-left .3s cubic-bezier(.2, .9, .25, 1), background-color .3s; }
+  .tour-btn .num { font: 400 14px var(--mono); color: var(--g5); width: 24px; flex: none; }
+  .tour-btn .lbl { flex: 1; }
+  .tour-btn .mark { width: 10px; height: 10px; border-radius: 5px; background: transparent; flex: none; margin-right: 4px; }
+  .tour-btn[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
+  .tour-btn[aria-pressed="true"] .mark { background: var(--ink); }
+  @media (hover: hover) { .tour-btn:hover { padding-left: 10px; background-color: var(--hover); } }
+  .tour-stage { grid-area: fig; position: sticky; top: 88px; margin: 0; background: var(--ink); color: var(--paper); border-radius: 10px; padding: 28px; }
+  .tour-screen { position: relative; aspect-ratio: 1478 / 422; }
+  .tour-screen img { position: absolute; left: 50%; top: 0; max-width: none; height: auto; transform: translateX(-50%); opacity: 0; transition: opacity .35s ease; }
+  .tour-screen img.on { opacity: 1; }
+  .tour-copy { margin-top: 20px; }
+  .tour-copy h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+  .tour-copy p { margin: 0; font-size: 15px; line-height: 1.6; color: #C8C8C4; max-width: 640px; }
+  .tour-copy kbd { font: 500 12px var(--mono); padding: 2px 6px; border-radius: 4px; background: #2A2A2A; color: var(--paper); }
+  @media (max-width: 900px) {
+    .tour { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "list" "fig"; }
+    .tour-list { flex-direction: row; overflow-x: auto; border-top: 0; border-bottom: 1px solid var(--rule); scrollbar-width: none; margin-bottom: 20px; }
+    .tour-list::-webkit-scrollbar { display: none; }
+    .tour-btn { width: auto; flex: none; white-space: nowrap; gap: 8px; padding: 10px 14px 10px 0; margin-right: 8px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tour-btn .mark { display: none; }
+    .tour-btn:focus-visible { outline-offset: -3px; }
+    .tour-btn[aria-pressed="true"] { border-bottom-color: var(--ink); }
+    .tour-btn .num { width: auto; }
+    .tour-stage { position: static; padding: 16px; }
   }
-  .live-notch.open .body { left: calc(18 * var(--pt)); right: calc(18 * var(--pt)); border-radius: 0 0 calc(26 * var(--pt)) calc(26 * var(--pt)); }
-  .live-notch.open::before, .live-notch.open::after { width: calc(18 * var(--pt)); height: calc(18 * var(--pt)); }
-  .live-notch.open .mini { opacity: 0; }
-  .live-notch.open .full { opacity: 1; transition-delay: .18s; }
-  .hint { margin-top: 14px; color: var(--faint); font-size: 13px; }
 
-  .works { padding: 56px 0 8px; text-align: center; }
-  .works p { color: var(--faint); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 18px; }
-  .marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
-  .marquee .track { display: flex; gap: 12px; width: max-content; animation: scroll 32s linear infinite; }
-  .chip { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card); color: var(--muted); font-size: 14px; white-space: nowrap; }
-  @keyframes scroll { to { transform: translateX(-50%); } }
+  /* Features: top-ruled items, no cards */
+  .bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 48px 32px; }
+  .tile { border-top: 2px solid var(--ink); padding-top: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
+  .tile.t-half { grid-column: span 2; }
+  .tile h3 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; }
+  .tile p { margin: 0; font-size: 15px; line-height: 1.6; color: #3A3A3A; }
+  .hud-stack { display: grid; gap: 8px; width: 100%; max-width: 300px; margin-top: 6px; padding: 10px; background: var(--ink); border-radius: 8px; }
+  .hud-stack img { width: 100%; height: auto; }
+  .tile-shot { width: 100%; max-width: 300px; height: auto; padding: 10px; background: var(--ink); border-radius: 8px; margin-top: 6px; }
+  .mini-note { margin-top: 6px; width: 100%; max-width: 380px; padding: 12px 16px; border-radius: 8px; background: #000; color: var(--paper); }
+  .mini-note b { display: block; font-size: 14px; font-weight: 600; }
+  .mini-note span { font-size: 13px; color: var(--dim); }
+  .brow-pill { width: 120px; height: 44px; border-radius: 22px; background: #000; display: flex; align-items: center; justify-content: center; }
+  .nn-brow-loop { animation: nn-lift 3.2s ease-in-out infinite; transform-origin: 30% 70%; }
+  @keyframes nn-lift { 0%, 55%, 100% { transform: none; } 65%, 80% { transform: translateY(-2px) rotate(-6deg); } }
+  .langs { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 4px; font: 400 14px/1.5 var(--mono); color: var(--g4); }
+  @media (max-width: 1000px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .bento { grid-template-columns: minmax(0, 1fr); } .tile.t-half { grid-column: auto; } }
 
-  section.block { padding: 110px 0 0; }
-  .section-head { text-align: center; max-width: 720px; margin: 0 auto 44px; }
-  .section-head .kicker { color: var(--violet); font-weight: 650; font-size: 14px; letter-spacing: .02em; }
-  .section-head h2 { font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -0.035em; margin: 10px 0 14px; font-weight: 800; text-wrap: balance; }
-  .section-head p { color: var(--muted); margin: 0; font-size: 18px; }
-
-  .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
-  .tile { position: relative; border-radius: var(--radius); padding: 28px; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)); border: 1px solid var(--card-border); transition: transform .25s, border-color .25s; }
-  @media (hover: hover) { .tile:hover { transform: translateY(-3px); border-color: rgba(200,107,250,0.35); } }
-  .tile h3 { margin: 0 0 8px; font-size: 22px; letter-spacing: -0.02em; }
-  .tile p { margin: 0; color: var(--muted); font-size: 15px; }
-  .tile .ico { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; margin-bottom: 18px; background: rgba(255,255,255,0.06); }
-  .tile .shot { margin: 24px -10px -28px; border-radius: 16px 16px 0 0; overflow: hidden; background: radial-gradient(80% 120% at 50% 0%, rgba(200,107,250,0.18), transparent 70%); padding: 0 10px; }
-  .tile .shot img { margin: 0 auto; width: 100%; max-width: 643px; height: auto; }
-  .t-wide { grid-column: span 4; } .t-half { grid-column: span 3; } .t-third { grid-column: span 2; }
-  .t-tall { grid-row: span 2; display: flex; flex-direction: column; }
-  .t-tall .shot { margin-top: auto; }
-  .hud-stack { display: grid; gap: 10px; margin-top: 22px; }
-  .hud-stack img { margin: 0 auto; max-width: 405px; width: 100%; height: auto; }
-  .langs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-  .langs span { padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); font-size: 13px; color: var(--text); }
-  @media (max-width: 900px) { .t-wide, .t-half, .t-third { grid-column: span 6; } .t-tall { grid-row: auto; } }
-
-  .install { max-width: 760px; margin: 0 auto; }
-  .tabs { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: var(--card); border: 1px solid var(--card-border); width: max-content; margin: 0 auto 18px; }
-  .tabs button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 14px; font-weight: 600; padding: 8px 18px; border-radius: 999px; cursor: pointer; transition: transform .15s; }
-  .tabs button[aria-selected="true"] { background: #fff; color: #0b0a0f; }
+  /* Install: the black band */
+  section.band { background: var(--ink); color: var(--paper); margin-top: 96px; padding: 88px 0; }
+  .band a { color: var(--paper); }
+  .band a:hover { color: var(--dim); }
+  .band :focus-visible { outline-color: var(--paper); }
+  .band .section-head .kicker { color: var(--dim); }
+  .band .section-head p { color: #C8C8C4; }
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-bottom: 56px; }
+  .step { border-top: 1px solid #3A3A3A; padding-top: 18px; }
+  .step .n { font: 500 15px var(--mono); color: var(--amber); margin-bottom: 10px; }
+  .step h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+  .step p { margin: 0; font-size: 15px; line-height: 1.6; color: #C8C8C4; }
+  .install { max-width: 760px; }
+  .tabs { display: flex; gap: 28px; border-bottom: 1px solid #3A3A3A; margin-bottom: 20px; }
+  .tabs button { min-height: 44px; padding: 8px 0; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--dim); font-size: 15px; font-weight: 600; cursor: pointer; transition: color .15s; }
+  .tabs button:hover { color: var(--paper); }
+  .tabs button[aria-selected="true"] { color: var(--paper); border-bottom-color: var(--paper); }
   .panel { display: none; }
   .panel.active { display: block; }
-  .code { position: relative; border-radius: 18px; border: 1px solid var(--card-border); background: #0d0c12; padding: 22px 24px; font-size: 14.5px; line-height: 1.75; overflow-x: auto; }
-  .code .copy { position: absolute; top: 14px; right: 14px; }
-  .code pre { margin: 0; color: #e9e7f2; padding-right: 70px; }
-  .code .c { color: var(--faint); }
-  .install .note { color: var(--muted); font-size: 14px; margin: 14px 4px 0; }
+  .code { display: flex; align-items: flex-start; gap: 12px; padding: 14px 12px 14px 18px; border-radius: 8px; background: #232323; font-size: 14px; line-height: 1.75; }
+  .code pre { flex: 1 1 auto; min-width: 0; margin: 0; overflow-x: auto; color: var(--paper); padding-top: 3px; }
+  .code .copy { order: 2; }
+  .install .note { margin: 14px 0 0; font-size: 14.5px; line-height: 1.6; color: #C8C8C4; }
+  .install .note a { text-decoration: underline; }
+  .install .note code { font-size: 13px; padding: 1px 6px; border-radius: 4px; background: #232323; color: var(--paper); }
+  @media (max-width: 860px) { .steps { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
 
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
-  .plain { border-radius: var(--radius); border: 1px solid var(--card-border); background: var(--card); padding: 28px; }
-  .plain h3 { margin: 0 0 10px; font-size: 20px; }
-  .plain p { color: var(--muted); margin: 0 0 10px; font-size: 15px; }
-  .plain code { font-size: 13px; color: var(--text); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; }
-  .perm { display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; font-size: 15px; }
-  .perm div:nth-child(even) { color: var(--muted); text-align: right; }
+  /* How it works */
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 56px; }
+  .plain { border-top: 2px solid var(--ink); padding-top: 18px; }
+  .plain h3 { margin: 0 0 14px; font-size: 20px; font-weight: 600; }
+  .plain p { margin: 0 0 12px; font-size: 15.5px; line-height: 1.65; color: var(--g3); }
+  .plain code { font-size: 13px; padding: 1px 6px; border-radius: 4px; background: var(--hover); }
+  .perm { display: grid; grid-template-columns: 1fr auto; margin-top: 20px; border-top: 1px solid var(--rule); font-size: 15px; }
+  .perm div { padding: 10px 0; border-bottom: 1px solid var(--rule); }
+  .perm div:nth-child(even) { padding-left: 20px; text-align: right; color: var(--g4); font: 400 13.5px/1.6 var(--mono); }
+  @media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
 
-  .final { margin: 120px 0 0; padding: 70px 28px; text-align: center; border-radius: 30px; border: 1px solid var(--card-border); background: radial-gradient(70% 120% at 50% 0%, rgba(200,107,250,0.25), transparent 70%), var(--bg-2); }
-  .final img { width: 96px; height: 96px; margin: 0 auto 18px; }
-  .final h2 { font-size: clamp(30px, 4.6vw, 48px); letter-spacing: -0.035em; margin: 0 0 22px; font-weight: 800; text-wrap: balance; }
-  footer { padding: 56px 0 48px; color: var(--faint); font-size: 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-  footer a:hover { color: var(--text); }
-
-
-  .stats { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px 34px; margin: 34px auto 0; color: var(--muted); font-size: 14px; }
-  .stats b { display: block; color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
-
-  .tour { display: grid; grid-template-columns: 300px 1fr; gap: 18px; align-items: stretch; }
-  @media (max-width: 900px) { .tour { grid-template-columns: 1fr; } }
-  .tour-list { display: flex; flex-direction: column; gap: 6px; }
-  @media (max-width: 900px) { .tour-list { flex-direction: row; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; } .tour-list::-webkit-scrollbar { display: none; } }
-  .tour-btn { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 1px solid transparent; background: transparent; color: var(--muted); font: inherit; font-size: 15px; font-weight: 600; padding: 8px 12px; border-radius: 14px; cursor: pointer; overflow: hidden; flex: none; transition: background .2s, color .2s, border-color .2s, transform .15s; }
-  @media (max-width: 900px) { .tour-btn { width: auto; white-space: nowrap; } }
-  .tour-btn .e { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,0.06); font-size: 16px; flex: none; }
-  .tour-btn:hover { color: var(--text); }
-  .tour-btn[aria-selected="true"] { color: var(--text); background: var(--card); border-color: var(--card-border); }
-  .tour-btn .bar { position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: linear-gradient(90deg, var(--violet), var(--pink)); }
-  .tour-btn[aria-selected="true"] .bar.run { animation: fill var(--dur, 5s) linear forwards; }
-  @keyframes fill { to { width: 100%; } }
-  /* The bar drives the tour, so holding the bar holds the tour: while it's off screen, focused, or the pointer is on the tabs or the text.
-     Not the screenshot: a resting cursor ends up there just by scrolling. */
-  .tour:not(.onscreen) .tour-btn .bar.run, .tour:focus-within .tour-btn .bar.run { animation-play-state: paused; }
-  @media (hover: hover) { .tour:has(.tour-list:hover, .tour-copy:hover) .tour-btn .bar.run { animation-play-state: paused; } }
-  .tour-stage { border-radius: var(--radius); border: 1px solid var(--card-border); overflow: hidden; display: flex; flex-direction: column;
-    background: radial-gradient(90% 120% at 15% 120%, rgba(255,122,168,0.35) 0%, transparent 55%), radial-gradient(80% 100% at 90% 110%, rgba(106,92,255,0.4) 0%, transparent 60%), linear-gradient(160deg, #1d1534, #0c0a14); }
-  .tour-screen { position: relative; aspect-ratio: 1286 / 470; }
-  .tour-screen img { position: absolute; left: 50%; top: 0; width: 86%; height: auto; transform: translateX(-50%) translateY(-6px) scale(.985); opacity: 0; transition: opacity .45s ease, transform .55s cubic-bezier(.2,.9,.25,1.05); filter: drop-shadow(0 24px 40px rgba(0,0,0,0.45)); }
-  .tour-screen img.on { opacity: 1; transform: translateX(-50%); }
-  @media (max-width: 900px) { .tour-screen img { width: 96%; } .tour-screen { aspect-ratio: 1286 / 440; } }
-  .tour-copy { padding: 0 28px 26px; margin-top: auto; }
-  .tour-copy h3 { margin: 0 0 6px; font-size: 22px; letter-spacing: -0.02em; }
-  .tour-copy p { margin: 0; color: var(--muted); font-size: 15.5px; max-width: 640px; }
-  .tour-copy kbd { font: 600 12px ui-monospace, "SF Mono", Menlo, monospace; padding: 2px 7px; border-radius: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.12); color: var(--text); }
-
-  .mini-note { margin-top: 20px; display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-radius: 18px; background: #000; border: 1px solid rgba(255,255,255,0.08); max-width: 380px; }
-  .mini-note .dot { width: 30px; height: 30px; border-radius: 9px; background: #d97757; display: grid; place-items: center; font-size: 15px; flex: none; }
-  .mini-note b { display: block; font-size: 14px; }
-  .mini-note span { color: var(--muted); font-size: 13px; }
-
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 34px; }
-  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
-  .step { border-radius: var(--radius); border: 1px solid var(--card-border); background: var(--card); padding: 24px; }
-  .step .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: #0b0a0f; background: linear-gradient(135deg, #fff, var(--violet)); margin-bottom: 14px; }
-  .step h3 { margin: 0 0 6px; font-size: 18px; }
-  .step p { margin: 0; color: var(--muted); font-size: 14.5px; }
-
-  .faq { max-width: 820px; margin: 0 auto; display: grid; gap: 10px; }
-  .faq details { border-radius: 18px; border: 1px solid var(--card-border); background: var(--card); padding: 0 22px; transition: border-color .2s; }
-  .faq details[open] { border-color: rgba(200,107,250,0.35); }
-  .faq summary { list-style: none; cursor: pointer; padding: 18px 0; font-weight: 650; font-size: 16px; display: flex; justify-content: space-between; gap: 16px; }
+  /* FAQ */
+  .faq { max-width: 820px; border-top: 1px solid var(--rule); }
+  .faq details { border-bottom: 1px solid var(--rule); }
+  .faq summary { list-style: none; cursor: pointer; min-height: 48px; padding: 18px 0; font-weight: 600; font-size: 17px; display: flex; justify-content: space-between; gap: 16px; }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: "+"; color: var(--violet); font-size: 22px; line-height: 1; transition: transform .2s; }
+  .faq summary::after { content: "+"; font: 400 22px/1 var(--mono); flex: none; transition: transform .2s; }
   .faq details[open] summary::after { transform: rotate(45deg); }
-  .faq .a { color: var(--muted); font-size: 15px; padding: 0 0 18px; }
-  .install .note code, .faq .a code { font-size: 13px; color: var(--text); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; }
+  .faq .a { padding: 0 40px 20px 0; font-size: 16px; line-height: 1.65; color: var(--g3); }
+  .faq .a code { font-size: 13px; padding: 1px 6px; border-radius: 4px; background: var(--hover); }
 
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
-  .reveal.in { opacity: 1; transform: none; }
-  /* Buttons give way the moment they're pressed, not when the click lands. */
-  .btn:active, .copy:active, .lang-btn:active, .tabs button:active, .tour-btn:active { transform: scale(.97); transition-duration: .1s; }
+  /* Closing */
+  .final { margin-top: 120px; border-top: 1px solid var(--rule); padding: 56px 0 48px; display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
+  .final img { width: 64px; height: 64px; margin-left: -6px; }
+  .final h2 { margin: 0; font-family: var(--head); font-weight: 800; font-size: clamp(32px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.035em; max-width: 16ch; text-wrap: balance; overflow-wrap: break-word; }
+  body[data-lang="ko"] .final h2, body[data-lang="ja"] .final h2, body[data-lang="zh"] .final h2 { line-height: 1.15; letter-spacing: -0.02em; }
+  footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; padding: 24px 0 56px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--g5); }
+
+  /* Sections ease in as they scroll into view. Without scroll-driven animation they are simply there. */
+  @keyframes nn-reveal { from { opacity: 0; transform: translateY(28px); } }
+  @supports (animation-timeline: view()) {
+    .reveal { animation: nn-reveal linear both; animation-timeline: view(); animation-range: entry 0% cover 28%; }
+  }
+
   body:not([data-lang="en"]) .en, body:not([data-lang="ko"]) .ko, body:not([data-lang="ja"]) .ja, body:not([data-lang="zh"]) .zh,
   body:not([data-lang="es"]) .es, body:not([data-lang="de"]) .de, body:not([data-lang="fr"]) .fr { display: none !important; }
+
+  /* Reduced motion: a still, readable page. The notch rests open on the screenshot. */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .reveal { opacity: 1; transform: none; }
-    /* Nothing slides or bounces, but swapped content still cross-fades and the notch eases in 0.2 s, as the app does with Reduce Motion. */
-    .tour-screen img { transform: translateX(-50%); }
-    .tour-screen img, .live-notch img { transition: opacity .2s ease !important; }
-    .live-notch, .live-notch::before, .live-notch::after { transition: width .2s ease-in-out, height .2s ease-in-out !important; }
-    .live-notch .body { transition: left .2s ease-in-out, right .2s ease-in-out, border-radius .2s ease-in-out !important; }
+    .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; }
+    .nn-brow { display: none; }
+    .nn-shot { opacity: 1; }
   }
 </style>
 </head>
 <body data-lang="en">
 
-<nav class="top">
+<nav class="top" aria-label="Main">
   <div class="wrap">
-    <a class="brand" href="#"><img src="images/icon.png" alt="">Nunsseop <small>눈썹</small></a>
+    <a class="brand nn-logo" href="#top"><span class="mark"><svg class="nn-logo-brow" width="20" height="8" viewBox="0 0 100 40" aria-hidden="true"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z" fill="#F4F4F1"/></svg></span><span class="name">Nunsseop</span><small>눈썹</small></a>
     <div class="nav-links">
       <a href="#tour"><span class="en">Tour</span><span class="ko">둘러보기</span><span class="ja">ツアー</span><span class="zh">导览</span><span class="es">Recorrido</span><span class="de">Tour</span><span class="fr">Aperçu</span></a>
       <a href="#features"><span class="en">Features</span><span class="ko">기능</span><span class="ja">機能</span><span class="zh">功能</span><span class="es">Funciones</span><span class="de">Funktionen</span><span class="fr">Fonctionnalités</span></a>
@@ -284,17 +297,16 @@
   </div>
 </nav>
 
-<header class="hero">
-  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<header class="hero" id="top">
   <div class="wrap">
-    <span class="eyebrow"><b>v0.23.0</b> <span class="en">Free &amp; open source · macOS 14+</span><span class="ko">무료 오픈소스 · macOS 14 이상</span><span class="ja">無料・オープンソース · macOS 14 以上</span><span class="zh">免费开源 · macOS 14 及以上</span><span class="es">Gratis y de código abierto · macOS 14+</span><span class="de">Kostenlos &amp; Open Source · macOS 14+</span><span class="fr">Gratuit &amp; open source · macOS 14+</span></span>
-    <h1 class="en">Your notch,<br><span class="grad-text">finally useful.</span></h1>
-    <h1 class="ko">노치,<br><span class="grad-text">이제 쓸모 있게.</span></h1>
-    <h1 class="ja">あなたのノッチが、<br><span class="grad-text">ついに役立つ。</span></h1>
-    <h1 class="zh">刘海，<br><span class="grad-text">终于有用了。</span></h1>
-    <h1 class="es">Tu notch,<br><span class="grad-text">por fin útil.</span></h1>
-    <h1 class="de">Deine Notch,<br><span class="grad-text">endlich nützlich.</span></h1>
-    <h1 class="fr">Votre encoche,<br><span class="grad-text">enfin utile.</span></h1>
+    <p class="eyebrow"><b>v0.23.0</b><span class="en">Free &amp; open source · macOS 14+</span><span class="ko">무료 오픈소스 · macOS 14 이상</span><span class="ja">無料・オープンソース · macOS 14 以上</span><span class="zh">免费开源 · macOS 14 及以上</span><span class="es">Gratis y de código abierto · macOS 14+</span><span class="de">Kostenlos &amp; Open Source · macOS 14+</span><span class="fr">Gratuit &amp; open source · macOS 14+</span></p>
+    <h1 class="en"><span class="nn-word">Your</span> <span class="nn-word" style="animation-delay:0.08s">notch,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">finally</span> <span class="nn-word" style="animation-delay:0.24s">useful.</span></span></h1>
+    <h1 class="ko"><span class="nn-word">노치,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">이제</span> <span class="nn-word" style="animation-delay:0.16s">쓸모</span> <span class="nn-word" style="animation-delay:0.24s">있게.</span></span></h1>
+    <h1 class="ja"><span class="nn-word">あなたのノッチが、</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">ついに役立つ。</span></span></h1>
+    <h1 class="zh"><span class="nn-word">刘海，</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">终于有用了。</span></span></h1>
+    <h1 class="es"><span class="nn-word">Tu</span> <span class="nn-word" style="animation-delay:0.08s">notch,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">por</span> <span class="nn-word" style="animation-delay:0.24s">fin</span> <span class="nn-word" style="animation-delay:0.32s">útil.</span></span></h1>
+    <h1 class="de"><span class="nn-word">Deine</span> <span class="nn-word" style="animation-delay:0.08s">Notch,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">endlich</span> <span class="nn-word" style="animation-delay:0.24s">nützlich.</span></span></h1>
+    <h1 class="fr"><span class="nn-word">Votre</span> <span class="nn-word" style="animation-delay:0.08s">encoche,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">enfin</span> <span class="nn-word" style="animation-delay:0.24s">utile.</span></span></h1>
     <p class="lead en">Music, files, your calendar and system HUDs live right where the camera sits. Hover to open. That's it.</p>
     <p class="lead ko">음악, 파일, 일정, 시스템 HUD가 카메라 바로 아래에 있습니다. 마우스를 올리면 열립니다. 그게 전부예요.</p>
     <p class="lead ja">音楽、ファイル、カレンダー、システム HUD が、カメラのあるその場所に。ホバーで開く。それだけです。</p>
@@ -312,37 +324,40 @@
         <button class="copy" type="button" data-copy="brew install --cask namekun/tap/nunsseop"><span class="en">Copy</span><span class="ko">복사</span><span class="ja">コピー</span><span class="zh">复制</span><span class="es">Copiar</span><span class="de">Kopieren</span><span class="fr">Copier</span></button>
       </div>
     </div>
+  </div>
+</header>
 
-    <div class="device reveal">
-      <div class="screen">
-        <div class="menubar"><div class="l"><b></b><b>Nunsseop</b><span class="en">File</span><span class="ko">파일</span><span class="ja">ファイル</span><span class="zh">文件</span><span class="es">Archivo</span><span class="de">Datei</span><span class="fr">Fichier</span><span class="en">Edit</span><span class="ko">편집</span><span class="ja">編集</span><span class="zh">编辑</span><span class="es">Editar</span><span class="de">Bearbeiten</span><span class="fr">Édition</span></div><div class="r"><span>100%</span><span id="clock">9:41</span></div></div>
-        <div class="live-notch" id="notch" role="button" tabindex="0" aria-label="Open the notch">
-          <div class="body"></div>
-          <img class="mini" src="images/collapsed-music.png" alt="" width="272" height="32">
-          <img class="full" src="images/home.png" alt="Expanded notch with now playing and calendar" width="739" height="196">
-        </div>
-      </div>
+<section class="stage-band" aria-label="The notch opening">
+  <div class="nn-stage">
+    <div class="nn-bar" aria-hidden="true"><div class="l"><b>Nunsseop</b><span class="en">File</span><span class="ko">파일</span><span class="ja">ファイル</span><span class="zh">文件</span><span class="es">Archivo</span><span class="de">Datei</span><span class="fr">Fichier</span><span class="en">Edit</span><span class="ko">편집</span><span class="ja">編集</span><span class="zh">编辑</span><span class="es">Editar</span><span class="de">Bearbeiten</span><span class="fr">Édition</span></div><div class="r"><span>100%</span><span>9:41</span></div></div>
+    <div class="nn-notch">
+      <svg class="nn-brow" viewBox="0 0 100 40" aria-hidden="true"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z" fill="#F4F4F1"/></svg>
+      <img class="nn-shot" src="images/home.png" alt="Expanded notch with now playing and calendar" width="1478" height="392">
     </div>
-    <p class="hint"><span class="en">Hover the notch above — just like on your Mac.</span><span class="ko">위의 노치에 마우스를 올려 보세요. Mac에서와 똑같이요.</span><span class="ja">上のノッチにマウスを乗せてみてください。Mac と同じように。</span><span class="zh">把鼠标移到上面的刘海上——就像在你的 Mac 上一样。</span><span class="es">Pasa el cursor por el notch de arriba, igual que en tu Mac.</span><span class="de">Bewege die Maus über die Notch oben – genau wie auf deinem Mac.</span><span class="fr">Survolez l’encoche ci-dessus — comme sur votre Mac.</span></p>
-    <div class="stats">
+  </div>
+  <p><span class="en">A real screenshot. Point at the eyebrow and this is what opens.</span><span class="ko">실제 화면입니다. 눈썹에 마우스를 올리면 이렇게 열립니다.</span><span class="ja">実際のスクリーンショットです。眉にポインターを合わせると、こう開きます。</span><span class="zh">这是真实截图。把鼠标移到眉毛上，就会这样展开。</span><span class="es">Una captura real. Apunta a la ceja y esto es lo que se abre.</span><span class="de">Ein echter Screenshot. Zeig auf die Augenbraue, und das öffnet sich.</span><span class="fr">Une vraie capture d’écran. Pointez le sourcil et voici ce qui s’ouvre.</span></p>
+</section>
+<div class="wrap">
+  <div class="stats">
       <div><b>13</b><span class="en">tabs to choose from</span><span class="ko">고를 수 있는 탭</span><span class="ja">選べるタブ</span><span class="zh">个可选标签</span><span class="es">pestañas para elegir</span><span class="de">Tabs zur Auswahl</span><span class="fr">onglets au choix</span></div>
       <div><b>7</b><span class="en">languages</span><span class="ko">개 언어</span><span class="ja">言語</span><span class="zh">种语言</span><span class="es">idiomas</span><span class="de">Sprachen</span><span class="fr">langues</span></div>
       <div><b>0</b><span class="en">accounts or trackers</span><span class="ko">계정·추적 없음</span><span class="ja">アカウントもトラッカーもなし</span><span class="zh">账户或追踪</span><span class="es">cuentas ni rastreadores</span><span class="de">Accounts oder Tracker</span><span class="fr">comptes ni traqueurs</span></div>
       <div><b>1.6 MB</b><span class="en">download, native Swift</span><span class="ko">다운로드, 네이티브 앱</span><span class="ja">のダウンロード、ネイティブ Swift</span><span class="zh">下载，原生 Swift 打造</span><span class="es">de descarga, Swift nativo</span><span class="de">Download, natives Swift</span><span class="fr">téléchargement, natif en Swift</span></div>
     </div>
-  </div>
-</header>
-
-<div class="works">
-  <p class="en">Picks up whatever is playing</p><p class="ko">무엇을 재생하든 잡아냅니다</p><p class="ja">再生中のものを自動で検出</p><p class="zh">自动识别正在播放的内容</p><p class="es">Capta lo que sea que estés reproduciendo</p><p class="de">Erkennt, was auch immer gerade läuft</p><p class="fr">Détecte tout ce qui est en train de jouer</p>
-  <div class="marquee"><div class="track" id="track">
-    <span class="chip">Apple Music</span><span class="chip">Spotify</span><span class="chip">YouTube Music</span><span class="chip">Safari</span><span class="chip">Chrome</span><span class="chip">Arc</span><span class="chip">Dia</span><span class="chip">Aside</span><span class="chip">Firefox</span><span class="chip">Edge</span><span class="chip">Brave</span><span class="chip">Whale</span><span class="chip">SoundCloud</span><span class="chip">Melon</span><span class="chip">Podcasts</span><span class="chip">QuickTime</span>
-  </div></div>
 </div>
 
-<main class="wrap">
+<div class="works">
+  <div class="wrap">
+  <p class="en">Picks up whatever is playing</p><p class="ko">무엇을 재생하든 잡아냅니다</p><p class="ja">再生中のものを自動で検出</p><p class="zh">自动识别正在播放的内容</p><p class="es">Capta lo que sea que estés reproduciendo</p><p class="de">Erkennt, was auch immer gerade läuft</p><p class="fr">Détecte tout ce qui est en train de jouer</p>
+  <ul class="players"><li>Apple Music</li><li>Spotify</li><li>YouTube Music</li><li>Safari</li><li>Chrome</li><li>Arc</li><li>Dia</li><li>Aside</li><li>Firefox</li><li>Edge</li><li>Brave</li><li>Whale</li><li>SoundCloud</li><li>Melon</li><li>Podcasts</li><li>QuickTime</li></ul>
+  </div>
+</div>
+
+<main>
   <section class="block" id="tour">
-    <div class="section-head reveal">
+    <div class="wrap">
+    <div class="tour" id="tourBox">
+      <div class="section-head">
       <div class="kicker en">Take the tour</div><div class="kicker ko">둘러보기</div><div class="kicker ja">ツアーを見る</div><div class="kicker zh">开始导览</div><div class="kicker es">Haz el recorrido</div><div class="kicker de">Zur Tour</div><div class="kicker fr">Voir l’aperçu</div>
       <h2 class="en">One hover, a dozen tools.</h2><h2 class="ko">마우스 한 번에, 도구 열두 개.</h2><h2 class="ja">マウスを乗せるだけで、十数個のツール。</h2><h2 class="zh">悬停一次，十余种工具。</h2><h2 class="es">Un gesto, una docena de herramientas.</h2><h2 class="de">Ein Hover, ein Dutzend Werkzeuge.</h2><h2 class="fr">Un survol, une douzaine d’outils.</h2>
       <p class="en">These are real screenshots. Pick a tab to see it.</p>
@@ -353,17 +368,19 @@
       <p class="de">Das sind echte Screenshots. Wähle einen Tab, um ihn zu sehen.</p>
       <p class="fr">Ce sont de vraies captures d’écran. Choisissez un onglet pour les voir.</p>
     </div>
-    <div class="tour reveal" id="tourBox">
-      <div class="tour-list" role="tablist" id="tourList"></div>
-      <div class="tour-stage">
+      <div class="tour-list" id="tourList" role="group"></div>
+      <figure class="tour-stage reveal">
         <div class="tour-screen" id="tourScreen"></div>
-        <div class="tour-copy" aria-live="polite"><h3 id="tourTitle"></h3><p id="tourText"></p></div>
-      </div>
+        <figcaption class="tour-copy"><h3 id="tourTitle"></h3><p id="tourText"></p></figcaption>
+        <div class="sr-only" id="tourStatus" role="status" aria-live="polite"></div>
+      </figure>
+    </div>
     </div>
   </section>
 
-  <section class="block" id="features">
-    <div class="section-head reveal">
+<section class="block" id="features">
+    <div class="wrap">
+    <div class="section-head">
       <div class="kicker en">And quietly, in the background</div><div class="kicker ko">그리고 조용히, 뒤에서</div><div class="kicker ja">そして静かに、裏側で</div><div class="kicker zh">而且，在后台默默工作</div><div class="kicker es">Y en silencio, de fondo</div><div class="kicker de">Und still, im Hintergrund</div><div class="kicker fr">Et discrètement, en arrière-plan</div>
       <h2 class="en">It notices, so you don't have to.</h2><h2 class="ko">알아서 챙기니까, 신경 끄셔도 돼요.</h2><h2 class="ja">気づいてくれるから、気にしなくていい。</h2><h2 class="zh">它会留意一切，你不用操心。</h2><h2 class="es">Se da cuenta, para que tú no tengas que hacerlo.</h2><h2 class="de">Es behält den Überblick, damit du es nicht musst.</h2><h2 class="fr">Il s’en occupe, pour que vous n’ayez pas à y penser.</h2>
       <p class="en">Built natively in Swift and SwiftUI. No Electron, no account, no tracking.</p>
@@ -377,7 +394,6 @@
 
     <div class="bento">
       <article class="tile t-half reveal">
-        <div class="ico">🔊</div>
         <h3><span class="en">System HUDs, reimagined</span><span class="ko">새로워진 시스템 HUD</span><span class="ja">システム HUD を、再発明。</span><span class="zh">重新设计的系统 HUD</span><span class="es">Los HUD del sistema, reinventados</span><span class="de">System-HUDs, neu gedacht</span><span class="fr">Les HUD système, réinventés</span></h3>
         <p class="en">Volume, brightness (even external displays over DDC), keyboard backlight, charging and AirPods battery, right in the notch.</p>
         <p class="ko">볼륨, 밝기(DDC 외부 모니터 포함), 키보드 백라이트, 충전, AirPods 배터리까지 노치 안에서.</p>
@@ -392,7 +408,6 @@
         </div>
       </article>
       <article class="tile t-half reveal">
-        <div class="ico">✳️</div>
         <h3><span class="en">Agents &amp; terminals, in your notch</span><span class="ko">노치로 오는 에이전트·터미널 알림</span><span class="ja">エージェントとターミナルが、ノッチに。</span><span class="zh">代理与终端通知，直达刘海</span><span class="es">Agentes y terminales, en tu notch</span><span class="de">Agenten &amp; Terminals, in deiner Notch</span><span class="fr">Agents &amp; terminaux, dans votre encoche</span></h3>
         <p class="en">Connect Claude Code, Codex, Gemini CLI or OpenCode with one click. Agents in Muxy, cmux and herdr, and bells from tmux and WezTerm, show up without a hook. Click a notice to jump to its terminal, pane or tab. Any local script can send one too.</p>
         <p class="ko">Claude Code, Codex, Gemini CLI, OpenCode는 클릭 한 번으로 연결되고, Muxy·cmux·herdr 안의 에이전트와 tmux·WezTerm 벨은 훅 없이 뜹니다. 알림을 누르면 그 터미널, 창, 탭으로 바로 갑니다. 어떤 로컬 스크립트든 알림을 보낼 수 있어요.</p>
@@ -401,10 +416,9 @@
         <p class="es">Conecta Claude Code, Codex, Gemini CLI u OpenCode con un clic. Los agentes de Muxy, cmux y herdr, y las campanas de tmux y WezTerm, aparecen sin ningún hook. Haz clic en un aviso para ir a su terminal, panel o pestaña. Cualquier script local también puede enviar uno.</p>
         <p class="de">Verbinde Claude Code, Codex, Gemini CLI oder OpenCode mit einem Klick. Agenten in Muxy, cmux und herdr sowie Bell-Signale aus tmux und WezTerm erscheinen ganz ohne Hook. Ein Klick auf einen Hinweis bringt dich zu seinem Terminal, Bereich oder Tab. Auch jedes lokale Skript kann einen senden.</p>
         <p class="fr">Connectez Claude Code, Codex, Gemini CLI ou OpenCode en un clic. Les agents de Muxy, cmux et herdr, ainsi que les sonneries de tmux et WezTerm, s’affichent sans aucun hook. Cliquez sur une alerte pour retrouver son terminal, son panneau ou son onglet. N’importe quel script local peut aussi en envoyer une.</p>
-        <div class="mini-note"><div class="dot">✳︎</div><div><b>Claude Code</b><span class="en">Needs your permission to run a command</span><span class="ko">명령을 실행하려면 허락이 필요해요</span><span class="ja">コマンドの実行に許可が必要です</span><span class="zh">需要你的许可才能执行命令</span><span class="es">Necesita tu permiso para ejecutar un comando</span><span class="de">Braucht deine Erlaubnis, um einen Befehl auszuführen</span><span class="fr">A besoin de votre autorisation pour exécuter une commande</span></div></div>
+        <div class="mini-note"><div><b>Claude Code</b><span class="en">Needs your permission to run a command</span><span class="ko">명령을 실행하려면 허락이 필요해요</span><span class="ja">コマンドの実行に許可が必要です</span><span class="zh">需要你的许可才能执行命令</span><span class="es">Necesita tu permiso para ejecutar un comando</span><span class="de">Braucht deine Erlaubnis, um einen Befehl auszuführen</span><span class="fr">A besoin de votre autorisation pour exécuter une commande</span></div></div>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">🎤</div>
+      <article class="tile reveal">
         <h3><span class="en">Sneak peek &amp; lyrics</span><span class="ko">미리보기와 가사</span><span class="ja">スニークピークと歌詞</span><span class="zh">预览与歌词</span><span class="es">Vista previa y letras</span><span class="de">Vorschau &amp; Songtexte</span><span class="fr">Aperçu &amp; paroles</span></h3>
         <p class="en">When the track changes the title slides out for a moment, and the line being sung can stay under the notch while you work.</p>
         <p class="ko">곡이 바뀌면 제목이 잠깐 나왔다 사라지고, 원하면 지금 부르는 가사가 작업 중에도 노치 아래에 흐릅니다.</p>
@@ -413,9 +427,9 @@
         <p class="es">Cuando cambia la canción, el título aparece un momento y, si quieres, la letra que se está cantando se queda bajo el notch mientras trabajas.</p>
         <p class="de">Wenn sich der Titel ändert, gleitet er kurz heraus, und die aktuelle Textzeile kann während der Arbeit unter der Notch bleiben.</p>
         <p class="fr">Quand le morceau change, le titre apparaît un instant, et la ligne chantée peut rester sous l’encoche pendant que vous travaillez.</p>
+        <img class="tile-shot" src="images/collapsed-music.png" alt="The closed notch with artwork and a playback indicator" width="544" height="64" loading="lazy">
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">📅</div>
+      <article class="tile reveal">
         <h3><span class="en">Calendar &amp; reminders</span><span class="ko">캘린더와 미리 알림</span><span class="ja">カレンダーとリマインダー</span><span class="zh">日历与提醒事项</span><span class="es">Calendario y recordatorios</span><span class="de">Kalender &amp; Erinnerungen</span><span class="fr">Calendrier &amp; rappels</span></h3>
         <p class="en">This week, today's events and reminders to tick off. Five minutes before an event the notch gives you a heads-up, and one click joins Zoom, Meet, Teams and other calls.</p>
         <p class="ko">이번 주, 오늘 일정, 완료할 미리 알림. 일정 5분 전에 노치가 알려 주고, Zoom·Meet·Teams 같은 화상 회의는 클릭 한 번으로 참가합니다.</p>
@@ -425,8 +439,7 @@
         <p class="de">Diese Woche, die heutigen Termine und Erinnerungen zum Abhaken. Fünf Minuten vor einem Termin meldet sich die Notch, und Zoom-, Meet-, Teams- und andere Calls trittst du mit einem Klick bei.</p>
         <p class="fr">Votre semaine, les évènements du jour et des rappels à cocher. Cinq minutes avant un évènement, l’encoche vous prévient, et vous rejoignez Zoom, Meet, Teams et d’autres appels en un clic.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">🟢</div>
+      <article class="tile reveal">
         <h3><span class="en">Camera &amp; mic indicator</span><span class="ko">카메라·마이크 표시</span><span class="ja">カメラ・マイクのインジケーター</span><span class="zh">相机与麦克风提示</span><span class="es">Indicador de cámara y micrófono</span><span class="de">Kamera- &amp; Mikrofonanzeige</span><span class="fr">Indicateur caméra &amp; micro</span></h3>
         <p class="en">A dot on the notch whenever any app is using your camera or microphone, so nothing listens in unnoticed.</p>
         <p class="ko">어떤 앱이든 카메라나 마이크를 쓰는 동안 노치에 표시가 뜹니다. 몰래 듣는 앱은 없어요.</p>
@@ -436,8 +449,7 @@
         <p class="de">Ein Punkt auf der Notch, sobald eine App deine Kamera oder dein Mikrofon nutzt, damit nichts unbemerkt mithört.</p>
         <p class="fr">Un point sur l’encoche dès qu’une app utilise votre caméra ou votre microphone, pour qu’aucune écoute ne passe inaperçue.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">⏺️</div>
+      <article class="tile reveal">
         <h3><span class="en">Screen recording</span><span class="ko">화면 녹화</span><span class="ja">画面収録</span><span class="zh">屏幕录制</span><span class="es">Grabación de pantalla</span><span class="de">Bildschirmaufnahme</span><span class="fr">Enregistrement de l’écran</span></h3>
         <p class="en">Start it from Tools; a red dot and timer stay on the notch, and the video lands on the shelf when you stop.</p>
         <p class="ko">도구 탭에서 시작하면 노치에 빨간 점과 시간이 남고, 멈추면 영상이 선반에 들어갑니다.</p>
@@ -447,8 +459,7 @@
         <p class="de">Starte sie über Werkzeuge; ein roter Punkt und ein Timer bleiben auf der Notch, und das Video landet beim Stoppen in der Ablage.</p>
         <p class="fr">Lancez-le depuis Outils ; un point rouge et un chronomètre restent sur l’encoche, et la vidéo atterrit sur l’étagère à l’arrêt.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">📋</div>
+      <article class="tile reveal">
         <h3><span class="en">Clipboard &amp; notes</span><span class="ko">클립보드와 메모</span><span class="ja">クリップボードとメモ</span><span class="zh">剪贴板与便笺</span><span class="es">Portapapeles y notas</span><span class="de">Zwischenablage &amp; Notizen</span><span class="fr">Presse-papiers &amp; notes</span></h3>
         <p class="en">Search what you copied and copy it again in one click. Jot notes without opening another app.</p>
         <p class="ko">복사한 내용을 검색해 한 번에 다시 복사하고, 다른 앱 없이 바로 메모하세요.</p>
@@ -458,8 +469,7 @@
         <p class="de">Durchsuche, was du kopiert hast, und kopiere es mit einem Klick erneut. Notiere dir etwas, ohne eine weitere App zu öffnen.</p>
         <p class="fr">Recherchez ce que vous avez copié et recopiez-le en un clic. Notez vos idées sans ouvrir une autre app.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">⛅</div>
+      <article class="tile reveal">
         <h3><span class="en">Weather &amp; downloads</span><span class="ko">날씨와 다운로드</span><span class="ja">天気とダウンロード</span><span class="zh">天气与下载</span><span class="es">Tiempo y descargas</span><span class="de">Wetter &amp; Downloads</span><span class="fr">Météo &amp; téléchargements</span></h3>
         <p class="en">Today's weather in the header, and a nudge when a download finishes. Screenshots drop onto the shelf by themselves.</p>
         <p class="ko">헤더에 오늘 날씨를, 다운로드가 끝나면 살짝 알려 줍니다. 스크린샷은 알아서 선반에 들어가요.</p>
@@ -469,8 +479,7 @@
         <p class="de">Das heutige Wetter in der Kopfzeile und ein Hinweis, wenn ein Download fertig ist. Screenshots landen von selbst in der Ablage.</p>
         <p class="fr">La météo du jour dans l’en-tête, et un signal quand un téléchargement se termine. Les captures d’écran arrivent seules sur l’étagère.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">🔋</div>
+      <article class="tile reveal">
         <h3><span class="en">Little heads-ups</span><span class="ko">작은 알림들</span><span class="ja">ちょっとした通知</span><span class="zh">小提醒</span><span class="es">Pequeños avisos</span><span class="de">Kleine Hinweise</span><span class="fr">Petites alertes</span></h3>
         <p class="en">Low battery on the Mac, mouse or keyboard, fully charged, Caps Lock on. Glanceable, then gone.</p>
         <p class="ko">Mac·마우스·키보드 배터리 부족, 충전 완료, Caps Lock 켜짐. 한눈에 보이고 금방 사라집니다.</p>
@@ -480,8 +489,7 @@
         <p class="de">Niedriger Akkustand bei Mac, Maus oder Tastatur, vollständig geladen, Feststelltaste an. Ein kurzer Blick, dann sind sie weg.</p>
         <p class="fr">Batterie faible du Mac, de la souris ou du clavier, charge complète, verrouillage des majuscules activé. Un coup d’œil, puis ça disparaît.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">👆</div>
+      <article class="tile reveal">
         <h3><span class="en">Gestures</span><span class="ko">제스처</span><span class="ja">ジェスチャー</span><span class="zh">手势</span><span class="es">Gestos</span><span class="de">Gesten</span><span class="fr">Gestes</span></h3>
         <p class="en">Swipe down to open, up to close, sideways on Home to skip the track.</p>
         <p class="ko">아래로 쓸면 열기, 위로 쓸면 닫기, 홈 탭에서 옆으로 쓸면 다음 곡.</p>
@@ -491,8 +499,7 @@
         <p class="de">Nach unten wischen zum Öffnen, nach oben zum Schließen, seitlich auf Start, um den Titel zu wechseln.</p>
         <p class="fr">Balayez vers le bas pour ouvrir, vers le haut pour fermer, sur le côté dans l’onglet Accueil pour changer de morceau.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">📷</div>
+      <article class="tile reveal">
         <h3><span class="en">Mirror</span><span class="ko">미러</span><span class="ja">ミラー</span><span class="zh">镜子</span><span class="es">Espejo</span><span class="de">Spiegel</span><span class="fr">Miroir</span></h3>
         <p class="en">Check your hair before the call. The camera runs only while the tab is open.</p>
         <p class="ko">통화 전에 머리 한 번 확인. 카메라는 탭이 열려 있을 때만 켜집니다.</p>
@@ -502,8 +509,7 @@
         <p class="de">Prüf dein Haar vor dem Call. Die Kamera läuft nur, solange der Tab geöffnet ist.</p>
         <p class="fr">Vérifiez votre coiffure avant l’appel. La caméra ne fonctionne que lorsque l’onglet est ouvert.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">🔔</div>
+      <article class="tile reveal">
         <h3><span class="en">Notifications tab</span><span class="ko">알림 탭</span><span class="ja">通知タブ</span><span class="zh">通知标签</span><span class="es">Pestaña Notificaciones</span><span class="de">Mitteilungen-Tab</span><span class="fr">Onglet Notifications</span></h3>
         <p class="en">The last 30 notices from agents, terminals and your calendar, with a badge for unseen ones. Click one to go back where it came from. Off by default, kept in memory only.</p>
         <p class="ko">에이전트, 터미널, 캘린더에서 온 최근 알림 30개와 안 본 개수 배지. 누르면 알림이 온 곳으로 돌아갑니다. 기본으로 꺼져 있고 메모리에만 둡니다.</p>
@@ -513,8 +519,7 @@
         <p class="de">Die letzten 30 Hinweise von Agenten, Terminals und deinem Kalender, mit einem Badge für ungesehene. Ein Klick führt zurück zur Quelle. Standardmäßig aus und nur im Arbeitsspeicher.</p>
         <p class="fr">Les 30 dernières alertes des agents, des terminaux et de votre calendrier, avec un badge pour celles non vues. Cliquez sur l’une d’elles pour revenir à son origine. Désactivé par défaut, gardé en mémoire uniquement.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">⚡</div>
+      <article class="tile reveal">
         <h3><span class="en">Agents at work</span><span class="ko">작업 중인 에이전트</span><span class="ja">作業中のエージェント</span><span class="zh">工作中的代理</span><span class="es">Agentes en marcha</span><span class="de">Aktive Agenten</span><span class="fr">Agents au travail</span></h3>
         <p class="en">An item for the closed notch: a green bolt with how many coding agents are working, a yellow hand when some wait for you. It follows herdr for now.</p>
         <p class="ko">닫힌 노치에 일하는 코딩 에이전트 수는 초록 번개로, 나를 기다리는 에이전트가 있으면 노란 손으로 보여 줍니다. 지금은 herdr를 따라갑니다.</p>
@@ -524,8 +529,7 @@
         <p class="de">Ein Element für die eingeklappte Notch: ein grüner Blitz mit der Zahl arbeitender Coding-Agenten, eine gelbe Hand, wenn welche auf dich warten. Vorerst für herdr.</p>
         <p class="fr">Un élément pour l’encoche repliée : un éclair vert avec le nombre d’agents de code au travail, une main jaune quand certains vous attendent. Il suit herdr pour l’instant.</p>
       </article>
-      <article class="tile t-third reveal">
-        <div class="ico">📈</div>
+      <article class="tile reveal">
         <h3><span class="en">Live Claude limits</span><span class="ko">Claude 실시간 한도</span><span class="ja">Claude の上限をリアルタイムに</span><span class="zh">实时 Claude 额度</span><span class="es">Límites de Claude en directo</span><span class="de">Claude-Limits live</span><span class="fr">Limites de Claude en direct</span></h3>
         <p class="en">Say yes once in the AI tab and your 5-hour and weekly Claude limits come from Anthropic about once an hour, using the sign-in Claude Code keeps in the Keychain. Off until you opt in.</p>
         <p class="ko">AI 탭에서 한 번 허락하면 Claude Code가 키체인에 둔 로그인 정보로 한 시간에 한 번쯤 Anthropic에서 5시간·주간 한도를 받아옵니다. 허락하기 전에는 꺼져 있어요.</p>
@@ -536,7 +540,6 @@
         <p class="fr">Acceptez une fois dans l’onglet IA, et vos limites Claude sur 5 heures et à la semaine arrivent d’Anthropic environ une fois par heure, grâce à la connexion que Claude Code garde dans le trousseau. Désactivé tant que vous n’avez pas accepté.</p>
       </article>
       <article class="tile t-half reveal">
-        <div class="ico">🧩</div>
         <h3><span class="en">Make it yours</span><span class="ko">내게 맞게 구성</span><span class="ja">自分好みに設定</span><span class="zh">打造专属体验</span><span class="es">Hazlo tuyo</span><span class="de">Mach es zu deinem</span><span class="fr">Faites-le vôtre</span></h3>
         <p class="en">Pick your tabs and their order, what the header and the collapsed notch show, and which pop-ups you get. During a call it shows the call app and how long you've been talking, and when idle each side of the collapsed notch can show Claude Code usage left, agents at work, battery, weather or the date. Anything you turn off stops running. On macOS 26 it wears Liquid Glass, tinted as dark as you like up to solid black, and it can hide while the lid is closed.</p>
         <p class="ko">탭과 순서, 헤더와 접힌 노치에 보일 것, 받을 알림을 직접 고르세요. 통화 중에는 통화 앱과 통화 시간이, 평소에는 접힌 노치 양쪽에 Claude Code 남은 양, 작업 중인 에이전트, 배터리, 날씨, 날짜를 띄워 둘 수 있어요. 꺼 둔 기능은 동작하지 않습니다. macOS 26에서는 Liquid Glass로 그려지고 농도를 완전한 검정까지 올릴 수 있으며, 덮개를 닫았을 때 숨길 수도 있어요.</p>
@@ -547,8 +550,8 @@
         <p class="fr">Choisissez vos onglets et leur ordre, ce que l’en-tête et l’encoche repliée affichent, et les notifications que vous recevez. Pendant un appel, elle affiche l’app d’appel et sa durée, et au repos, chaque côté de l’encoche repliée peut afficher l’usage restant de Claude Code, les agents au travail, la batterie, la météo ou la date. Tout ce que vous désactivez s’arrête complètement. Sur macOS 26, elle adopte le Liquid Glass, teinté jusqu’au noir opaque, et peut se cacher quand le capot est fermé.</p>
       </article>
       <article class="tile t-half reveal">
-        <div class="ico">🌏</div>
         <h3><span class="en">Speaks your language</span><span class="ko">7개 언어</span><span class="ja">あなたの言葉で話します</span><span class="zh">跟随你的语言</span><span class="es">Habla tu idioma</span><span class="de">Spricht deine Sprache</span><span class="fr">Parle votre langue</span></h3>
+        <div class="brow-pill" aria-hidden="true"><svg class="nn-brow-loop" width="56" height="22" viewBox="0 0 100 40"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z" fill="#F4F4F1"/></svg></div>
         <p class="en">Follows your Mac's language. Screens without a notch get a small eyebrow pill in the menu bar that fades out when unused.</p>
         <p class="ko">Mac 언어 설정을 따릅니다. 노치가 없는 화면에는 메뉴 막대 안에 눈썹 로고의 작은 알약으로 나타나고, 쓰지 않으면 사라져요.</p>
         <p class="ja">Mac の言語設定に従います。ノッチのない画面では、メニューバーの中に眉のロゴの小さなピルが表示され、使わないときは消えます。</p>
@@ -559,33 +562,35 @@
         <div class="langs"><span>English</span><span>한국어</span><span>日本語</span><span>简体中文</span><span>Español</span><span>Deutsch</span><span>Français</span></div>
       </article>
     </div>
+    </div>
   </section>
 
-  <section class="block" id="install">
-    <div class="section-head reveal">
+<section class="block band" id="install">
+    <div class="wrap">
+    <div class="section-head">
       <div class="kicker en">Install</div><div class="kicker ko">설치</div><div class="kicker ja">インストール</div><div class="kicker zh">安装</div><div class="kicker es">Instalación</div><div class="kicker de">Installieren</div><div class="kicker fr">Installation</div>
       <h2 class="en">Up and running in a minute.</h2><h2 class="ko">1분이면 충분합니다.</h2><h2 class="ja">1分で使い始められます。</h2><h2 class="zh">一分钟就能用起来。</h2><h2 class="es">Listo en un minuto.</h2><h2 class="de">In einer Minute startklar.</h2><h2 class="fr">Opérationnel en une minute.</h2>
       <p class="en">macOS 14 Sonoma or later, on Apple silicon or Intel.</p><p class="ko">macOS 14 Sonoma 이상, Apple 실리콘과 Intel 모두.</p><p class="ja">macOS 14 Sonoma 以降、Apple シリコンと Intel の両方で。</p><p class="zh">macOS 14 Sonoma 或更高版本，支持 Apple 芯片和 Intel。</p><p class="es">macOS 14 Sonoma o posterior, en Apple silicon o Intel.</p><p class="de">macOS 14 Sonoma oder neuer, auf Apple Silicon oder Intel.</p><p class="fr">macOS 14 Sonoma ou version ultérieure, sur Apple silicon ou Intel.</p>
     </div>
-    <div class="steps reveal">
+    <div class="steps">
       <div class="step"><div class="n">1</div><h3><span class="en">Install</span><span class="ko">설치</span><span class="ja">インストール</span><span class="zh">安装</span><span class="es">Instalación</span><span class="de">Installieren</span><span class="fr">Installation</span></h3><p class="en">One Homebrew line. It lives in the notch, not the Dock.</p><p class="ko">Homebrew 한 줄이면 됩니다. Dock이 아니라 노치에 삽니다.</p><p class="ja">Homebrew のコマンド1行だけ。Dock ではなくノッチに常駐します。</p><p class="zh">一行 Homebrew 命令即可。它常驻在刘海里，不在 Dock 中。</p><p class="es">Una línea de Homebrew. Vive en el notch, no en el Dock.</p><p class="de">Eine Zeile mit Homebrew. Sie lebt in der Notch, nicht im Dock.</p><p class="fr">Une ligne Homebrew. Il vit dans l’encoche, pas dans le Dock.</p></div>
       <div class="step"><div class="n">2</div><h3><span class="en">Hover the notch</span><span class="ko">노치에 마우스 올리기</span><span class="ja">ノッチにマウスを乗せる</span><span class="zh">把鼠标移到刘海上</span><span class="es">Pasa el cursor por el notch</span><span class="de">Maus über die Notch</span><span class="fr">Survolez l’encoche</span></h3><p class="en">It opens. Move away and it tucks itself back. Play some music and watch it come alive.</p><p class="ko">열립니다. 마우스를 떼면 다시 접혀요. 음악을 틀면 살아 움직입니다.</p><p class="ja">開きます。マウスを離すとまた閉じます。音楽を再生すると動き出します。</p><p class="zh">它会打开；移开鼠标又会自动收起。播放点音乐，看它变得生动起来。</p><p class="es">Se abre. Aparta el cursor y se repliega. Pon música y mira cómo cobra vida.</p><p class="de">Sie öffnet sich. Geh weg, und sie zieht sich wieder ein. Spiel etwas Musik und sieh zu, wie sie lebendig wird.</p><p class="fr">Elle s’ouvre. Éloignez-vous et elle se replie. Lancez de la musique et regardez-la s’animer.</p></div>
       <div class="step"><div class="n">3</div><h3><span class="en">Make it yours</span><span class="ko">내 맞게 고르기</span><span class="ja">自分好みに設定</span><span class="zh">打造专属体验</span><span class="es">Hazlo tuyo</span><span class="de">Mach es zu deinem</span><span class="fr">Configurez-la à votre façon</span></h3><p class="en">Right-click the notch and open Settings to choose tabs, pop-ups and size.</p><p class="ko">노치를 우클릭해 설정을 열고 탭, 알림, 크기를 고르세요.</p><p class="ja">ノッチを右クリックして設定を開き、タブ、通知、サイズを選んでください。</p><p class="zh">右键点击刘海打开设置，选择标签、提示和尺寸。</p><p class="es">Haz clic derecho en el notch y abre Ajustes para elegir pestañas, avisos y tamaño.</p><p class="de">Klicke mit der rechten Maustaste auf die Notch und öffne die Einstellungen, um Tabs, Hinweise und Größe zu wählen.</p><p class="fr">Clic droit sur l’encoche puis ouvrez Réglages pour choisir les onglets, les notifications et la taille.</p></div>
     </div>
-    <div class="install reveal">
+    <div class="install">
       <div class="tabs" role="tablist">
         <button role="tab" aria-selected="true" data-tab="brew">Homebrew</button>
         <button role="tab" aria-selected="false" data-tab="src"><span class="en">Source</span><span class="ko">소스</span><span class="ja">ソース</span><span class="zh">来源</span><span class="es">Código fuente</span><span class="de">Quelle</span><span class="fr">Source</span></button>
       </div>
       <div class="panel active" data-panel="brew">
         <div class="code"><button class="copy" type="button" data-copy="brew install --cask namekun/tap/nunsseop"><span class="en">Copy</span><span class="ko">복사</span><span class="ja">コピー</span><span class="zh">复制</span><span class="es">Copiar</span><span class="de">Kopieren</span><span class="fr">Copier</span></button><pre>brew install --cask namekun/tap/nunsseop</pre></div>
-        <p class="note en">Needs <a href="https://brew.sh" style="color:var(--violet)">Homebrew</a>. Homebrew clears the quarantine flag for you, so the app opens right away.</p>
-        <p class="note ko"><a href="https://brew.sh" style="color:var(--violet)">Homebrew</a>가 필요합니다. Homebrew가 격리 표시를 알아서 지워 주기 때문에 바로 실행됩니다.</p>
-        <p class="note ja"><a href="https://brew.sh" style="color:var(--violet)">Homebrew</a> が必要です。Homebrew が隔離フラグを自動で解除するので、すぐに起動できます。</p>
-        <p class="note zh">需要 <a href="https://brew.sh" style="color:var(--violet)">Homebrew</a>。Homebrew 会自动清除隔离标记，应用可以直接打开。</p>
-        <p class="note es">Necesita <a href="https://brew.sh" style="color:var(--violet)">Homebrew</a>. Homebrew quita la marca de cuarentena por ti, así que la app se abre al instante.</p>
-        <p class="note de">Dafür brauchst du <a href="https://brew.sh" style="color:var(--violet)">Homebrew</a>. Homebrew entfernt die Quarantäne-Markierung für dich, sodass die App sofort startet.</p>
-        <p class="note fr">Nécessite <a href="https://brew.sh" style="color:var(--violet)">Homebrew</a>. Homebrew retire le drapeau de quarantaine à votre place, l’app s’ouvre donc immédiatement.</p>
+        <p class="note en">Needs <a href="https://brew.sh">Homebrew</a>. Homebrew clears the quarantine flag for you, so the app opens right away.</p>
+        <p class="note ko"><a href="https://brew.sh">Homebrew</a>가 필요합니다. Homebrew가 격리 표시를 알아서 지워 주기 때문에 바로 실행됩니다.</p>
+        <p class="note ja"><a href="https://brew.sh">Homebrew</a> が必要です。Homebrew が隔離フラグを自動で解除するので、すぐに起動できます。</p>
+        <p class="note zh">需要 <a href="https://brew.sh">Homebrew</a>。Homebrew 会自动清除隔离标记，应用可以直接打开。</p>
+        <p class="note es">Necesita <a href="https://brew.sh">Homebrew</a>. Homebrew quita la marca de cuarentena por ti, así que la app se abre al instante.</p>
+        <p class="note de">Dafür brauchst du <a href="https://brew.sh">Homebrew</a>. Homebrew entfernt die Quarantäne-Markierung für dich, sodass die App sofort startet.</p>
+        <p class="note fr">Nécessite <a href="https://brew.sh">Homebrew</a>. Homebrew retire le drapeau de quarantaine à votre place, l’app s’ouvre donc immédiatement.</p>
         <p class="note en">To update, run <code>brew upgrade --cask nunsseop</code>. Settings › General › Updates copies this command to the clipboard when an update is out.</p>
         <p class="note ko">업데이트는 <code>brew upgrade --cask nunsseop</code>을 실행하세요. 새 버전이 나오면 설정 › 일반 › 업데이트에서 이 명령을 클립보드에 복사해 줍니다.</p>
         <p class="note ja">アップデートは <code>brew upgrade --cask nunsseop</code> を実行してください。新しいバージョンが出ると、設定 › 一般 › アップデートでこのコマンドがクリップボードにコピーされます。</p>
@@ -608,10 +613,12 @@ open build/Nunsseop.app</pre></div>
         <p class="note fr">Nécessite les outils en ligne de commande Xcode (Swift 5.10+).</p>
       </div>
     </div>
+    </div>
   </section>
 
-  <section class="block" id="how">
-    <div class="section-head reveal">
+<section class="block" id="how">
+    <div class="wrap">
+    <div class="section-head">
       <div class="kicker en">Under the hood</div><div class="kicker ko">작동 방식</div><div class="kicker ja">内部の仕組み</div><div class="kicker zh">幕后原理</div><div class="kicker es">Por dentro</div><div class="kicker de">Unter der Haube</div><div class="kicker fr">Sous le capot</div>
       <h2 class="en">Private by design.</h2><h2 class="ko">처음부터 프라이버시를 지키게.</h2><h2 class="ja">プライバシーを、最初から。</h2><h2 class="zh">从设计上保护隐私。</h2><h2 class="es">Privada desde el diseño.</h2><h2 class="de">Privat von Grund auf.</h2><h2 class="fr">Privé par conception.</h2>
     </div>
@@ -660,10 +667,12 @@ open build/Nunsseop.app</pre></div>
         </div>
       </div>
     </div>
+    </div>
   </section>
 
-  <section class="block" id="faq">
-    <div class="section-head reveal">
+<section class="block" id="faq">
+    <div class="wrap">
+    <div class="section-head">
       <div class="kicker">FAQ</div>
       <h2 class="en">Good questions.</h2><h2 class="ko">자주 묻는 질문.</h2><h2 class="ja">よくある質問。</h2><h2 class="zh">常见问题。</h2><h2 class="es">Buenas preguntas.</h2><h2 class="de">Gute Fragen.</h2><h2 class="fr">Bonnes questions.</h2>
     </div>
@@ -733,9 +742,11 @@ open build/Nunsseop.app</pre></div>
         <div class="a de">Es ist eine kleine native App, die meist schläft. Tabs wie Systemstatus oder Nutzung aktualisieren sich nur, solange sie geöffnet sind.</div>
         <div class="a fr">C’est une petite app native qui dort la plupart du temps. Les onglets comme les statistiques ou l’usage ne se rafraîchissent que lorsqu’ils sont ouverts.</div></details>
     </div>
+    </div>
   </section>
 
-  <div class="final reveal">
+  <div class="wrap">
+  <div class="final">
     <img src="images/icon.png" alt="">
     <h2 class="en">Give your notch something to do.</h2>
     <h2 class="ko">노치에게 할 일을 주세요.</h2>
@@ -749,12 +760,15 @@ open build/Nunsseop.app</pre></div>
       <a class="btn ghost" href="https://github.com/namekun/Nunsseop"><span class="en">Star on GitHub</span><span class="ko">GitHub에서 보기</span><span class="ja">GitHub でスターをつける</span><span class="zh">在 GitHub 上点星标</span><span class="es">Dale una estrella en GitHub</span><span class="de">Auf GitHub favorisieren</span><span class="fr">Star sur GitHub</span></a>
     </div>
   </div>
+  </div>
 
+  <div class="wrap">
   <footer>
     <span class="en">Nunsseop · MIT License · Made for MacBooks with a notch (and the ones without).</span>
     <span class="ko">Nunsseop · MIT 라이선스 · 노치가 있는(그리고 없는) 모든 MacBook을 위해.</span><span class="ja">Nunsseop · MIT ライセンス · ノッチのある（そしてない）すべての MacBook のために。</span><span class="zh">Nunsseop · MIT 许可证 · 为有刘海（也为没有刘海）的 MacBook 而做。</span><span class="es">Nunsseop · Licencia MIT · Hecho para los MacBook con notch (y para los que no lo tienen).</span><span class="de">Nunsseop · MIT-Lizenz · Gemacht für MacBooks mit Notch (und die ohne).</span><span class="fr">Nunsseop · Licence MIT · Conçu pour les MacBook avec encoche (et sans).</span>
     <span><a href="https://github.com/namekun/Nunsseop">GitHub</a> · <a href="https://github.com/namekun/Nunsseop/releases">Releases</a> · <a href="https://github.com/namekun/homebrew-tap">Homebrew</a></span>
   </footer>
+  </div>
 </main>
 
 <script>
@@ -842,94 +856,51 @@ open build/Nunsseop.app</pre></div>
     });
   });
 
-  // The demo notch opens on hover, focus or tap, and loops gently until someone touches it.
-  var notch = document.getElementById('notch');
-  var touched = false, timer = null;
-  function open(v) { notch.classList.toggle('open', v); }
-  function loop() {
-    if (touched) return;
-    open(!notch.classList.contains('open'));
-    timer = setTimeout(loop, notch.classList.contains('open') ? 3200 : 2200);
-  }
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce) timer = setTimeout(loop, 1400);
-  function take() { touched = true; clearTimeout(timer); }
-  // Only a mouse hovers, and only the keyboard focuses: a tap fires those too, and its click would close what they opened.
-  notch.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { take(); open(true); } });
-  notch.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') open(false); });
-  notch.addEventListener('focus', function () { if (notch.matches(':focus-visible')) { take(); open(true); } });
-  notch.addEventListener('blur', function () { open(false); });
-  notch.addEventListener('click', function () { take(); open(!notch.classList.contains('open')); });
-
-
   var tourData = [
-    { e: '🏠', img: 'home.png', en: ['Home', 'What’s playing from any app or browser, with artwork, controls and a seekable bar, next to your week and today’s events.'], ko: ['홈', '어떤 앱이나 브라우저에서 재생하든 앨범아트, 컨트롤, 진행바가 나오고, 옆에는 이번 주와 오늘 일정이 보입니다.'], ja: ['ホーム', 'どのアプリやブラウザで再生していても、アートワーク・操作ボタン・シークバーを表示。すぐ横には今週と今日の予定も。'], zh: ['主页', '任何应用或浏览器正在播放的内容，附带封面、控制按钮和可拖动的进度条，旁边还有本周安排和今日日程。'], es: ['Inicio', 'Lo que suena en cualquier app o navegador, con carátula, controles y una barra de progreso, junto a tu semana y los eventos de hoy.'], de: ['Start', 'Was in jeder App oder jedem Browser läuft, mit Cover, Steuerung und einer Fortschrittsleiste, daneben deine Woche und die heutigen Termine.'], fr: ['Accueil', 'Ce qui joue depuis n’importe quelle app ou navigateur, avec pochette, commandes et une barre de progression, à côté de votre semaine et des évènements du jour.'] },
-    { e: '🔍', img: 'tab-search.png', en: ['Search', 'A launcher that can stand in for Spotlight or Raycast: apps, files, commands, settings, clipboard, emoji and sums. <kbd>⇧⌘Space</kbd> by default, or record your own, even <kbd>⌘Space</kbd>.'], ko: ['검색', 'Spotlight나 Raycast 대신 쓸 수 있는 검색. 앱, 파일, 명령, 설정, 클립보드, 이모지, 계산까지. 기본 단축키는 <kbd>⇧⌘Space</kbd>이고, <kbd>⌘Space</kbd>를 포함해 원하는 키로 바꿀 수 있습니다.'], ja: ['検索', 'Spotlight や Raycast の代わりになるランチャー。アプリ、ファイル、コマンド、設定、クリップボード、絵文字、計算まで。デフォルトは <kbd>⇧⌘Space</kbd>、<kbd>⌘Space</kbd> を含め好きなショートカットに変更できます。'], zh: ['搜索', '一款可以代替 Spotlight 或 Raycast 的启动器：应用、文件、命令、设置、剪贴板、表情符号和计算结果，默认快捷键是 <kbd>⇧⌘Space</kbd>，也可以自行录制，包括 <kbd>⌘Space</kbd>。'], es: ['Buscar', 'Un lanzador que puede sustituir a Spotlight o Raycast: apps, archivos, comandos, ajustes, portapapeles, emoji y sumas. <kbd>⇧⌘Space</kbd> por defecto, o graba el tuyo, incluso <kbd>⌘Space</kbd>.'], de: ['Suche', 'Ein Launcher, der Spotlight oder Raycast ersetzen kann: Apps, Dateien, Befehle, Einstellungen, Zwischenablage, Emoji und Rechenergebnisse. Standardmäßig <kbd>⇧⌘Space</kbd>, oder nimm deinen eigenen Kurzbefehl auf, auch <kbd>⌘Space</kbd>.'], fr: ['Rechercher', 'Un lanceur capable de remplacer Spotlight ou Raycast : apps, fichiers, commandes, réglages, presse-papiers, emoji et calculs. <kbd>⇧⌘Space</kbd> par défaut, ou enregistrez le vôtre, même <kbd>⌘Space</kbd>.'] },
-    { e: '📥', img: 'shelf.png', en: ['Shelf', 'Drop files on the notch and drag them out later. Drop them on the AirDrop tile to send them straight away.'], ko: ['선반', '파일을 노치에 놓아 두고 나중에 끌어내세요. AirDrop 칸에 놓으면 바로 보내집니다.'], ja: ['シェルフ', 'ファイルをノッチにドロップしておけば、あとで取り出せます。AirDrop のタイルにドロップすれば、そのまま送信されます。'], zh: ['架子', '把文件拖到刘海上先存着，以后再拖出来用。拖到 AirDrop 卡片上即可立即发送。'], es: ['Estante', 'Suelta archivos en el notch y arrástralos fuera más tarde. Suéltalos en la tarjeta de AirDrop para enviarlos al instante.'], de: ['Ablage', 'Lege Dateien auf der Notch ab und zieh sie später wieder heraus. Lege sie auf der AirDrop-Kachel ab, um sie sofort zu senden.'], fr: ['Étagère', 'Déposez des fichiers sur l’encoche et ressortez-les plus tard. Déposez-les sur la tuile AirDrop pour les envoyer immédiatement.'] },
-    { e: '✨', img: 'tab-ai.png', en: ['AI usage', 'Claude Code and Codex limits with reset times, plus Claude Code’s recent token use. No login needed; live Claude limits from Anthropic are opt-in.'], ko: ['AI 사용량', 'Claude Code와 Codex의 한도와 초기화 시각, Claude Code의 최근 토큰 사용량. 로그인은 필요 없고, Anthropic에서 Claude 실시간 한도를 받아오는 건 선택입니다.'], ja: ['AI 使用量', 'Claude Code と Codex の使用上限と初期化時刻、そして Claude Code の最近のトークン使用量。ログインは不要。Anthropic からリアルタイムで Claude の上限を取得するのは任意です。'], zh: ['AI 用量', 'Claude Code 和 Codex 的额度与重置时间，以及 Claude Code 最近的令牌使用量。不需要登录；从 Anthropic 获取实时 Claude 额度是可选的。'], es: ['Uso de IA', 'Los límites de Claude Code y Codex con sus horas de reinicio, más el uso reciente de tokens de Claude Code. Sin iniciar sesión; los límites de Claude en directo desde Anthropic son opcionales.'], de: ['KI-Nutzung', 'Claude Code- und Codex-Limits mit Zurücksetzungszeiten, plus Claude Codes zuletzt genutzte Tokens. Kein Login nötig; Live-Limits für Claude von Anthropic sind optional.'], fr: ['Usage de l’IA', 'Les limites de Claude Code et Codex avec leurs horaires de réinitialisation, plus l’usage récent des tokens de Claude Code. Pas de connexion requise ; les limites de Claude en direct depuis Anthropic sont optionnelles.'] },
-    { e: '⏱️', img: 'tab-timer.png', en: ['Timer', 'Countdown, Pomodoro and stopwatch around a ring that empties as time runs out. Scroll or type to set any length, and the time left stays on the collapsed notch.'], ko: ['타이머', '시간이 줄어들수록 비워지는 링으로 보는 카운트다운, 뽀모도로, 스톱워치. 스크롤하거나 직접 입력해 원하는 길이로 맞추고, 접힌 노치에도 남은 시간이 그대로 보입니다.'], ja: ['タイマー', '時間が減るほど空いていくリングで表示するカウントダウン、ポモドーロ、ストップウォッチ。スクロールまたは入力で好きな長さに設定でき、残り時間は折りたたんだノッチにも表示されます。'], zh: ['计时器', '倒计时、番茄钟和秒表，用一个随时间流逝逐渐清空的圆环呈现。滚动或输入即可设置任意时长，剩余时间还会留在收起的刘海上。'], es: ['Temporizador', 'Cuenta atrás, Pomodoro y cronómetro alrededor de un anillo que se vacía a medida que pasa el tiempo. Desplázate o escribe para fijar cualquier duración, y el tiempo restante se queda en el notch plegado.'], de: ['Timer', 'Countdown, Pomodoro und Stoppuhr um einen Ring, der sich leert, während die Zeit abläuft. Scrollen oder eingeben, um jede Länge einzustellen, und die Restzeit bleibt auf der eingeklappten Notch sichtbar.'], fr: ['Minuteur', 'Compte à rebours, Pomodoro et chronomètre autour d’un anneau qui se vide à mesure que le temps s’écoule. Faites défiler ou saisissez une durée, et le temps restant reste visible sur l’encoche repliée.'] },
-    { e: '🎛️', img: 'tab-tools.png', en: ['Tools', 'Switch speakers, mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from the screen and copy text out of any part of it.'], ko: ['도구', '스피커 전환, 마이크 음소거, 잠자기 방지, 화면 녹화, 드라이브 꺼내기, 화면에서 색 찍기와 글자 복사.'], ja: ['ツール', 'スピーカーの切り替え、マイクのミュート、スリープ防止、画面収録、ドライブの取り出し、画面から色を取得、画面上のテキストをコピー。'], zh: ['工具', '切换输出设备、静音麦克风、保持 Mac 唤醒、录制屏幕、推出磁盘、从屏幕上取色，以及从屏幕任意位置复制文字。'], es: ['Herramientas', 'Cambia de altavoces, silencia el micrófono, mantén el Mac despierto, graba la pantalla, expulsa discos, toma un color de la pantalla y copia texto de cualquier parte de ella.'], de: ['Werkzeuge', 'Lautsprecher wechseln, Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe vom Bildschirm aufnehmen und Text aus jedem Bereich davon kopieren.'], fr: ['Outils', 'Changez de haut-parleurs, coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur à l’écran et copiez du texte depuis n’importe quelle zone.'] },
-    { e: '📊', img: 'tab-system.png', en: ['System', 'CPU, memory, disk and network at a glance, plus your mouse and keyboard batteries.'], ko: ['시스템', 'CPU, 메모리, 디스크, 네트워크를 한눈에. 마우스와 키보드 배터리도 함께.'], ja: ['システム', 'CPU、メモリ、ディスク、ネットワークを一目で。マウスとキーボードのバッテリーも。'], zh: ['系统', '一目了然的 CPU、内存、磁盘和网络状态，还有鼠标和键盘的电量。'], es: ['Sistema', 'CPU, memoria, disco y red de un vistazo, además de la batería del ratón y el teclado.'], de: ['System', 'CPU, Speicher, Festplatte und Netzwerk auf einen Blick, plus Akkustand von Maus und Tastatur.'], fr: ['Système', 'CPU, mémoire, disque et réseau en un coup d’œil, plus les batteries de votre souris et clavier.'] },
-    { e: '😀', img: 'tab-emoji.png', en: ['Emoji', 'Every emoji, searchable by name, with your recent picks first. Click to copy.'], ko: ['이모지', '모든 이모지를 이름으로 검색하고, 최근에 쓴 것부터. 클릭하면 복사됩니다.'], ja: ['絵文字', 'すべての絵文字を名前で検索でき、最近使ったものが先頭に表示されます。クリックでコピー。'], zh: ['表情符号', '所有表情符号都能按名称搜索，最近用过的会优先显示，点击即可复制。'], es: ['Emoji', 'Todos los emoji, con búsqueda por nombre, con los que has usado últimamente primero. Haz clic para copiar.'], de: ['Emoji', 'Jedes Emoji, durchsuchbar nach Namen, zuletzt verwendete zuerst. Klicken, um zu kopieren.'], fr: ['Emoji', 'Tous les emoji, recherchables par nom, avec vos choix récents en premier. Cliquez pour copier.'] }
+    { w: 100, img: 'home.png', en: ['Home', 'What’s playing from any app or browser, with artwork, controls and a seekable bar, next to your week and today’s events.'], ko: ['홈', '어떤 앱이나 브라우저에서 재생하든 앨범아트, 컨트롤, 진행바가 나오고, 옆에는 이번 주와 오늘 일정이 보입니다.'], ja: ['ホーム', 'どのアプリやブラウザで再生していても、アートワーク・操作ボタン・シークバーを表示。すぐ横には今週と今日の予定も。'], zh: ['主页', '任何应用或浏览器正在播放的内容，附带封面、控制按钮和可拖动的进度条，旁边还有本周安排和今日日程。'], es: ['Inicio', 'Lo que suena en cualquier app o navegador, con carátula, controles y una barra de progreso, junto a tu semana y los eventos de hoy.'], de: ['Start', 'Was in jeder App oder jedem Browser läuft, mit Cover, Steuerung und einer Fortschrittsleiste, daneben deine Woche und die heutigen Termine.'], fr: ['Accueil', 'Ce qui joue depuis n’importe quelle app ou navigateur, avec pochette, commandes et une barre de progression, à côté de votre semaine et des évènements du jour.'] },
+    { w: 83, img: 'tab-search.png', en: ['Search', 'A launcher that can stand in for Spotlight or Raycast: apps, files, commands, settings, clipboard, emoji and sums. <kbd>⇧⌘Space</kbd> by default, or record your own, even <kbd>⌘Space</kbd>.'], ko: ['검색', 'Spotlight나 Raycast 대신 쓸 수 있는 검색. 앱, 파일, 명령, 설정, 클립보드, 이모지, 계산까지. 기본 단축키는 <kbd>⇧⌘Space</kbd>이고, <kbd>⌘Space</kbd>를 포함해 원하는 키로 바꿀 수 있습니다.'], ja: ['検索', 'Spotlight や Raycast の代わりになるランチャー。アプリ、ファイル、コマンド、設定、クリップボード、絵文字、計算まで。デフォルトは <kbd>⇧⌘Space</kbd>、<kbd>⌘Space</kbd> を含め好きなショートカットに変更できます。'], zh: ['搜索', '一款可以代替 Spotlight 或 Raycast 的启动器：应用、文件、命令、设置、剪贴板、表情符号和计算结果，默认快捷键是 <kbd>⇧⌘Space</kbd>，也可以自行录制，包括 <kbd>⌘Space</kbd>。'], es: ['Buscar', 'Un lanzador que puede sustituir a Spotlight o Raycast: apps, archivos, comandos, ajustes, portapapeles, emoji y sumas. <kbd>⇧⌘Space</kbd> por defecto, o graba el tuyo, incluso <kbd>⌘Space</kbd>.'], de: ['Suche', 'Ein Launcher, der Spotlight oder Raycast ersetzen kann: Apps, Dateien, Befehle, Einstellungen, Zwischenablage, Emoji und Rechenergebnisse. Standardmäßig <kbd>⇧⌘Space</kbd>, oder nimm deinen eigenen Kurzbefehl auf, auch <kbd>⌘Space</kbd>.'], fr: ['Rechercher', 'Un lanceur capable de remplacer Spotlight ou Raycast : apps, fichiers, commandes, réglages, presse-papiers, emoji et calculs. <kbd>⇧⌘Space</kbd> par défaut, ou enregistrez le vôtre, même <kbd>⌘Space</kbd>.'] },
+    { w: 87, img: 'shelf.png', en: ['Shelf', 'Drop files on the notch and drag them out later. Drop them on the AirDrop tile to send them straight away.'], ko: ['선반', '파일을 노치에 놓아 두고 나중에 끌어내세요. AirDrop 칸에 놓으면 바로 보내집니다.'], ja: ['シェルフ', 'ファイルをノッチにドロップしておけば、あとで取り出せます。AirDrop のタイルにドロップすれば、そのまま送信されます。'], zh: ['架子', '把文件拖到刘海上先存着，以后再拖出来用。拖到 AirDrop 卡片上即可立即发送。'], es: ['Estante', 'Suelta archivos en el notch y arrástralos fuera más tarde. Suéltalos en la tarjeta de AirDrop para enviarlos al instante.'], de: ['Ablage', 'Lege Dateien auf der Notch ab und zieh sie später wieder heraus. Lege sie auf der AirDrop-Kachel ab, um sie sofort zu senden.'], fr: ['Étagère', 'Déposez des fichiers sur l’encoche et ressortez-les plus tard. Déposez-les sur la tuile AirDrop pour les envoyer immédiatement.'] },
+    { w: 83, img: 'tab-ai.png', en: ['AI usage', 'Claude Code and Codex limits with reset times, plus Claude Code’s recent token use. No login needed; live Claude limits from Anthropic are opt-in.'], ko: ['AI 사용량', 'Claude Code와 Codex의 한도와 초기화 시각, Claude Code의 최근 토큰 사용량. 로그인은 필요 없고, Anthropic에서 Claude 실시간 한도를 받아오는 건 선택입니다.'], ja: ['AI 使用量', 'Claude Code と Codex の使用上限と初期化時刻、そして Claude Code の最近のトークン使用量。ログインは不要。Anthropic からリアルタイムで Claude の上限を取得するのは任意です。'], zh: ['AI 用量', 'Claude Code 和 Codex 的额度与重置时间，以及 Claude Code 最近的令牌使用量。不需要登录；从 Anthropic 获取实时 Claude 额度是可选的。'], es: ['Uso de IA', 'Los límites de Claude Code y Codex con sus horas de reinicio, más el uso reciente de tokens de Claude Code. Sin iniciar sesión; los límites de Claude en directo desde Anthropic son opcionales.'], de: ['KI-Nutzung', 'Claude Code- und Codex-Limits mit Zurücksetzungszeiten, plus Claude Codes zuletzt genutzte Tokens. Kein Login nötig; Live-Limits für Claude von Anthropic sind optional.'], fr: ['Usage de l’IA', 'Les limites de Claude Code et Codex avec leurs horaires de réinitialisation, plus l’usage récent des tokens de Claude Code. Pas de connexion requise ; les limites de Claude en direct depuis Anthropic sont optionnelles.'] },
+    { w: 100, img: 'tab-timer.png', en: ['Timer', 'Countdown, Pomodoro and stopwatch around a ring that empties as time runs out. Scroll or type to set any length, and the time left stays on the collapsed notch.'], ko: ['타이머', '시간이 줄어들수록 비워지는 링으로 보는 카운트다운, 뽀모도로, 스톱워치. 스크롤하거나 직접 입력해 원하는 길이로 맞추고, 접힌 노치에도 남은 시간이 그대로 보입니다.'], ja: ['タイマー', '時間が減るほど空いていくリングで表示するカウントダウン、ポモドーロ、ストップウォッチ。スクロールまたは入力で好きな長さに設定でき、残り時間は折りたたんだノッチにも表示されます。'], zh: ['计时器', '倒计时、番茄钟和秒表，用一个随时间流逝逐渐清空的圆环呈现。滚动或输入即可设置任意时长，剩余时间还会留在收起的刘海上。'], es: ['Temporizador', 'Cuenta atrás, Pomodoro y cronómetro alrededor de un anillo que se vacía a medida que pasa el tiempo. Desplázate o escribe para fijar cualquier duración, y el tiempo restante se queda en el notch plegado.'], de: ['Timer', 'Countdown, Pomodoro und Stoppuhr um einen Ring, der sich leert, während die Zeit abläuft. Scrollen oder eingeben, um jede Länge einzustellen, und die Restzeit bleibt auf der eingeklappten Notch sichtbar.'], fr: ['Minuteur', 'Compte à rebours, Pomodoro et chronomètre autour d’un anneau qui se vide à mesure que le temps s’écoule. Faites défiler ou saisissez une durée, et le temps restant reste visible sur l’encoche repliée.'] },
+    { w: 100, img: 'tab-tools.png', en: ['Tools', 'Switch speakers, mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from the screen and copy text out of any part of it.'], ko: ['도구', '스피커 전환, 마이크 음소거, 잠자기 방지, 화면 녹화, 드라이브 꺼내기, 화면에서 색 찍기와 글자 복사.'], ja: ['ツール', 'スピーカーの切り替え、マイクのミュート、スリープ防止、画面収録、ドライブの取り出し、画面から色を取得、画面上のテキストをコピー。'], zh: ['工具', '切换输出设备、静音麦克风、保持 Mac 唤醒、录制屏幕、推出磁盘、从屏幕上取色，以及从屏幕任意位置复制文字。'], es: ['Herramientas', 'Cambia de altavoces, silencia el micrófono, mantén el Mac despierto, graba la pantalla, expulsa discos, toma un color de la pantalla y copia texto de cualquier parte de ella.'], de: ['Werkzeuge', 'Lautsprecher wechseln, Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe vom Bildschirm aufnehmen und Text aus jedem Bereich davon kopieren.'], fr: ['Outils', 'Changez de haut-parleurs, coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur à l’écran et copiez du texte depuis n’importe quelle zone.'] },
+    { w: 83, img: 'tab-system.png', en: ['System', 'CPU, memory, disk and network at a glance, plus your mouse and keyboard batteries.'], ko: ['시스템', 'CPU, 메모리, 디스크, 네트워크를 한눈에. 마우스와 키보드 배터리도 함께.'], ja: ['システム', 'CPU、メモリ、ディスク、ネットワークを一目で。マウスとキーボードのバッテリーも。'], zh: ['系统', '一目了然的 CPU、内存、磁盘和网络状态，还有鼠标和键盘的电量。'], es: ['Sistema', 'CPU, memoria, disco y red de un vistazo, además de la batería del ratón y el teclado.'], de: ['System', 'CPU, Speicher, Festplatte und Netzwerk auf einen Blick, plus Akkustand von Maus und Tastatur.'], fr: ['Système', 'CPU, mémoire, disque et réseau en un coup d’œil, plus les batteries de votre souris et clavier.'] },
+    { w: 83, img: 'tab-emoji.png', en: ['Emoji', 'Every emoji, searchable by name, with your recent picks first. Click to copy.'], ko: ['이모지', '모든 이모지를 이름으로 검색하고, 최근에 쓴 것부터. 클릭하면 복사됩니다.'], ja: ['絵文字', 'すべての絵文字を名前で検索でき、最近使ったものが先頭に表示されます。クリックでコピー。'], zh: ['表情符号', '所有表情符号都能按名称搜索，最近用过的会优先显示，点击即可复制。'], es: ['Emoji', 'Todos los emoji, con búsqueda por nombre, con los que has usado últimamente primero. Haz clic para copiar.'], de: ['Emoji', 'Jedes Emoji, durchsuchbar nach Namen, zuletzt verwendete zuerst. Klicken, um zu kopieren.'], fr: ['Emoji', 'Tous les emoji, recherchables par nom, avec vos choix récents en premier. Cliquez pour copier.'] }
   ];
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var list = document.getElementById('tourList'), screen = document.getElementById('tourScreen');
   var tTitle = document.getElementById('tourTitle'), tText = document.getElementById('tourText');
-  var current = 0, tourTouched = false, DUR = 5000;
+  var current = 0, held = false, hover = false, onscreen = true, timer = null;
+  var tStatus = document.getElementById('tourStatus');
   tourData.forEach(function (d, i) {
     var b = document.createElement('button');
-    b.className = 'tour-btn'; b.type = 'button'; b.setAttribute('role', 'tab');
-    b.innerHTML = '<span class="e">' + d.e + '</span>' + LANGS.map(function (l) { return '<span class="' + l + '">' + d[l][0] + '</span>'; }).join('') + '<span class="bar"></span>';
-    b.addEventListener('click', function () { tourTouched = true; show(i); });
-    b.querySelector('.bar').addEventListener('animationend', function () { show((i + 1) % tourData.length); });
+    b.className = 'tour-btn'; b.type = 'button';
+    b.innerHTML = '<span class="num">' + (i < 9 ? '0' : '') + (i + 1) + '</span><span class="lbl">' +
+      LANGS.map(function (l) { return '<span class="' + l + '">' + d[l][0] + '</span>'; }).join('') + '</span><span class="mark" aria-hidden="true"></span>';
+    b.addEventListener('click', function () { held = true; clearInterval(timer); show(i); tStatus.textContent = tTitle.textContent; });
     list.appendChild(b);
-    var img = new Image(); img.src = 'images/' + d.img; img.alt = d.en[0]; img.loading = i ? 'lazy' : 'eager';
+    var img = new Image(); img.src = 'images/' + d.img; img.alt = d.en[0]; img.style.width = d.w + '%'; img.loading = i ? 'lazy' : 'eager';
     screen.appendChild(img);
   });
   function show(i) {
     current = i;
     var lang = document.body.dataset.lang;
-    list.querySelectorAll('.tour-btn').forEach(function (b, j) {
-      b.setAttribute('aria-selected', String(j === i));
-      var bar = b.querySelector('.bar'); bar.classList.remove('run'); void bar.offsetWidth;
-      if (j === i && !tourTouched && !reduce) bar.classList.add('run');
-    });
+    list.querySelectorAll('.tour-btn').forEach(function (b, j) { b.setAttribute('aria-pressed', String(j === i)); });
     screen.querySelectorAll('img').forEach(function (im, j) { im.classList.toggle('on', j === i); });
     var active = list.children[i];
     if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: active.offsetLeft - 20, behavior: reduce ? 'auto' : 'smooth' });
     tTitle.textContent = tourData[i][lang][0]; tText.innerHTML = tourData[i][lang][1];
   }
-  list.style.setProperty('--dur', DUR + 'ms');
+  // Advances every 4 s until the visitor picks one; never under Reduce Motion.
   var tourBox = document.getElementById('tourBox');
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function (entries) { tourBox.classList.toggle('onscreen', entries[entries.length - 1].isIntersecting); }, { rootMargin: '-20% 0px' }).observe(tourBox);
-  } else {
-    tourBox.classList.add('onscreen');
+    new IntersectionObserver(function (entries) { onscreen = entries[entries.length - 1].isIntersecting; }).observe(tourBox);
   }
+  ['mouseenter', 'focusin'].forEach(function (e) { tourBox.addEventListener(e, function () { hover = true; }); });
+  ['mouseleave', 'focusout'].forEach(function (e) { tourBox.addEventListener(e, function () { hover = false; }); });
+  if (!reduce) timer = setInterval(function () { if (!held && !hover && onscreen && !document.hidden) show((current + 1) % tourData.length); }, 4000);
   langListeners.push(function () { show(current); });
   show(0);
-
-  var clock = document.getElementById('clock');
-  function tick() { clock.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
-  tick(); setInterval(tick, 30000);
-
-  var track = document.getElementById('track');
-  track.innerHTML += track.innerHTML;
-
-  // Fade sections in as they scroll into view; never leave content hidden if that doesn't run.
-  var items = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
-  function showAll() { items.forEach(function (el) { el.classList.add('in'); }); }
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
-    items.forEach(function (el) { io.observe(el); });
-    window.addEventListener('scroll', function onScroll() {
-      items.forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('in'); });
-    }, { passive: true });
-    setTimeout(showAll, 2500);
-  } else {
-    showAll();
-  }
 })();
 </script>
 </body>
