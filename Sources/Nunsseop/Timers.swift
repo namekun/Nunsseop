@@ -8,14 +8,14 @@ final class TimerModel: ObservableObject {
     enum Phase { case work, rest }
 
     @Published var mode: Mode = .countdown { didSet { if mode != oldValue { reset() } } }
-    @Published var countdownSeconds = TimerModel.stored("countdownSeconds", 5 * 60) {
-        didSet { UserDefaults.standard.set(countdownSeconds, forKey: "countdownSeconds") }
+    @Published var countdownSeconds: Int {
+        didSet { defaults.set(countdownSeconds, forKey: "countdownSeconds") }
     }
-    @Published var workMinutes = TimerModel.stored("pomodoroWorkMinutes", 25) {
-        didSet { UserDefaults.standard.set(workMinutes, forKey: "pomodoroWorkMinutes") }
+    @Published var workMinutes: Int {
+        didSet { defaults.set(workMinutes, forKey: "pomodoroWorkMinutes") }
     }
-    @Published var restMinutes = TimerModel.stored("pomodoroRestMinutes", 5) {
-        didSet { UserDefaults.standard.set(restMinutes, forKey: "pomodoroRestMinutes") }
+    @Published var restMinutes: Int {
+        didSet { defaults.set(restMinutes, forKey: "pomodoroRestMinutes") }
     }
     @Published private(set) var phase: Phase = .work
     @Published private(set) var completedPomodoros = 0
@@ -24,9 +24,23 @@ final class TimerModel: ObservableObject {
     /// Time left (countdown) or elapsed (stopwatch) while paused.
     @Published private(set) var pausedValue: TimeInterval?
 
-    private static func stored(_ key: String, _ fallback: Int) -> Int {
-        let value = UserDefaults.standard.integer(forKey: key)
+    private static func stored(_ key: String, _ fallback: Int, in defaults: UserDefaults) -> Int {
+        let value = defaults.integer(forKey: key)
         return value > 0 ? value : fallback
+    }
+
+    private let defaults: UserDefaults
+    private let now: () -> Date
+    private let chime: () -> Void
+
+    init(defaults: UserDefaults = .standard, now: @escaping () -> Date = { .now },
+         chime: @escaping () -> Void = { NSSound(named: "Glass")?.play() }) {
+        self.defaults = defaults
+        self.now = now
+        self.chime = chime
+        countdownSeconds = Self.stored("countdownSeconds", 5 * 60, in: defaults)
+        workMinutes = Self.stored("pomodoroWorkMinutes", 25, in: defaults)
+        restMinutes = Self.stored("pomodoroRestMinutes", 5, in: defaults)
     }
 
     var onFinished: ((String) -> Void)?
@@ -36,7 +50,8 @@ final class TimerModel: ObservableObject {
     var isActive: Bool { anchor != nil || pausedValue != nil }
 
     /// Seconds left for countdown modes, seconds elapsed for the stopwatch.
-    func value(at date: Date = .now) -> TimeInterval {
+    func value(at date: Date? = nil) -> TimeInterval {
+        let date = date ?? now()
         switch mode {
         case .stopwatch:
             if let anchor { return (pausedValue ?? 0) + date.timeIntervalSince(anchor) }
@@ -59,9 +74,9 @@ final class TimerModel: ObservableObject {
         guard anchor == nil else { return }
         switch mode {
         case .stopwatch:
-            anchor = .now
+            anchor = now()
         case .countdown, .pomodoro:
-            anchor = Date().addingTimeInterval(pausedValue ?? fullLength)
+            anchor = now().addingTimeInterval(pausedValue ?? fullLength)
             pausedValue = nil
         }
         startTicking()
@@ -147,9 +162,9 @@ final class TimerModel: ObservableObject {
         ticker?.tolerance = 0.05
     }
 
-    private func tick() {
-        guard let anchor, anchor <= .now else { return }
-        NSSound(named: "Glass")?.play()
+    func tick() {
+        guard let anchor, anchor <= now() else { return }
+        chime()
         switch mode {
         case .countdown:
             reset()
@@ -158,7 +173,7 @@ final class TimerModel: ObservableObject {
             if phase == .work { completedPomodoros += 1 }
             let finishedWork = phase == .work
             phase = finishedWork ? .rest : .work
-            self.anchor = Date().addingTimeInterval(fullLength)
+            self.anchor = now().addingTimeInterval(fullLength)
             onFinished?(finishedWork ? String(localized: "Time for a break") : String(localized: "Back to work"))
         case .stopwatch:
             break

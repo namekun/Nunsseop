@@ -49,14 +49,19 @@ final class SystemStats: ObservableObject {
         let now = Date()
         if let last = lastBytes {
             let seconds = max(0.5, now.timeIntervalSince(last.at))
-            downloadRate = Double(bytes.received &- last.received) / seconds
-            uploadRate = Double(bytes.sent &- last.sent) / seconds
+            downloadRate = Self.rate(previous: last.received, current: bytes.received, seconds: seconds)
+            uploadRate = Self.rate(previous: last.sent, current: bytes.sent, seconds: seconds)
         }
         lastBytes = (bytes.received, bytes.sent, now)
         if let values = try? URL(fileURLWithPath: "/").resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey, .volumeTotalCapacityKey]) {
             diskFree = values.volumeAvailableCapacityForImportantUsage ?? 0
             diskTotal = Int64(values.volumeTotalCapacity ?? 0)
         }
+    }
+
+    nonisolated static func rate(previous: UInt64, current: UInt64, seconds: Double) -> Double {
+        // The counters are 32-bit sums over all interfaces, so one that wraps or disappears makes the total drop.
+        current >= previous ? Double(current - previous) / seconds : 0
     }
 
     private static func cpuTicks() -> (busy: UInt64, total: UInt64)? {

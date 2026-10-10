@@ -5,23 +5,39 @@ import SwiftUI
 final class NotesModel: ObservableObject {
     @Published var text: String { didSet { scheduleSave() } }
     private let url: URL
+    private let debounce: TimeInterval
     private var saveWork: DispatchWorkItem?
 
-    init() {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        url = base.appendingPathComponent("Nunsseop/notes.txt")
+    init(url: URL = NotesModel.defaultURL, debounce: TimeInterval = 0.6) {
+        self.url = url
+        self.debounce = debounce
         text = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+    }
+
+    nonisolated static var defaultURL: URL {
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        return base.appendingPathComponent("Nunsseop/notes.txt")
+    }
+
+    /// Writes any edit still waiting out the delay.
+    func flush() {
+        guard let work = saveWork else { return }
+        work.cancel()
+        saveWork = nil
+        Self.write(text, to: url)
+    }
+
+    nonisolated private static func write(_ text: String, to url: URL) {
+        try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try? text.write(to: url, atomically: true, encoding: .utf8)
     }
 
     private func scheduleSave() {
         saveWork?.cancel()
         let text = text, url = url
-        let work = DispatchWorkItem {
-            try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-            try? text.write(to: url, atomically: true, encoding: .utf8)
-        }
+        let work = DispatchWorkItem { Self.write(text, to: url) }
         saveWork = work
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.6, execute: work)
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + debounce, execute: work)
     }
 }
 

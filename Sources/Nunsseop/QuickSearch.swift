@@ -16,11 +16,17 @@ enum Calculator {
         return value
     }
 
-    static func format(_ value: Double) -> String {
+    static func format(_ value: Double, locale: Locale = .current) -> String {
         let formatter = NumberFormatter()
+        formatter.locale = locale
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 10
         return formatter.string(from: NSNumber(value: value)) ?? String(value)
+    }
+
+    /// What the Copy action puts on the clipboard: a decimal point and no grouping, whatever the display language.
+    static func copyString(_ value: Double) -> String {
+        format(value, locale: Locale(identifier: "en_US_POSIX")).replacingOccurrences(of: ",", with: "")
     }
 
     private struct Parser {
@@ -289,7 +295,7 @@ final class QuickSearchModel: ObservableObject {
             list.append(SearchResult(id: "calc", icon: .symbol("equal.circle.fill"), title: Calculator.format(value),
                                      subtitle: String(localized: "Copy result")) { [weak self] in
                 NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(Calculator.format(value).replacingOccurrences(of: ",", with: ""), forType: .string)
+                NSPasteboard.general.setString(Calculator.copyString(value), forType: .string)
                 self?.finish()
             })
         }
