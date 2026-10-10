@@ -710,7 +710,8 @@ open build/Nunsseop.app</pre></div>
       <div class="kicker">FAQ</div>
       <h2 class="en">Good questions.</h2><h2 class="ko">자주 묻는 질문.</h2><h2 class="ja">よくある質問。</h2><h2 class="zh">常见问题。</h2><h2 class="es">Buenas preguntas.</h2><h2 class="de">Gute Fragen.</h2><h2 class="fr">Bonnes questions.</h2>
     </div>
-    <div class="faq reveal">
+    <!-- No scroll reveal here: links land on a FAQ answer, and a reveal still moving would leave it under the nav. -->
+    <div class="faq">
       <details><summary><span class="en">Is it really free?</span><span class="ko">정말 무료인가요?</span><span class="ja">本当に無料ですか？</span><span class="zh">真的免费吗？</span><span class="es">¿De verdad es gratis?</span><span class="de">Ist es wirklich kostenlos?</span><span class="fr">Est-ce vraiment gratuit ?</span></summary>
         <div class="a en">Yes. Free, open source under the MIT license, with no account, subscription or trial.</div>
         <div class="a ko">네. MIT 라이선스의 오픈소스이고, 계정·구독·체험 기간이 없습니다.</div>
@@ -993,7 +994,7 @@ open build/Nunsseop.app</pre></div>
     stage.addEventListener('pointerleave', function (e) { if (e.pointerType === 'touch') return; pointerIn = false; if (!kbd) leave(); });
     stage.addEventListener('focus', function () { kbd = stage.matches(':focus-visible'); if (kbd) arrive(); });
     stage.addEventListener('blur', function () { kbd = false; if (!pointerIn) leave(); });
-    // Touch has no hover: a tap on the eyebrow or the open notch opens it, a tap elsewhere closes it.
+    // Touch on a screen that also has a pointer: a tap on the eyebrow opens it; a tap on the open notch or anywhere else closes it.
     stage.addEventListener('pointerup', function (e) {
       if (e.pointerType !== 'touch') return;
       if (!isOpen && within(e.clientX, e.clientY)) arrive(); else leave();
@@ -1010,6 +1011,11 @@ open build/Nunsseop.app</pre></div>
   });
   window.addEventListener('hashchange', function () { openFaq(location.hash.slice(1)); });
   openFaq(location.hash.slice(1));
+  // Arriving with a hash, the browser scrolls before images above have their size; once they do, land on the target again.
+  window.addEventListener('load', function () {
+    var el = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+    if (el) el.scrollIntoView({ block: 'start' });
+  });
 })();
 </script>
 </body>
