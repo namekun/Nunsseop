@@ -125,11 +125,11 @@
   .nn-bar .l, .nn-bar .r { display: flex; gap: 1.6em; }
   .nn-bar b { font-weight: 500; color: #C8C8C4; }
   .nn-notch { position: absolute; left: 50%; top: 5px; width: 72px; height: 26px; border-radius: 13px; background: #000; transform: translateX(-50%); overflow: hidden; z-index: 2; animation: nn-open 9s cubic-bezier(.32, 1.12, .4, 1) infinite; }
-  @keyframes nn-open { 0%, 24% { top: 5px; width: 72px; height: 26px; border-radius: 13px; } 34%, 78% { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; } 88%, 100% { top: 5px; width: 72px; height: 26px; border-radius: 13px; } }
+  @keyframes nn-open { 0%, 62% { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; } 72%, 90% { top: 5px; width: 72px; height: 26px; border-radius: 13px; } 100% { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; } }
   .nn-brow { position: absolute; left: 50%; top: 50%; width: 40px; height: 16px; margin: -8px 0 0 -20px; animation: nn-brow 9s ease-in-out infinite; }
-  @keyframes nn-brow { 0%, 10% { transform: none; opacity: 1; } 16%, 24% { transform: translateY(-2px) rotate(-6deg); opacity: 1; } 28%, 84% { opacity: 0; transform: translateY(-2px) rotate(-6deg); } 90%, 100% { opacity: 1; transform: none; } }
+  @keyframes nn-brow { 0%, 64% { opacity: 0; transform: none; } 72%, 78% { opacity: 1; transform: none; } 82%, 88% { opacity: 1; transform: translateY(-2px) rotate(-6deg); } 94%, 100% { opacity: 0; transform: translateY(-2px) rotate(-6deg); } }
   .nn-shot { position: absolute; top: 0; left: 50%; max-width: none; width: calc(var(--nw) * 1.049); height: auto; transform: translateX(-50%); opacity: 0; animation: nn-shot 9s ease infinite; }
-  @keyframes nn-shot { 0%, 32% { opacity: 0; } 40%, 74% { opacity: 1; } 80%, 100% { opacity: 0; } }
+  @keyframes nn-shot { 0%, 60% { opacity: 1; } 66%, 92% { opacity: 0; } 100% { opacity: 1; } }
   .nn-stage { cursor: default; }
   .nn-stage:focus-visible { outline: 2px solid var(--paper); outline-offset: -5px; }
   /* Pointing at the eyebrow drives the notch the way the app does: the loop stops, the brow lifts with a bounce, and
@@ -143,6 +143,16 @@
   .nn-stage.open .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; transition: top .45s cubic-bezier(.34, 1.25, .5, 1), width .45s cubic-bezier(.34, 1.25, .5, 1), height .45s cubic-bezier(.34, 1.25, .5, 1), border-radius .45s cubic-bezier(.34, 1.25, .5, 1); }
   .nn-stage.open .nn-shot { opacity: 1; transition: opacity .22s ease-out .09s; }
   .nn-stage.open .nn-brow { opacity: 0; transition: opacity .1s ease; }
+  /* Phones and other touch screens have no pointer to point with: the notch rests open on the screenshot, without the
+     fake menu items it would cover or the caption about pointing. */
+  @media (hover: none), (max-width: 600px) {
+    .nn-notch, .nn-shot, .nn-brow { animation: none; }
+    .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; }
+    .nn-shot { opacity: 1; }
+    .nn-brow, .nn-bar .l, .stage-band p { display: none; }
+    .nn-stage { height: calc(var(--nh) + 8px); }
+    .stage-band { padding-bottom: 24px; }
+  }
   .stage-band p { margin: 0 auto; max-width: 1200px; padding: 0 24px; text-align: center; font: 400 13px/1.6 var(--mono); color: var(--dim); }
 
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 32px; padding-top: 56px; }
@@ -931,7 +941,8 @@ open build/Nunsseop.app</pre></div>
   var STAGE_LABEL = { en: 'Show the open notch', ko: '열린 노치 보기', ja: '開いたノッチを表示', zh: '查看展开的刘海', es: 'Ver el notch abierto', de: 'Geöffnete Notch zeigen', fr: 'Afficher l’encoche ouverte' };
   function stageLabel() { stage.setAttribute('aria-label', STAGE_LABEL[document.body.dataset.lang] || STAGE_LABEL.en); }
   langListeners.push(stageLabel); stageLabel();
-  if (!reduce) {
+  var still = reduce || window.matchMedia('(hover: none), (max-width: 600px)').matches;
+  if (!still) {
     var notch = stage.querySelector('.nn-notch');
     var frozen = [[notch, ['top', 'width', 'height', 'borderRadius']], [stage.querySelector('.nn-shot'), ['opacity']], [stage.querySelector('.nn-brow'), ['opacity', 'transform']]];
     var live = false, isOpen = false, kbd = false, openT = 0, closeT = 0, resumeT = 0;
