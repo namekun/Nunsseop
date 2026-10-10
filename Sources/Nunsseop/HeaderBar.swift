@@ -211,13 +211,15 @@ private struct TabButton: View {
                 .background(Capsule().fill(.white.opacity(selected ? 0.16 : 0)))
                 .overlay(alignment: .topTrailing) {
                     if badge > 0 {
-                        Text("\(badge)")
-                            .font(.system(size: 8, weight: .bold))
+                        Text(badge > 9 ? "9+" : "\(badge)")
+                            .font(.system(size: 8, weight: .bold).monospacedDigit())
                             .foregroundStyle(.black)
                             .padding(.horizontal, 3)
                             .background(Capsule().fill(.white))
-                            // Kept inside the button: the tab row scrolls and clips anything outside it.
-                            .offset(x: 1, y: 0)
+                            // Inside the button on every side: the tab row scrolls and clips anything past it,
+                            // so a badge on the tab at the end of the row, or a wider one, lost its edge.
+                            .padding(.top, 1)
+                            .padding(.trailing, 1)
                     }
                 }
                 .contentShape(Rectangle())
