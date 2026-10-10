@@ -40,7 +40,7 @@ struct PrivacyEdgeTests {
         #expect(calls.list[1].camera == true && calls.list[1].mic == false)
     }
 
-    @Test func keepingStateOnStopStaysQuietWhenRestarted() {
+    @Test func stopWithoutClearingKeepsCameraInUseAndStaysQuiet() {
         let (monitor, calls) = monitor()
         monitor.apply(camera: true, mic: false)
         monitor.stop(clearing: false)

@@ -32,6 +32,13 @@ struct LyricsParseTests {
         ])
     }
 
+    @Test func parsesOldMacCarriageReturnLineEndings() {
+        #expect(LyricsModel.parse("[00:01.00]A\r[00:02.00]B\r") == [
+            .init(time: 1, text: "A"),
+            .init(time: 2, text: "B"),
+        ])
+    }
+
     @Test func parsesTimestampForms() {
         #expect(LyricsModel.parse("[00:05]x") == [.init(time: 5, text: "x")])
         let fraction = LyricsModel.parse("[01:02.345]x")
