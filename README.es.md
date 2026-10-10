@@ -131,7 +131,7 @@ En una pantalla sin notch, como un monitor externo con la tapa cerrada, el notch
 <details>
 <summary><b>¿Por qué el uso de IA muestra límites antiguos de Claude?</b></summary>
 
-Por defecto, los porcentajes de Claude de 5 horas y semanales salen de cachés que escriben otras herramientas: el HUD de [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) mientras usas Claude Code en un terminal, o gjc. La tarjeta indica cuándo se actualizaron por última vez. Para tener límites al día sin ellas, activa los límites de Claude en tiempo real en la pestaña de IA o en Ajustes › Servicios. Los totales de tokens siempre están al día.
+Por defecto, los porcentajes de Claude de 5 horas y semanales salen de cachés que escriben otras herramientas: el HUD de [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) mientras usas Claude Code en un terminal, o gjc. La tarjeta indica cuándo se actualizaron por última vez. Los límites de Claude también pueden venir directamente de la línea de estado de Claude Code, una vez que la conectes en Ajustes › Servicios. Para tener límites al día sin ellas, activa los límites de Claude en tiempo real en la pestaña de IA o en Ajustes › Servicios. Los totales de tokens siempre están al día.
 </details>
 
 <details>

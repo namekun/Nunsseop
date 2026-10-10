@@ -323,6 +323,12 @@
 "Paste it into ~/.wezterm.lua before `return config`. Bells from any WezTerm pane then show in the notch; WezTerm's config isn't changed for you." = "In ~/.wezterm.lua vor `return config` einfügen. Glocken aus jedem WezTerm-Bereich erscheinen dann in der Notch; WezTerms Konfiguration wird nicht für dich geändert.";
 "Ask Anthropic for Claude's limits" = "Claudes Limits bei Anthropic abfragen";
 "Reads the sign-in Claude Code keeps in the Keychain and asks api.anthropic.com for your 5-hour and weekly limits about once an hour, so they also move when another app or claude.ai uses them. While that sign-in has expired they stop updating, until Claude Code signs in again. The sign-in is never changed or sent anywhere else." = "Liest die Anmeldung, die Claude Code im Schlüsselbund ablegt, und fragt etwa stündlich bei api.anthropic.com nach deinen 5-Stunden- und Wochenlimits, damit sie sich auch ändern, wenn eine andere App oder claude.ai sie nutzt. Solange diese Anmeldung abgelaufen ist, werden sie nicht aktualisiert, bis Claude Code sich wieder anmeldet. Die Anmeldung wird nie geändert oder anderswohin gesendet.";
+"Claude Code status line" = "Statuszeile von Claude Code";
+"Takes Claude's 5-hour and weekly limits from what Claude Code passes to its status line, and keeps running your own status line as before. Nothing leaves this Mac." = "Übernimmt Claudes 5-Stunden- und Wochenlimits aus den Daten, die Claude Code an seine Statuszeile übergibt, und führt deine eigene Statuszeile wie bisher aus. Nichts verlässt diesen Mac.";
+"Connected. The limits update while Claude Code runs." = "Verbunden. Die Limits aktualisieren sich, solange Claude Code läuft.";
+"Not connected." = "Nicht verbunden.";
+"Something else has changed Claude Code's status line since you connected. Connect again to use the new one." = "Seit der Verbindung hat etwas anderes die Statuszeile von Claude Code geändert. Verbinde erneut, um die neue zu verwenden.";
+"Couldn't change Claude Code's settings." = "Die Einstellungen von Claude Code konnten nicht geändert werden.";
 "Live Claude limits?" = "Claudes Limits live abrufen?";
 "Nunsseop can read the sign-in Claude Code keeps in the Keychain and ask Anthropic directly for your 5-hour and weekly limits, about once an hour, so they update without Claude Code running." = "Nunsseop kann die Anmeldung lesen, die Claude Code im Schlüsselbund ablegt, und etwa stündlich direkt bei Anthropic nach deinen 5-Stunden- und Wochenlimits fragen, damit sie sich ohne laufendes Claude Code aktualisieren.";
 "Turn On" = "Einschalten";

@@ -131,7 +131,7 @@ Sur un écran sans encoche, comme un moniteur externe avec le MacBook fermé, l�
 <details>
 <summary><b>Pourquoi l’usage de l’IA affiche-t-il d’anciennes limites Claude ?</b></summary>
 
-Par défaut, les pourcentages de 5 heures et hebdomadaires de Claude proviennent de caches écrits par d’autres outils : le HUD d’[oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) quand vous utilisez Claude Code dans un terminal, ou gjc. La carte indique la date de leur dernière mise à jour. Pour des limites toujours à jour sans eux, activez les limites de Claude en temps réel dans l’onglet Usage de l’IA ou dans Réglages › Services. Les totaux de tokens sont toujours en temps réel.
+Par défaut, les pourcentages de 5 heures et hebdomadaires de Claude proviennent de caches écrits par d’autres outils : le HUD d’[oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) quand vous utilisez Claude Code dans un terminal, ou gjc. La carte indique la date de leur dernière mise à jour. Les limites de Claude peuvent aussi provenir directement de la ligne d’état de Claude Code, une fois que vous l’avez connectée dans Réglages › Services. Pour des limites toujours à jour sans eux, activez les limites de Claude en temps réel dans l’onglet Usage de l’IA ou dans Réglages › Services. Les totaux de tokens sont toujours en temps réel.
 </details>
 
 <details>

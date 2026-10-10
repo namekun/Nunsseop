@@ -131,7 +131,7 @@ On a display without a notch, such as an external monitor with the lid closed, t
 <details>
 <summary><b>Why does AI usage show old Claude limits?</b></summary>
 
-By default, Claude's 5-hour and weekly percentages come from caches other tools write: the [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD while you use Claude Code in a terminal, or gjc. The card shows when they were last updated. For limits that stay current without them, turn on live Claude limits in the AI tab or Settings › Services. Token totals are always live.
+By default, Claude's 5-hour and weekly percentages come from caches other tools write: the [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD while you use Claude Code in a terminal, or gjc. The card shows when they were last updated. Claude's limits can also come straight from Claude Code's status line once you connect it in Settings › Services. For limits that stay current without them, turn on live Claude limits in the AI tab or Settings › Services. Token totals are always live.
 </details>
 
 <details>

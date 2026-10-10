@@ -131,7 +131,7 @@ Nunsseop は、macOS が「再生中」として認識している内容を表�
 <details>
 <summary><b>AI 使用量に古い Claude の上限が表示されるのはなぜですか?</b></summary>
 
-初期設定では、Claude の 5 時間と週のパーセンテージは、他のツールが書き込むキャッシュから取得されます。ターミナルで Claude Code を使っている間の [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) の HUD、または gjc が書き込んだものです。カードには最終更新時刻が表示されます。それらがなくても最新の上限を表示したい場合は、AI タブまたは設定 › サービスで、Claude の上限のリアルタイム取得をオンにしてください。トークンの合計は常に最新です。
+初期設定では、Claude の 5 時間と週のパーセンテージは、他のツールが書き込むキャッシュから取得されます。ターミナルで Claude Code を使っている間の [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) の HUD、または gjc が書き込んだものです。カードには最終更新時刻が表示されます。設定 › サービスで接続すると、Claude の上限を Claude Code のステータスラインから直接取得することもできます。それらがなくても最新の上限を表示したい場合は、AI タブまたは設定 › サービスで、Claude の上限のリアルタイム取得をオンにしてください。トークンの合計は常に最新です。
 </details>
 
 <details>

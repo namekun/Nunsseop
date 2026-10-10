@@ -323,6 +323,12 @@
 "Paste it into ~/.wezterm.lua before `return config`. Bells from any WezTerm pane then show in the notch; WezTerm's config isn't changed for you." = "粘贴到 ~/.wezterm.lua 中 `return config` 之前，所有 WezTerm 窗格的响铃都会显示在刘海中。不会自动修改 WezTerm 配置。";
 "Ask Anthropic for Claude's limits" = "从 Anthropic 获取 Claude 用量上限";
 "Reads the sign-in Claude Code keeps in the Keychain and asks api.anthropic.com for your 5-hour and weekly limits about once an hour, so they also move when another app or claude.ai uses them. While that sign-in has expired they stop updating, until Claude Code signs in again. The sign-in is never changed or sent anywhere else." = "读取 Claude Code 存在钥匙串中的登录信息，大约每小时向 api.anthropic.com 查询 5 小时和每周上限，其他应用或 claude.ai 的用量也会反映。登录过期期间不会更新，直到 Claude Code 重新登录。登录信息不会被修改，也不会发送到其他地方。";
+"Claude Code status line" = "Claude Code 状态栏";
+"Takes Claude's 5-hour and weekly limits from what Claude Code passes to its status line, and keeps running your own status line as before. Nothing leaves this Mac." = "从 Claude Code 传给状态栏的数据中获取 Claude 的 5 小时和每周用量上限，并照常运行你原来的状态栏。数据不会离开这台 Mac。";
+"Connected. The limits update while Claude Code runs." = "已连接。Claude Code 运行时，用量上限会随之更新。";
+"Not connected." = "未连接。";
+"Something else has changed Claude Code's status line since you connected. Connect again to use the new one." = "连接之后，Claude Code 的状态栏被其他程序改动了。要使用新的设置，请重新连接。";
+"Couldn't change Claude Code's settings." = "无法修改 Claude Code 的设置。";
 "Live Claude limits?" = "实时获取 Claude 用量上限？";
 "Nunsseop can read the sign-in Claude Code keeps in the Keychain and ask Anthropic directly for your 5-hour and weekly limits, about once an hour, so they update without Claude Code running." = "Nunsseop 可以读取 Claude Code 存在钥匙串中的登录信息，大约每小时直接向 Anthropic 查询 5 小时和每周上限，无需运行 Claude Code 即可更新。";
 "Turn On" = "开启";
