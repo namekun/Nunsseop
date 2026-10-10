@@ -170,6 +170,13 @@ final class NotchViewModel: ObservableObject {
         nowPlaying.$track
             .sink { [weak self] in self?.lyrics.update(for: $0) }
             .store(in: &cancellables)
+        nowPlaying.$track.map { track in track.map { $0.artist.isEmpty ? $0.title : $0.title + "  " + $0.artist } ?? "" }
+            .removeDuplicates()
+            .combineLatest(lyrics.$lines.map { $0.map(\.text) }.removeDuplicates(), settings.$lyricsEnabled)
+            .map { title, lyricLines, lyricsOn in Self.peekLineWidth(lines: [title] + (lyricsOn ? lyricLines : [])) }
+            .removeDuplicates()
+            .sink { [weak self] in self?.songPeekWidth = $0 }
+            .store(in: &cancellables)
         lyrics.objectWillChange
             .sink { [weak self] in self?.objectWillChange.send() }
             .store(in: &cancellables)
@@ -351,8 +358,38 @@ final class NotchViewModel: ObservableObject {
         return HUDContent.line(for: event)
     }
 
+    /// On a display without a notch the sneak peek or lyric sits between the artwork and the visualizer, not in a row below.
+    var sneakPeekInline: Bool { !geometry.hasNotch && showsSneakPeek }
+    /// The line's room when it sits inline: the song's longest lyric, or its title and artist, measured once per song so
+    /// the shape doesn't resize with every line. A call that is starting is measured on its own.
+    @Published private(set) var songPeekWidth: CGFloat = NotchViewModel.minInlinePeekWidth
+    nonisolated static let minInlinePeekWidth: CGFloat = 240
+
+    /// What the inline line may take, at most a third of the screen; anything longer shrinks a little, then truncates.
+    var inlinePeekWidth: CGFloat {
+        let wanted = sneakPeekCallTitle.map { Self.peekLineWidth(lines: [$0]) } ?? songPeekWidth
+        return min(max(wanted, Self.minInlinePeekWidth), geometry.screenFrame.width / 3)
+    }
+
+    /// The widest of these lines as SneakPeekLine draws them: the play symbol and its gap, the text, and the side padding.
+    nonisolated static func peekLineWidth(lines: [String]) -> CGFloat {
+        let font = NSFont.systemFont(ofSize: 11, weight: .medium)
+        let text = lines.map { ($0 as NSString).size(withAttributes: [.font: font]).width }.max() ?? 0
+        return ceil(8 + 6 + text + 2 * 10)
+    }
+
+    /// On a display without a notch every HUD is one line: the symbol beside its text, level bar or percent.
+    var hudSingleRow: Bool {
+        guard !geometry.hasNotch, let event = hud.event else { return false }
+        return HUDContent.line(for: event) != nil || HUDContent.compactValueWidth(for: event) != nil
+    }
+
     var collapsedSize: CGSize {
         var size = geometry.collapsedSize
+        if !geometry.hasNotch, let event = hud.event, let value = HUDContent.compactValueWidth(for: event) {
+            size.width = max(size.width, 2 * 18 + HUDContent.lineSymbolWidth + HUDContent.lineGap + value)
+            return size
+        }
         if let line = hudLine {
             // The symbol, the gap after it and the side padding, then the text; long lines truncate at a third of the screen.
             let text = ceil((line as NSString).size(withAttributes: [.font: HUDContent.lineFont]).width)
@@ -370,10 +407,12 @@ final class NotchViewModel: ObservableObject {
         }
         if showsLiveActivity {
             size.width += 2 * earWidth
-        } else if showsIdleEars {
+        } else if showsIdleEars && !sneakPeekInline {
             size.width += (idleOneSide == nil ? 2 : 1) * Self.idleEarWidth
         }
-        if showsSneakPeek {
+        if sneakPeekInline {
+            size.width = max(size.width, (showsLiveActivity ? 2 * earWidth : 0) + inlinePeekWidth + 2 * 13)
+        } else if showsSneakPeek {
             size.width = max(size.width, 300)
             size.height += Self.sneakPeekHeight
         }
@@ -388,6 +427,8 @@ final class NotchViewModel: ObservableObject {
     /// True when the collapsed notch's left side would cover the frontmost app's menus. It then grows to the right only,
     /// and what the left side showed moves to the right of the camera. Left as is when the menus reach the right side too.
     var hidesLeftEar: Bool {
+        // The inline peek is centred on the line, so it can't make room for the menus by growing right only.
+        if sneakPeekInline { return false }
         let notch = geometry.collapsedSize.width
         let width = collapsedSize.width
         guard width > notch else { return false }

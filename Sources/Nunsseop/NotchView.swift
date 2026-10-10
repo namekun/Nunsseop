@@ -30,7 +30,7 @@ struct NotchView: View {
                     // Without this, content being removed is drawn under the black body and vanishes instead of fading.
                     .zIndex(-1)
 
-                if !model.isExpanded && !model.geometry.hasNotch && model.hudLine == nil {
+                if !model.isExpanded && !model.geometry.hasNotch && !model.hudSingleRow && !model.sneakPeekInline {
                     EyebrowMark(lift: model.browFaded ? -1 : model.browLifted ? 1 : 0)
                         .animation(model.browFaded ? .easeIn(duration: 0.3) : motion.brow, value: model.browFaded)
                         .animation(motion.brow, value: model.browLifted)
@@ -95,37 +95,36 @@ struct NotchView: View {
                     .transition(motion.expandedContent)
                 } else if let event = model.hud.event {
                     HUDContent(event: event, height: notchHeight, earWidth: NotchViewModel.hudEarWidth, leadingInset: earLead,
-                               singleLine: model.hudLine != nil)
+                               singleLine: model.hudSingleRow)
                         .padding(.horizontal, topRadius + 12)
                         .transition(motion.hudContent)
                 } else if model.showsLiveActivity || model.showsSneakPeek || model.showsIdleEars {
                     VStack(spacing: 0) {
-                        if model.showsLiveActivity {
-                            CollapsedActivity(nowPlaying: nowPlaying, timer: model.timer, recorder: model.recorder, downloads: model.downloads,
-                                              privacy: model.settings.privacyIndicator ? model.privacy : nil, call: model.calls.call,
-                                              callMuted: model.callControls.state?.mic == .off,
-                                              height: notchHeight, earWidth: model.earWidth,
-                                              showsMusic: model.settings.collapsedMusic, showsTimer: model.settings.collapsedTimer,
-                                              showsDownloads: model.settings.collapsedDownloads)
-                            .padding(.leading, earLead)
-                        } else if model.showsIdleEars {
-                            IdleEars(model: model, height: notchHeight)
+                        ZStack {
+                            if model.showsLiveActivity {
+                                CollapsedActivity(nowPlaying: nowPlaying, timer: model.timer, recorder: model.recorder, downloads: model.downloads,
+                                                  privacy: model.settings.privacyIndicator ? model.privacy : nil, call: model.calls.call,
+                                                  callMuted: model.callControls.state?.mic == .off,
+                                                  height: notchHeight, earWidth: model.earWidth,
+                                                  showsMusic: model.settings.collapsedMusic, showsTimer: model.settings.collapsedTimer,
+                                                  showsDownloads: model.settings.collapsedDownloads)
                                 .padding(.leading, earLead)
-                        } else {
-                            Color.clear.frame(height: notchHeight)
-                        }
-                        if model.showsSneakPeek, let title = model.sneakPeekCallTitle {
-                            HStack(spacing: 6) {
-                                Image(systemName: "phone.fill").font(.system(size: 8)).foregroundStyle(.green)
-                                Text(title).foregroundStyle(.white)
+                            } else if model.showsIdleEars && !model.sneakPeekInline {
+                                IdleEars(model: model, height: notchHeight)
+                                    .padding(.leading, earLead)
+                            } else {
+                                Color.clear.frame(height: notchHeight)
                             }
-                            .font(.system(size: 11, weight: .medium))
-                            .lineLimit(1)
-                            .padding(.horizontal, 10)
-                            .frame(height: NotchViewModel.sneakPeekHeight, alignment: .top)
-                            .transition(.opacity)
-                        } else if model.showsSneakPeek, let track = nowPlaying.track {
-                            SneakPeekLine(track: track, lyrics: model.settings.lyricsEnabled ? model.lyrics : nil)
+                            if model.sneakPeekInline {
+                                peekLine
+                                    // A line longer than its room gives up a little size before it truncates.
+                                    .minimumScaleFactor(0.9)
+                                    .frame(width: model.inlinePeekWidth, height: notchHeight)
+                                    .transition(.opacity)
+                            }
+                        }
+                        if model.showsSneakPeek && !model.sneakPeekInline {
+                            peekLine
                                 .frame(height: NotchViewModel.sneakPeekHeight, alignment: .top)
                                 .transition(.opacity)
                         }
@@ -169,6 +168,7 @@ struct NotchView: View {
         .animation(model.showsLiveActivity ? motion.earsGrow : motion.earsShrink, value: model.showsLiveActivity)
         .animation(model.showsSneakPeek ? motion.earsGrow : motion.earsShrink, value: model.showsSneakPeek)
         .animation(model.showsIdleEars ? motion.earsGrow : motion.earsShrink, value: model.showsIdleEars)
+        .animation(motion.earsGrow, value: model.inlinePeekWidth)
         .animation(model.hud.event != nil ? motion.earsGrow : motion.earsShrink, value: model.hud.event)
         // The shape slides over when the left ear hides or shows, rather than jumping.
         .animation(motion.earsGrow, value: model.collapsedShift)
@@ -176,6 +176,21 @@ struct NotchView: View {
     }
 
     private var motion: NotchMotion { NotchMotion(reduceMotion: reduceMotion) }
+
+    /// The call that is starting, or the track or its sung line.
+    @ViewBuilder private var peekLine: some View {
+        if let title = model.sneakPeekCallTitle {
+            HStack(spacing: 6) {
+                Image(systemName: "phone.fill").font(.system(size: 8)).foregroundStyle(.green)
+                Text(title).foregroundStyle(.white)
+            }
+            .font(.system(size: 11, weight: .medium))
+            .lineLimit(1)
+            .padding(.horizontal, 10)
+        } else if let track = nowPlaying.track {
+            SneakPeekLine(track: track, lyrics: model.settings.lyricsEnabled ? model.lyrics : nil)
+        }
+    }
 }
 
 /// How the notch opens, closes and grows its ears. The shape's size and corner radii move together on one spring;
