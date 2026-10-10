@@ -30,8 +30,9 @@ struct NotchView: View {
                     // Without this, content being removed is drawn under the black body and vanishes instead of fading.
                     .zIndex(-1)
 
-                if !model.isExpanded && !model.geometry.hasNotch {
-                    EyebrowMark(lifted: model.browLifted)
+                if !model.isExpanded && !model.geometry.hasNotch && model.hudLine == nil {
+                    EyebrowMark(lift: model.browFaded ? -1 : model.browLifted ? 1 : 0)
+                        .animation(model.browFaded ? .easeIn(duration: 0.3) : motion.brow, value: model.browFaded)
                         .animation(motion.brow, value: model.browLifted)
                         .frame(width: model.geometry.collapsedSize.width, height: notchHeight)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: shift > 0 ? .topLeading : shift < 0 ? .topTrailing : .top)
@@ -93,7 +94,8 @@ struct NotchView: View {
                     // No scale here: scaling the scrolling tab row while it appears leaves it a few points off.
                     .transition(motion.expandedContent)
                 } else if let event = model.hud.event {
-                    HUDContent(event: event, height: notchHeight, earWidth: NotchViewModel.hudEarWidth, leadingInset: earLead)
+                    HUDContent(event: event, height: notchHeight, earWidth: NotchViewModel.hudEarWidth, leadingInset: earLead,
+                               singleLine: model.hudLine != nil)
                         .padding(.horizontal, topRadius + 12)
                         .transition(motion.hudContent)
                 } else if model.showsLiveActivity || model.showsSneakPeek || model.showsIdleEars {
@@ -148,8 +150,11 @@ struct NotchView: View {
                 airDropRect: airDropRect(in: size)
             ))
             .offset(x: shift)
-            .opacity(model.browFaded ? 0 : 1)
-            .animation(.easeInOut(duration: 0.4), value: model.browFaded)
+            // Fading out waits for the brow to lower first, like an eye closing; coming back shows at once.
+            // Scoped to the opacity, so the shape resizing when a HUD or live activity ends isn't held back too.
+            .animation(model.browFaded ? .easeIn(duration: 0.3).delay(0.28) : .easeOut(duration: 0.2)) {
+                $0.opacity(model.browFaded ? 0 : 1)
+            }
             .padding(.top, model.isExpanded ? 0 : model.geometry.topInset)
             // Ears appearing is when the app's menus matter, so they are read again then.
             .onChange(of: model.collapsedSize.width) { old, new in

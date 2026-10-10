@@ -6,8 +6,45 @@ struct HUDContent: View {
     let earWidth: CGFloat
     /// Room kept clear before the symbol, so both ears can sit right of the camera.
     var leadingInset: CGFloat = 0
+    /// The symbol and the text line side by side, for a display without a camera to keep clear.
+    var singleLine = false
+
+    static let lineFont = NSFont.systemFont(ofSize: 11, weight: .medium)
+    /// The symbol's slot in the single line; the widest symbol a notice uses (a battery) fits.
+    static let lineSymbolWidth: CGFloat = 20
+    static let lineGap: CGFloat = 7
+
+    /// The text a notice or headphone battery shows under the notch.
+    static func line(for event: HUDEvent) -> String? {
+        switch event {
+        case .notice(_, let title, let detail):
+            return ([title] + (detail.map { [$0] } ?? [])).joined(separator: "  ·  ")
+        case .headphones(let battery):
+            return ([battery.name] + battery.levels.map { "\($0.label) \($0.percent)%" }).joined(separator: "  ·  ")
+        default:
+            return nil
+        }
+    }
 
     var body: some View {
+        if singleLine, let line = Self.line(for: event) {
+            HStack(spacing: Self.lineGap) {
+                Image(systemName: symbol)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: Self.lineSymbolWidth)
+                Text(line)
+                    .font(Font(Self.lineFont))
+                    .foregroundStyle(.white.opacity(0.85))
+                    .lineLimit(1)
+            }
+            .frame(height: height)
+        } else {
+            stacked
+        }
+    }
+
+    private var stacked: some View {
         VStack(spacing: 0) {
             HStack {
                 Image(systemName: symbol)
@@ -20,17 +57,10 @@ struct HUDContent: View {
             }
             .padding(.leading, leadingInset)
             .frame(height: height)
-            if case .notice(_, let title, let detail) = event {
-                Text(([title] + (detail.map { [$0] } ?? [])).joined(separator: "  ·  "))
-                    .font(.system(size: 11, weight: .medium))
+            if let line = Self.line(for: event) {
+                Text(line)
+                    .font(Font(Self.lineFont))
                     .foregroundStyle(.white.opacity(0.85))
-                    .lineLimit(1)
-                    .frame(height: NotchViewModel.sneakPeekHeight, alignment: .top)
-            }
-            if case .headphones(let battery) = event {
-                Text(([battery.name] + battery.levels.map { "\($0.label) \($0.percent)%" }).joined(separator: "  ·  "))
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.75))
                     .lineLimit(1)
                     .frame(height: NotchViewModel.sneakPeekHeight, alignment: .top)
             }
