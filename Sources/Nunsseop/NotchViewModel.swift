@@ -170,6 +170,13 @@ final class NotchViewModel: ObservableObject {
         nowPlaying.$track
             .sink { [weak self] in self?.lyrics.update(for: $0) }
             .store(in: &cancellables)
+        nowPlaying.$track.map { track in track.map { $0.artist.isEmpty ? $0.title : $0.title + "  " + $0.artist } ?? "" }
+            .removeDuplicates()
+            .combineLatest(lyrics.$lines.map { $0.map(\.text) }.removeDuplicates(), settings.$lyricsEnabled)
+            .map { title, lyricLines, lyricsOn in Self.peekLineWidth(lines: [title] + (lyricsOn ? lyricLines : [])) }
+            .removeDuplicates()
+            .sink { [weak self] in self?.songPeekWidth = $0 }
+            .store(in: &cancellables)
         lyrics.objectWillChange
             .sink { [weak self] in self?.objectWillChange.send() }
             .store(in: &cancellables)
@@ -353,8 +360,23 @@ final class NotchViewModel: ObservableObject {
 
     /// On a display without a notch the sneak peek or lyric sits between the artwork and the visualizer, not in a row below.
     var sneakPeekInline: Bool { !geometry.hasNotch && showsSneakPeek }
-    /// The line's room when it sits inline; fixed, so the shape doesn't resize with every lyric.
-    static let inlinePeekWidth: CGFloat = 300
+    /// The line's room when it sits inline: the song's longest lyric, or its title and artist, measured once per song so
+    /// the shape doesn't resize with every line. A call that is starting is measured on its own.
+    @Published private(set) var songPeekWidth: CGFloat = NotchViewModel.minInlinePeekWidth
+    nonisolated static let minInlinePeekWidth: CGFloat = 240
+
+    /// What the inline line may take, at most a third of the screen; anything longer shrinks a little, then truncates.
+    var inlinePeekWidth: CGFloat {
+        let wanted = sneakPeekCallTitle.map { Self.peekLineWidth(lines: [$0]) } ?? songPeekWidth
+        return min(max(wanted, Self.minInlinePeekWidth), geometry.screenFrame.width / 3)
+    }
+
+    /// The widest of these lines as SneakPeekLine draws them: the play symbol and its gap, the text, and the side padding.
+    nonisolated static func peekLineWidth(lines: [String]) -> CGFloat {
+        let font = NSFont.systemFont(ofSize: 11, weight: .medium)
+        let text = lines.map { ($0 as NSString).size(withAttributes: [.font: font]).width }.max() ?? 0
+        return ceil(8 + 6 + text + 2 * 10)
+    }
 
     /// On a display without a notch every HUD is one line: the symbol beside its text, level bar or percent.
     var hudSingleRow: Bool {
@@ -389,7 +411,7 @@ final class NotchViewModel: ObservableObject {
             size.width += (idleOneSide == nil ? 2 : 1) * Self.idleEarWidth
         }
         if sneakPeekInline {
-            size.width = max(size.width, (showsLiveActivity ? 2 * earWidth : 0) + Self.inlinePeekWidth + 2 * 13)
+            size.width = max(size.width, (showsLiveActivity ? 2 * earWidth : 0) + inlinePeekWidth + 2 * 13)
         } else if showsSneakPeek {
             size.width = max(size.width, 300)
             size.height += Self.sneakPeekHeight

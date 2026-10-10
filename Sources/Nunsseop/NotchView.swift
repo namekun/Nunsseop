@@ -117,7 +117,7 @@ struct NotchView: View {
                             }
                             if model.sneakPeekInline {
                                 peekLine
-                                    .frame(width: NotchViewModel.inlinePeekWidth, height: notchHeight)
+                                    .frame(width: model.inlinePeekWidth, height: notchHeight)
                                     .transition(.opacity)
                             }
                         }

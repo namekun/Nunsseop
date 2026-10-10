@@ -227,6 +227,8 @@ struct SneakPeekLine: View {
         }
         .font(.system(size: 11, weight: .medium))
         .lineLimit(1)
+        // A line longer than its room gives up a little size before it truncates.
+        .minimumScaleFactor(0.9)
         .padding(.horizontal, 10)
     }
 }

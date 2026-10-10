@@ -47,3 +47,17 @@ struct SneakPeekFilterTests {
         #expect(peeks([("song A|true", 120)]) == [true])
     }
 }
+
+struct InlinePeekWidthTests {
+    @Test func theLongestLineDecides() {
+        let short = NotchViewModel.peekLineWidth(lines: ["Hi"])
+        let long = NotchViewModel.peekLineWidth(lines: ["Hi", "A much longer line of lyrics than the first"])
+        #expect(long > short)
+        #expect(long == NotchViewModel.peekLineWidth(lines: ["A much longer line of lyrics than the first"]))
+    }
+
+    @Test func roomForTheSymbolAndPaddingWithoutText() {
+        // The play symbol (8), its gap (6) and 10 on each side.
+        #expect(NotchViewModel.peekLineWidth(lines: [""]) == 34)
+    }
+}
