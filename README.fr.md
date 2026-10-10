@@ -8,9 +8,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=c86bfa&label=release" alt="Dernière version"></a>
+  <a href="https://github.com/namekun/Nunsseop/releases/latest"><img src="https://img.shields.io/github/v/release/namekun/Nunsseop?color=111111&label=release" alt="Dernière version"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-black?logo=apple" alt="macOS 14 ou ultérieur">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ff5f8f" alt="Licence MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="Licence MIT"></a>
   <img src="https://img.shields.io/badge/Swift-native-orange?logo=swift&logoColor=white" alt="Swift natif">
 </p>
 
@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Nécessite [Homebrew](https://brew.sh). Homebrew retire l’attribut de quarantaine, l’app s’ouvre donc tout de suite. Pour la mettre à jour, lancez `brew update && brew upgrade --cask nunsseop` ; quand une mise à jour est disponible, Réglages › Général › Mises à jour copie cette commande dans le presse-papiers.
+Nécessite [Homebrew](https://brew.sh). Homebrew retire l’attribut de quarantaine, l’app s’ouvre donc tout de suite. Pour la mettre à jour, lancez `brew update && brew upgrade --cask nunsseop` ; quand une mise à jour est disponible, Réglages › Général › Mises à jour copie cette commande dans le presse-papiers (pour une app installée depuis l’ancien dmg, une commande qui la fait passer à Homebrew).
 
 Nécessite macOS 14 Sonoma ou ultérieur. Fonctionne sur Apple silicon et sur Intel, ainsi que sur les écrans sans encoche.
 
@@ -83,7 +83,8 @@ Il n’y a pas d’icône dans le Dock. Nunsseop vit dans l’encoche.
 
 **🤖 Pour les développeurs**
 - **Usage de l’IA.** Les limites de Claude et Codex avec leurs heures de réinitialisation, et la consommation de tokens sur les 5 dernières heures et les 7 derniers jours, tous Claude Code, Codex, gjc, omo et OpenCode confondus. Lu dans des fichiers que ces outils conservent déjà sur votre Mac : il n’y a rien à connecter.
-- **Limites de Claude en temps réel (optionnel).** L’onglet Usage de l’IA demande une fois s’il faut récupérer vos limites Claude de 5 heures et hebdomadaires auprès d’Anthropic, environ une fois par heure, avec la connexion que Claude Code garde dans le trousseau. Désactivé tant que vous n’avez pas accepté ; modifiable plus tard dans Réglages › Services.
+- **Limites de Claude depuis Claude Code.** Dans Réglages › Services › Usage de l’IA, connectez la ligne d’état de Claude Code. Claude Code lui transmet vos limites de 5 heures et hebdomadaires à chaque réponse : l’onglet Usage de l’IA reste à jour pendant que vous travaillez, sans que Nunsseop ne demande quoi que ce soit à Anthropic. La ligne d’état que vous aviez déjà continue de s’afficher comme avant, et Déconnecter la rétablit.
+- **Limites de Claude en temps réel (optionnel).** Pour le cas où vous utilisez Claude ailleurs, l’onglet Usage de l’IA demande une fois s’il faut récupérer vos limites Claude de 5 heures et hebdomadaires auprès d’Anthropic, environ une fois par heure, avec la connexion que Claude Code garde dans le trousseau. Désactivé tant que vous n’avez pas accepté ; modifiable plus tard dans Réglages › Services. La source la plus récente l’emporte.
 - **Notifications des agents et des terminaux.** Les hooks de Claude Code, Codex, Gemini CLI et OpenCode, les agents dans Muxy, cmux et herdr, et les sonneries de tmux et WezTerm s’affichent dans l’encoche. Cliquez sur une notification pour ramener au premier plan son terminal, son panneau ou son onglet ([réglage ci-dessous](#notifications-des-agents-et-des-terminaux)).
 - **Onglet Notifications.** Les 30 dernières notifications des agents, des terminaux et de votre calendrier, avec un badge pour celles que vous n’avez pas vues ; cliquez sur l’une d’elles pour retourner à sa source. Désactivé par défaut (Réglages › Encoche), et conservé en mémoire uniquement.
 - **Agents au travail.** Un élément de l’encoche fermée qui indique combien d’agents de code vous attendent (une main jaune) ou, quand aucun n’attend, combien travaillent (un éclair vert). Pour l’instant, il suit herdr.
@@ -91,7 +92,7 @@ Il n’y a pas d’icône dans le Dock. Nunsseop vit dans l’encoche.
 **🧩 À votre façon**
 - Choisissez vos onglets et leur ordre, ce qu’affichent l’en-tête et l’encoche repliée, et les pop-ups que vous recevez. **Tout ce que vous désactivez cesse de tourner.**
 - Sous macOS 26, l’encoche déployée et ses cartes utilisent Liquid Glass, ce qui laisse transparaître doucement l’arrière-plan. Vous réglez l’opacité du verre jusqu’à 100 % pour une encoche noire pleine, ou vous désactivez le verre.
-- Sur les écrans sans encoche, l’encoche fermée est une petite pastille avec le logo du sourcil, dans la barre des menus, en verre si vous le souhaitez. Elle s’efface après un temps d’inactivité (de 3 à 60 secondes, ou jamais) et revient quand le pointeur l’atteint ; restez dessus une demi-seconde et elle s’ouvre.
+- Sur les écrans sans encoche, l’encoche fermée est une petite pastille dans la barre des menus, en verre si vous le souhaitez, avec le sourcil, un trait de pinceau blanc, posé dessus. Le sourcil se soulève quand le pointeur le survole. Après un temps d’inactivité (de 3 à 60 secondes, ou jamais), il s’abaisse comme un œil qui se ferme et la pastille s’efface, puis elle revient quand le pointeur l’atteint ; restez dessus une demi-seconde et elle s’ouvre, fixée au bord supérieur. Là, les HUD, notifications, paroles et l’aperçu discret tiennent sur une seule ligne, avec le symbole juste à côté de la barre de niveau, du pourcentage ou du texte.
 - Choisissez l’écran, la taille et le délai de survol, le lancement à l’ouverture de session, et masquez l’encoche quand le MacBook est fermé.
 - Balayez vers le bas pour ouvrir, vers le haut pour fermer, sur le côté dans Accueil pour changer de morceau.
 - Disponible en English, 한국어, 日本語, 简体中文, Español, Deutsch et Français, selon la langue de votre Mac.
@@ -125,13 +126,13 @@ Faites un clic droit sur l’encoche → Réglages → Encoche, et désactivez c
 <details>
 <summary><b>Mon Mac n’a pas d’encoche.</b></summary>
 
-Sur un écran sans encoche, comme un moniteur externe avec le MacBook fermé, l’encoche fermée est une petite pastille avec le logo du sourcil, flottant dans la barre des menus. Le sourcil se soulève quand le pointeur le survole, et l’ouvrir fixe l’encoche au bord supérieur, à sa taille habituelle. Elle s’efface quand elle n’est pas utilisée ; désactivez cela ou changez le délai dans les Réglages. C’est aussi là que vous choisissez l’écran utilisé.
+Sur un écran sans encoche, comme un moniteur externe avec le MacBook fermé, l’encoche fermée est une petite pastille flottant dans la barre des menus, avec le sourcil, un trait de pinceau blanc, posé dessus. Le sourcil se soulève quand le pointeur le survole, et l’ouvrir fixe l’encoche au bord supérieur, à sa taille habituelle. Les HUD, notifications, paroles et l’aperçu discret s’affichent sur une seule ligne, au lieu de contourner une caméra. Quand elle n’est pas utilisée, le sourcil s’abaisse comme un œil qui se ferme et la pastille s’efface ; désactivez cela ou changez le délai dans les Réglages. C’est aussi là que vous choisissez l’écran utilisé.
 </details>
 
 <details>
 <summary><b>Pourquoi l’usage de l’IA affiche-t-il d’anciennes limites Claude ?</b></summary>
 
-Par défaut, les pourcentages de 5 heures et hebdomadaires de Claude proviennent de caches écrits par d’autres outils : le HUD d’[oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) quand vous utilisez Claude Code dans un terminal, ou gjc. La carte indique la date de leur dernière mise à jour. Les limites de Claude peuvent aussi provenir directement de la ligne d’état de Claude Code, une fois que vous l’avez connectée dans Réglages › Services. Pour des limites toujours à jour sans eux, activez les limites de Claude en temps réel dans l’onglet Usage de l’IA ou dans Réglages › Services. Les totaux de tokens sont toujours en temps réel.
+Par défaut, les pourcentages de 5 heures et hebdomadaires de Claude proviennent de caches écrits par d’autres outils : le HUD d’[oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) quand vous utilisez Claude Code dans un terminal, ou gjc. La carte indique la date de leur dernière mise à jour. Pour des limites toujours à jour, connectez la ligne d’état de Claude Code dans Réglages › Services › Usage de l’IA : Claude Code lui transmet vos limites à chaque réponse, et votre propre ligne d’état continue de fonctionner. Si vous utilisez Claude ailleurs, activez plutôt les limites de Claude en temps réel dans l’onglet Usage de l’IA ou dans Réglages › Services. La source la plus récente l’emporte. Les totaux de tokens sont toujours en temps réel.
 </details>
 
 <details>
@@ -201,7 +202,7 @@ Nunsseop ne collecte ni n’envoie aucune donnée personnelle. Elle ne se connec
 - télécharger des pochettes en HTTPS depuis des services musicaux connus, uniquement quand l’assistant MediaRemote est indisponible ;
 - demander à `api.anthropic.com` vos limites Claude environ une fois par heure, avec la connexion de Claude Code lue dans le trousseau, uniquement si vous activez les limites de Claude en temps réel.
 
-Tout le reste demeure sur votre Mac. Le serveur de notifications n’accepte que les connexions de ce Mac. L’usage de l’IA est lu dans des fichiers locaux, sauf si vous activez les limites de Claude en temps réel. Les notifications de l’onglet Notifications sont conservées en mémoire uniquement. Les enregistrements sont sauvegardés à côté de vos captures d’écran. L’aperçu de la caméra ne tourne que lorsque l’onglet Miroir est ouvert et n’est jamais enregistré. L’historique du presse-papiers est effacé quand Nunsseop quitte.
+Tout le reste demeure sur votre Mac. Le serveur de notifications n’accepte que les connexions de ce Mac. L’usage de l’IA est lu dans des fichiers locaux, y compris les limites que la ligne d’état de Claude Code conserve sur ce Mac, sauf si vous activez les limites de Claude en temps réel. Les notifications de l’onglet Notifications sont conservées en mémoire uniquement. Les enregistrements sont sauvegardés à côté de vos captures d’écran. L’aperçu de la caméra ne tourne que lorsque l’onglet Miroir est ouvert et n’est jamais enregistré. L’historique du presse-papiers est effacé quand Nunsseop quitte.
 
 ## Fonctionnement de la lecture en cours
 
