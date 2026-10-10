@@ -18,7 +18,9 @@ struct NowPlayingTrack: Equatable {
 
     func position(at date: Date) -> Double {
         guard isPlaying else { return position }
-        return min(duration, position + date.timeIntervalSince(fetchedAt) * rate)
+        let live = position + date.timeIntervalSince(fetchedAt) * rate
+        // Streams report no duration; there is no end to clamp to.
+        return duration > 0 ? min(duration, live) : live
     }
 
     var identity: String { "\(sourceBundleID)|\(title)|\(artist)|\(album)" }
@@ -32,7 +34,7 @@ enum NowPlayingCommand {
 
 /// Reads playback state from apps that expose it over AppleScript. Each source
 /// needs the user's Automation consent the first time it is queried.
-private struct ScriptSource {
+struct ScriptSource {
     let bundleID: String
     let durationScale: Double
     let stateScript: String
@@ -173,15 +175,22 @@ final class NowPlayingController: ObservableObject {
     func skip(by seconds: Double) {
         guard let track, track.canSeek, track.duration > 0 else { return }
         // Stop just short of the end so players don't jump to the next track.
-        send(.seek(min(max(0, track.duration - 1), max(0, track.position(at: Date()) + seconds))))
+        send(.seek(Self.skipTarget(position: track.position(at: Date()), duration: track.duration, by: seconds)))
+    }
+
+    nonisolated static func skipTarget(position: Double, duration: Double, by seconds: Double) -> Double {
+        min(max(0, duration - 1), max(0, position + seconds))
     }
 
     /// Steps through 1×, 1.25×, 1.5× and 2×, then back to 1×.
     func cycleRate() {
         guard let track, track.canChangeRate else { return }
+        send(.rate(Self.nextRate(after: track.rate)))
+    }
+
+    nonisolated static func nextRate(after rate: Double) -> Double {
         let rates: [Double] = [1, 1.25, 1.5, 2]
-        let next = rates.first { $0 > track.rate + 0.01 } ?? 1
-        send(.rate(next))
+        return rates.first { $0 > rate + 0.01 } ?? 1
     }
 
     private func poll() {
@@ -386,7 +395,7 @@ final class NowPlayingController: ObservableObject {
         return .success(result)
     }
 
-    nonisolated private static func parse(_ d: NSAppleEventDescriptor, source: ScriptSource) -> NowPlayingTrack? {
+    nonisolated static func parse(_ d: NSAppleEventDescriptor, source: ScriptSource) -> NowPlayingTrack? {
         guard d.numberOfItems >= 6, let state = d.atIndex(1)?.stringValue, state != "stopped" else { return nil }
         return NowPlayingTrack(
             title: d.atIndex(2)?.stringValue ?? "",

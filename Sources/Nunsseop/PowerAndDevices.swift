@@ -37,14 +37,19 @@ final class PowerMonitor {
               let list = IOPSCopyPowerSourcesList(info)?.takeRetainedValue() as? [CFTypeRef] else { return nil }
         for ps in list {
             guard let desc = IOPSGetPowerSourceDescription(info, ps)?.takeUnretainedValue() as? [String: Any],
-                  desc[kIOPSTypeKey] as? String == kIOPSInternalBatteryType else { continue }
-            let current = desc[kIOPSCurrentCapacityKey] as? Int ?? 0
-            let max = desc[kIOPSMaxCapacityKey] as? Int ?? 100
-            return PowerState(percent: max > 0 ? current * 100 / max : current,
-                              isCharging: desc[kIOPSIsChargingKey] as? Bool ?? false,
-                              onAC: desc[kIOPSPowerSourceStateKey] as? String == kIOPSACPowerValue)
+                  let state = state(from: desc) else { continue }
+            return state
         }
         return nil
+    }
+
+    nonisolated static func state(from desc: [String: Any]) -> PowerState? {
+        guard desc[kIOPSTypeKey] as? String == kIOPSInternalBatteryType else { return nil }
+        let current = desc[kIOPSCurrentCapacityKey] as? Int ?? 0
+        let max = desc[kIOPSMaxCapacityKey] as? Int ?? 100
+        return PowerState(percent: max > 0 ? current * 100 / max : current,
+                          isCharging: desc[kIOPSIsChargingKey] as? Bool ?? false,
+                          onAC: desc[kIOPSPowerSourceStateKey] as? String == kIOPSACPowerValue)
     }
 }
 

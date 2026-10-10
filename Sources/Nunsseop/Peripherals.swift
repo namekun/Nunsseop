@@ -55,21 +55,36 @@ final class PeripheralMonitor: ObservableObject {
                 guard let self else { return }
                 self.reading = false
                 self.devices = found
-                for device in found where device.percent <= 15 && !self.warned.contains(device.name) {
-                    self.warned.insert(device.name)
-                    self.onLow?(device)
-                }
-                self.warned = self.warned.filter { name in found.contains { $0.name == name && $0.percent <= 15 } }
+                let (toWarn, warned) = Self.lowBattery(found: found, warned: self.warned)
+                self.warned = warned
+                toWarn.forEach { self.onLow?($0) }
             }
         }
     }
 
-    nonisolated private static func kind(for name: String, type: String?) -> PeripheralBattery.Kind {
+    /// The devices to warn about now, and the set of devices already warned about and still low.
+    nonisolated static func lowBattery(found: [PeripheralBattery], warned: Set<String>)
+        -> (toWarn: [PeripheralBattery], warned: Set<String>) {
+        let toWarn = found.filter { $0.percent <= 15 && !warned.contains($0.name) }
+        let still = warned.union(toWarn.map(\.name))
+        return (toWarn, still.filter { name in found.contains { $0.name == name && $0.percent <= 15 } })
+    }
+
+    nonisolated static func kind(for name: String, type: String?) -> PeripheralBattery.Kind {
         let text = (name + " " + (type ?? "")).lowercased()
         if text.contains("trackpad") { return .trackpad }
         if text.contains("mouse") || text.contains("mx master") || text.contains("mx vertical") || text.contains("mx anywhere") { return .mouse }
         if text.contains("keyboard") || text.contains("keys") || text.contains("keychron") { return .keyboard }
         return .other
+    }
+
+    /// Headphones have their own reading; everything else reports one main level.
+    nonisolated static func bluetoothBattery(name: String, info: [String: Any]) -> PeripheralBattery? {
+        let type = info["device_minorType"] as? String
+        guard type != "Headphones", type != "Headset",
+              let text = info["device_batteryLevelMain"] as? String,
+              let percent = Int(text.trimmingCharacters(in: CharacterSet(charactersIn: "%"))) else { return nil }
+        return PeripheralBattery(name: name, percent: percent, kind: kind(for: name, type: type))
     }
 
     /// Apple devices report through IORegistry; others through system_profiler.
@@ -88,11 +103,7 @@ final class PeripheralMonitor: ObservableObject {
             IOObjectRelease(iterator)
         }
         for (name, info) in BluetoothProfiler.connectedDevices() ?? [] where result[name] == nil {
-            let type = info["device_minorType"] as? String
-            guard type != "Headphones", type != "Headset",
-                  let text = info["device_batteryLevelMain"] as? String,
-                  let percent = Int(text.trimmingCharacters(in: CharacterSet(charactersIn: "%"))) else { continue }
-            result[name] = PeripheralBattery(name: name, percent: percent, kind: kind(for: name, type: type))
+            if let battery = bluetoothBattery(name: name, info: info) { result[name] = battery }
         }
         return result.values.sorted { $0.name < $1.name }
     }
@@ -147,7 +158,7 @@ final class PrivacyMonitor: ObservableObject {
         }
     }
 
-    private func apply(camera: Bool, mic: Bool) {
+    func apply(camera: Bool, mic: Bool) {
         guard camera != cameraInUse || mic != micInUse else { return }
         let startedCamera = camera && !cameraInUse
         let startedMic = mic && !micInUse

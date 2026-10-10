@@ -74,27 +74,39 @@ enum ExternalBrightness {
     /// Current and maximum brightness, or nil if the display does not answer.
     static func level(of service: CFTypeRef) -> (current: Int, max: Int)? {
         guard let write, let read else { return nil }
-        var request: [UInt8] = [0x82, 0x01, 0x10]
-        request.append(checksum(request))
+        var request = requestPacket()
         var reply = [UInt8](repeating: 0, count: 12)
         for _ in 0..<3 {
             usleep(10_000)
             let wrote = request.withUnsafeMutableBytes { write(service, chipAddress, dataAddress, $0.baseAddress!, UInt32($0.count)) }
             usleep(50_000)
             let got = reply.withUnsafeMutableBytes { read(service, chipAddress, dataAddress, $0.baseAddress!, UInt32($0.count)) }
-            if wrote == kIOReturnSuccess, got == kIOReturnSuccess, reply[2] == 0x02, reply[3] == 0x00, reply[4] == 0x10 {
-                let maximum = Int(reply[6]) << 8 | Int(reply[7])
-                return (Int(reply[8]) << 8 | Int(reply[9]), maximum > 0 ? maximum : 100)
-            }
+            if wrote == kIOReturnSuccess, got == kIOReturnSuccess, let level = parseLevel(reply) { return level }
         }
         return nil
     }
 
+    static func requestPacket() -> [UInt8] {
+        let request: [UInt8] = [0x82, 0x01, 0x10]
+        return request + [checksum(request)]
+    }
+
+    /// Nil unless the reply answers the brightness (0x10) request.
+    static func parseLevel(_ reply: [UInt8]) -> (current: Int, max: Int)? {
+        guard reply.count >= 10, reply[2] == 0x02, reply[3] == 0x00, reply[4] == 0x10 else { return nil }
+        let maximum = Int(reply[6]) << 8 | Int(reply[7])
+        return (Int(reply[8]) << 8 | Int(reply[9]), maximum > 0 ? maximum : 100)
+    }
+
+    static func setPacket(_ value: Int) -> [UInt8] {
+        let clamped = UInt16(max(0, min(0xFFFF, value)))
+        let packet: [UInt8] = [0x84, 0x03, 0x10, UInt8(clamped >> 8), UInt8(clamped & 0xFF)]
+        return packet + [checksum(packet)]
+    }
+
     static func set(_ value: Int, on service: CFTypeRef) {
         guard let write else { return }
-        let clamped = UInt16(max(0, min(0xFFFF, value)))
-        var packet: [UInt8] = [0x84, 0x03, 0x10, UInt8(clamped >> 8), UInt8(clamped & 0xFF)]
-        packet.append(checksum(packet))
+        var packet = setPacket(value)
         for _ in 0..<2 {
             usleep(10_000)
             _ = packet.withUnsafeMutableBytes { write(service, chipAddress, dataAddress, $0.baseAddress!, UInt32($0.count)) }
