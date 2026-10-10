@@ -139,6 +139,21 @@ struct ClaudeStatusLineFilesTests {
         #expect(!FileManager.default.fileExists(atPath: paths.script.path))
         #expect(ClaudeStatusLine.state(paths) == .notConnected)
     }
+
+    @Test func disconnectWithALostOriginalFileLeavesNoDanglingCommand() throws {
+        let root = try temporaryFolder()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let paths = ClaudeStatusLine.Paths(settings: root.appendingPathComponent("settings.json"), folder: root)
+        try Data(#"{"model":"opus","statusLine":{"type":"command","command":"echo hi"}}"#.utf8).write(to: paths.settings)
+        try ClaudeStatusLine.connect(paths)
+        try FileManager.default.removeItem(at: paths.original)
+        try ClaudeStatusLine.disconnect(paths)
+        let after = try settings(at: paths.settings)
+        #expect(after["statusLine"] == nil)
+        #expect(after["model"] as? String == "opus")
+        #expect(!String(decoding: try Data(contentsOf: paths.settings), as: UTF8.self).contains(paths.script.path))
+        #expect(!FileManager.default.fileExists(atPath: paths.script.path))
+    }
 }
 
 struct ClaudeStatusLineScriptTests {

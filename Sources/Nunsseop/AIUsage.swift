@@ -187,20 +187,26 @@ final class AIUsageModel: ObservableObject {
     /// Each provider's limits from whichever source fetched them last.
     nonisolated private static func limits(answered: @escaping @Sendable () -> Void) -> [Family: Limits] {
         let anthropic = ClaudeUsageAPI.latest(answered: answered)
-        var result: [Family: Limits] = [:]
-        func offer(_ family: Family, _ limits: Limits?) {
-            guard let limits, (limits.session ?? limits.weekly) != nil else { return }
-            if let current = result[family], current.updatedAt >= limits.updatedAt { return }
-            result[family] = limits
-        }
-        offer(.claude, (try? Data(contentsOf: home.appendingPathComponent(".claude/plugins/oh-my-claudecode/.usage-cache-anthropic.json"))).flatMap(omcLimits))
-        offer(.claude, anthropic)
-        offer(.claude, statusLineLimits())
-        offer(.codex, codexLimits())
+        var offers: [(Family, Limits?)] = []
+        offers.append((.claude, (try? Data(contentsOf: home.appendingPathComponent(".claude/plugins/oh-my-claudecode/.usage-cache-anthropic.json"))).flatMap(omcLimits)))
+        offers.append((.claude, anthropic))
+        offers.append((.claude, statusLineLimits()))
+        offers.append((.codex, codexLimits()))
         let gjc = home.appendingPathComponent(".gjc/agent/agent.db").path
         // Only the usage cache is read; this database also holds gjc's credentials, which are never touched.
         for row in query(gjc, "SELECT value FROM cache WHERE key GLOB 'usage_cache:report:*'") {
-            if let (family, limits) = gjcLimits(Data(row[0].utf8)) { offer(family, limits) }
+            if let (family, limits) = gjcLimits(Data(row[0].utf8)) { offers.append((family, limits)) }
+        }
+        return pick(offers)
+    }
+
+    /// The newest limits per provider, in the order offered: a tie keeps the first, and limits with no window are ignored.
+    nonisolated static func pick(_ offers: [(Family, Limits?)]) -> [Family: Limits] {
+        var result: [Family: Limits] = [:]
+        for (family, limits) in offers {
+            guard let limits, (limits.session ?? limits.weekly) != nil else { continue }
+            if let current = result[family], current.updatedAt >= limits.updatedAt { continue }
+            result[family] = limits
         }
         return result
     }
@@ -275,12 +281,18 @@ final class AIUsageModel: ObservableObject {
         let logs = days.flatMap {
             files(under: $0, modifiedSince: .distantPast) { $0.pathExtension == "jsonl" && $0.lastPathComponent.hasPrefix("rollout-") }
         }
-        guard let (file, modified) = logs.max(by: { $0.1 < $1.1 }), let handle = try? FileHandle(forReadingFrom: file) else { return nil }
+        guard let (file, modified) = logs.max(by: { $0.1 < $1.1 }), let text = tailText(of: file, maxBytes: 1_000_000) else { return nil }
+        return codexLimits(text, modified: modified)
+    }
+
+    /// The last `maxBytes` of a file as text. The cut can fall inside a multi-byte character, which only spoils the
+    /// first (partial) line.
+    nonisolated static func tailText(of file: URL, maxBytes: Int) -> String? {
+        guard let handle = try? FileHandle(forReadingFrom: file) else { return nil }
         defer { try? handle.close() }
         let size = (try? handle.seekToEnd()) ?? 0
-        try? handle.seek(toOffset: size > 1_000_000 ? size - 1_000_000 : 0)
-        guard let data = try? handle.readToEnd(), let text = String(data: data, encoding: .utf8) else { return nil }
-        return codexLimits(text, modified: modified)
+        try? handle.seek(toOffset: size > UInt64(maxBytes) ? size - UInt64(maxBytes) : 0)
+        return (try? handle.readToEnd()).map { String(decoding: $0, as: UTF8.self) }
     }
 
     /// The last limits a Codex session log recorded, dated by that line (or the file, if the line has no time).
@@ -468,7 +480,7 @@ final class AIUsageModel: ObservableObject {
     }
 
     /// Text columns of a read-only query, or nothing if the database can't be opened.
-    nonisolated private static func query(_ path: String, _ sql: String) -> [[String]] {
+    nonisolated static func query(_ path: String, _ sql: String) -> [[String]] {
         guard FileManager.default.fileExists(atPath: path) else { return [] }
         var db: OpaquePointer?
         defer { sqlite3_close(db) }

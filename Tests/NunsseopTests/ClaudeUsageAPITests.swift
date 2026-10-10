@@ -164,3 +164,140 @@ struct ClaudeUsageAPITests {
         #expect(limits.session != nil || limits.weekly != nil)
     }
 }
+
+struct ClaudeUsageAPISchedulingTests {
+    private let now = Date(timeIntervalSince1970: 1_791_300_000)
+
+    @Test(arguments: [
+        // A refusal waits at least 10 minutes, as long as the server asks, but never more than 4 hours.
+        (429, "30" as String?, 600.0), (429, "600", 600), (429, "1800", 1800), (429, "14400", 14400), (429, "999999", 14400),
+        (429, "1e3", 1000), (429, "0", 600), (429, "-5", 600),
+        // Retry-after values that aren't a plain number of seconds count as none.
+        (429, "abc", 600), (429, "nan", 600), (429, "inf", 600), (429, "-inf", 600), (429, "Wed, 21 Oct 2026 07:28:00 GMT", 600), (429, nil, 600),
+    ])
+    func aRefusalWaitsAsLongAsTheServerAsksWithinBounds(status: Int, retryAfter: String?, wait: Double) {
+        let reaction = ClaudeUsageAPI.reaction(status: status, retryAfter: retryAfter, parsed: false)
+        #expect(reaction.wait == wait)
+        #expect(!reaction.signedOut)
+    }
+
+    @Test func backoffFollowsTheResponse() {
+        // Answered with limits: the booked hour stands.
+        let ok = ClaudeUsageAPI.reaction(status: 200, retryAfter: nil, parsed: true)
+        #expect(ok.wait == nil && !ok.signedOut)
+        // Answered with something that isn't a usage response: soon again, still signed in.
+        let garbled = ClaudeUsageAPI.reaction(status: 200, retryAfter: nil, parsed: false)
+        #expect(garbled.wait == 600 && !garbled.signedOut)
+        // Offline or unreachable.
+        let offline = ClaudeUsageAPI.reaction(status: nil, retryAfter: "9999", parsed: false)
+        #expect(offline.wait == 600 && !offline.signedOut)
+        // A sign-in the server no longer accepts.
+        for status in [401, 403] {
+            let refused = ClaudeUsageAPI.reaction(status: status, retryAfter: "9999", parsed: false)
+            #expect(refused.wait == 600 && refused.signedOut)
+        }
+    }
+
+    @Test func claimAttemptBooksOneInterval() {
+        var state = ClaudeUsageAPI.State()
+        #expect(ClaudeUsageAPI.claimAttempt(&state, now: now))
+        #expect(state.inFlight)
+        #expect(state.nextAttempt == now.addingTimeInterval(3600))
+        state.inFlight = false
+        #expect(!ClaudeUsageAPI.claimAttempt(&state, now: now))
+        #expect(!ClaudeUsageAPI.claimAttempt(&state, now: now.addingTimeInterval(3599)))
+        #expect(!state.inFlight)
+        #expect(state.nextAttempt == now.addingTimeInterval(3600))
+        #expect(ClaudeUsageAPI.claimAttempt(&state, now: now.addingTimeInterval(3600)))
+        #expect(state.inFlight)
+        #expect(state.nextAttempt == now.addingTimeInterval(7200))
+    }
+
+    // MARK: Keychain entries
+
+    private func entry(_ token: String, expiresAtMilliseconds: Double? = nil) -> Data {
+        let expires = expiresAtMilliseconds.map { #","expiresAt":\#(Int64($0))"# } ?? ""
+        return Data(#"{"claudeAiOauth":{"accessToken":"\#(token)"\#(expires)}}"#.utf8)
+    }
+
+    private var nowMilliseconds: Double { now.timeIntervalSince1970 * 1000 }
+
+    @Test func expiredOrCorruptEntriesAreSkipped() {
+        let expired = entry("old", expiresAtMilliseconds: nowMilliseconds - 1)
+        let valid = entry("live", expiresAtMilliseconds: nowMilliseconds + 60_000)
+        #expect(ClaudeUsageAPI.usable([expired, valid], now: now)?.token == "live")
+        // Expiring this very moment counts as expired.
+        #expect(ClaudeUsageAPI.usable([entry("edge", expiresAtMilliseconds: nowMilliseconds)], now: now) == nil)
+        #expect(ClaudeUsageAPI.usable([entry("edge", expiresAtMilliseconds: nowMilliseconds + 1)], now: now)?.token == "edge")
+        // No expiry given: valid. Nothing readable is skipped over.
+        #expect(ClaudeUsageAPI.usable([nil, Data("garbage".utf8), entry("noexpiry")], now: now)?.token == "noexpiry")
+        #expect(ClaudeUsageAPI.usable([expired, expired], now: now) == nil)
+        #expect(ClaudeUsageAPI.usable([Data?](), now: now) == nil)
+        // The first one wins.
+        #expect(ClaudeUsageAPI.usable([entry("A"), entry("B")], now: now)?.token == "A")
+    }
+
+    @Test func theSecondLookupOnlyRunsWhenTheFirstFails() {
+        // The first lookup is good: the second never runs.
+        var looked = 0
+        let lookups = [entry("A"), entry("B")].lazy.map { data -> Data? in looked += 1; return data }
+        #expect(ClaudeUsageAPI.usable(lookups, now: now)?.token == "A")
+        #expect(looked == 1)
+    }
+
+    @Test(arguments: ["missing", "expired", "corrupt"])
+    func theSecondLookupRunsAndIsUsedWhenTheFirstYieldsNothingUsable(first: String) {
+        let unusable: Data? = switch first {
+        case "missing": nil
+        case "expired": entry("old", expiresAtMilliseconds: nowMilliseconds - 1)
+        default: Data("garbage".utf8)
+        }
+        var looked = 0
+        let lookups = [unusable, entry("B")].lazy.map { data -> Data? in looked += 1; return data }
+        #expect(ClaudeUsageAPI.usable(lookups, now: now)?.token == "B")
+        #expect(looked == 2)
+    }
+
+    // MARK: Resets
+
+    @Test func passedResetsZeroModelAndWeeklyWindows() throws {
+        let response = Data(#"""
+        {"five_hour":{"utilization":50.0,"resets_at":"2026-10-06T22:00:00+00:00"},
+         "seven_day":{"utilization":70.0,"resets_at":"2026-10-06T20:00:00+00:00"},
+         "limits":[{"kind":"weekly_scoped","percent":95,"resets_at":"2026-10-06T20:00:00+00:00","scope":{"model":{"display_name":"Fable"}}},
+                   {"kind":"weekly_scoped","percent":60,"resets_at":"2026-10-08T20:00:00+00:00","scope":{"model":{"display_name":"Opus"}}},
+                   {"kind":"weekly_scoped","percent":30,"scope":{"model":{"display_name":"Sonnet"}}},
+                   {"kind":"weekly_scoped","percent":10,"scope":{"model":{"display_name":""}}},
+                   {"kind":"weekly_scoped","percent":"20","scope":{"model":{"display_name":"Haiku"}}},
+                   {"kind":"weekly_all","percent":99,"scope":{"model":{"display_name":"Other"}}}]}
+        """#.utf8)
+        let fetched = try #require(ClaudeUsageAPI.date("2026-10-06T21:00:00Z"))
+        let limits = try #require(ClaudeUsageAPI.limits(from: response, fetchedAt: fetched))
+        #expect(limits.weekly == AIUsageModel.Window(percent: 0, resetsAt: nil))
+        #expect(limits.session?.percent == 50)
+        #expect(limits.models == [
+            AIUsageModel.ModelWindow(name: "Fable", window: .init(percent: 0, resetsAt: nil)),
+            AIUsageModel.ModelWindow(name: "Opus", window: .init(percent: 60, resetsAt: ClaudeUsageAPI.date("2026-10-08T20:00:00Z"))),
+            AIUsageModel.ModelWindow(name: "Sonnet", window: .init(percent: 30, resetsAt: nil)),
+        ])
+        // Before the reset the percentages stand.
+        let earlier = try #require(ClaudeUsageAPI.date("2026-10-06T19:00:00Z"))
+        let before = try #require(ClaudeUsageAPI.limits(from: response, fetchedAt: earlier))
+        #expect(before.weekly?.percent == 70)
+        #expect(before.models.first == AIUsageModel.ModelWindow(name: "Fable", window: .init(percent: 95, resetsAt: ClaudeUsageAPI.date("2026-10-06T20:00:00Z"))))
+    }
+
+    @Test func rolloverZeroesTheWeeklyAndModelWindowsOfOldLimits() throws {
+        let reset = try #require(ClaudeUsageAPI.date("2026-10-07T20:00:00Z"))
+        let window = AIUsageModel.Window(percent: 95, resetsAt: reset)
+        let limits = AIUsageModel.Limits(weekly: window, models: [AIUsageModel.ModelWindow(name: "Fable", window: window)],
+                                         updatedAt: reset.addingTimeInterval(-3600))
+        let after = ClaudeUsageAPI.fresh(limits, now: reset.addingTimeInterval(1))
+        #expect(after.weekly == AIUsageModel.Window(percent: 0, resetsAt: nil))
+        #expect(after.models == [AIUsageModel.ModelWindow(name: "Fable", window: .init(percent: 0, resetsAt: nil))])
+        #expect(after.updatedAt == limits.updatedAt)
+        #expect(ClaudeUsageAPI.fresh(limits, now: reset.addingTimeInterval(-1)) == limits)
+        // Exactly at the reset it hasn't passed yet.
+        #expect(ClaudeUsageAPI.fresh(limits, now: reset) == limits)
+    }
+}
