@@ -36,24 +36,31 @@ final class UpdateChecker: ObservableObject {
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         URLSession.shared.dataTask(with: request) { [weak self] data, response, _ in
             let status = (response as? HTTPURLResponse)?.statusCode
-            // 404 means the repository has no releases yet.
-            let release = status == 200 ? data.flatMap(Self.parse) : nil
-            let ok = status == 404 || (status == 200 && release != nil)
             DispatchQueue.main.async {
                 guard let self else { return }
+                let outcome = Self.outcome(status: status, data: data, current: self.currentVersion)
                 self.isChecking = false
                 self.lastChecked = Date()
-                self.failed = !ok
-                if let release, Self.isNewer(release.version, than: self.currentVersion) {
-                    self.available = release
-                } else if ok {
+                self.failed = outcome.failed
+                if let newer = outcome.newer {
+                    self.available = newer
+                } else if !outcome.failed {
                     self.available = nil
                 }
             }
         }.resume()
     }
 
-    nonisolated private static func parse(_ data: Data) -> Release? {
+    /// What a check found: the release if it is newer than `current`, and whether the check failed (a failure leaves
+    /// what was shown as it was).
+    nonisolated static func outcome(status: Int?, data: Data?, current: String) -> (newer: Release?, failed: Bool) {
+        // 404 means the repository has no releases yet.
+        let release = status == 200 ? data.flatMap(parse) : nil
+        let ok = status == 404 || (status == 200 && release != nil)
+        return (release.flatMap { isNewer($0.version, than: current) ? $0 : nil }, !ok)
+    }
+
+    nonisolated static func parse(_ data: Data) -> Release? {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let tag = json["tag_name"] as? String,
               let page = (json["html_url"] as? String).flatMap(URL.init(string:)),

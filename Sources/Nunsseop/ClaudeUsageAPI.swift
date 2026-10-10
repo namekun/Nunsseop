@@ -20,7 +20,7 @@ enum ClaudeUsageAPI {
         var plan: String?
     }
 
-    private struct State {
+    struct State {
         var limits: AIUsageModel.Limits?
         /// No usable sign-in at the last attempt: none in the Keychain, expired, or refused by the server.
         var signedOut = false
@@ -182,11 +182,32 @@ enum ClaudeUsageAPI {
 
     /// Whether a request is due, booking the next one if so.
     private static func claimAttempt(now: Date) -> Bool {
-        state.withLock { state -> Bool in
-            guard now >= state.nextAttempt else { return false }
-            state.nextAttempt = now.addingTimeInterval(interval)
-            state.inFlight = true
-            return true
+        state.withLock { claimAttempt(&$0, now: now) }
+    }
+
+    static func claimAttempt(_ state: inout State, now: Date) -> Bool {
+        guard now >= state.nextAttempt else { return false }
+        state.nextAttempt = now.addingTimeInterval(interval)
+        state.inFlight = true
+        return true
+    }
+
+    /// What to do after a response (`status` nil: none came): how long until the next request, when that isn't the
+    /// interval already booked, and whether the sign-in no longer works.
+    static func reaction(status: Int?, retryAfter: String?, parsed: Bool) -> (wait: TimeInterval?, signedOut: Bool) {
+        switch status {
+        case nil:
+            // Offline or unreachable: soon again, not after the full interval.
+            return (backoff, false)
+        case 200:
+            return (parsed ? nil : backoff, false)
+        case 429:
+            // Capped, so an odd retry-after can't switch this off until relaunch.
+            let asked = retryAfter.flatMap(Double.init) ?? 0
+            return (min(max(backoff, asked.isFinite ? asked : 0), interval * 4), false)
+        default:
+            // 401/403: a token that stopped working; Claude Code will sign in again, and it's asked later.
+            return (backoff, true)
         }
     }
 
@@ -201,36 +222,36 @@ enum ClaudeUsageAPI {
         state.withLock { $0.signedOut = false }
         guard let (data, response) = try? await session.data(for: request(token: credentials.token)),
               let response = response as? HTTPURLResponse else {
-            // Offline or unreachable: soon again, not after the full interval.
-            state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff) }
+            apply(reaction(status: nil, retryAfter: nil, parsed: false), now: now)
             return
         }
-        switch response.statusCode {
-        case 200:
-            if var limits = limits(from: data, fetchedAt: .now) {
-                limits.plan = credentials.plan
-                state.withLock { $0.limits = limits }
-            } else {
-                state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff) }
-            }
-        case 429:
-            // Capped, so an odd retry-after can't switch this off until relaunch.
-            let asked = response.value(forHTTPHeaderField: "retry-after").flatMap(Double.init) ?? 0
-            let wait = min(max(backoff, asked.isFinite ? asked : 0), interval * 4)
-            state.withLock { $0.nextAttempt = now.addingTimeInterval(wait) }
-        default:
-            // 401/403: a token that stopped working; Claude Code will sign in again, and it's asked later.
-            state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff); $0.signedOut = true }
+        var answer = response.statusCode == 200 ? limits(from: data, fetchedAt: .now) : nil
+        answer?.plan = credentials.plan
+        apply(reaction(status: response.statusCode, retryAfter: response.value(forHTTPHeaderField: "retry-after"), parsed: answer != nil),
+              now: now, limits: answer)
+    }
+
+    private static func apply(_ reaction: (wait: TimeInterval?, signedOut: Bool), now: Date, limits: AIUsageModel.Limits? = nil) {
+        state.withLock {
+            if let wait = reaction.wait { $0.nextAttempt = now.addingTimeInterval(wait) }
+            if reaction.signedOut { $0.signedOut = true }
+            if let limits { $0.limits = limits }
         }
     }
 
     /// The user's own entry first: an older one under the account "Claude Code" can linger, long expired.
     private static func keychainCredentials(now: Date) -> Credentials? {
-        for account in [NSUserName(), nil] {
+        usable([NSUserName(), nil].lazy.map { account -> Data? in
             var arguments = ["find-generic-password", "-s", "Claude Code-credentials"]
             if let account { arguments += ["-a", account] }
-            guard let output = run("/usr/bin/security", arguments + ["-w"]),
-                  let credentials = credentials(from: Data(output.utf8)) else { continue }
+            return run("/usr/bin/security", arguments + ["-w"]).map { Data($0.utf8) }
+        }, now: now)
+    }
+
+    /// The first entry that reads and hasn't expired. Taken lazily, so the second lookup only runs when the first fails.
+    static func usable(_ entries: some Sequence<Data?>, now: Date) -> Credentials? {
+        for case let entry? in entries {
+            guard let credentials = credentials(from: entry) else { continue }
             if let expires = credentials.expiresAt, expires <= now { continue }
             return credentials
         }
