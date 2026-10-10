@@ -36,11 +36,14 @@ struct NotifyServerParseTests {
     }
 
     @Test func refusesABadContentLength() {
-        let limit = 65_536
-        #expect(parse("POST /notify HTTP/1.1\r\nContent-Length: \(limit + 1)\r\n\r\n") == nil)
+        let limit = NotifyServer.maxRequestBytes
+        // Too large: the whole body is present, so only the cap can make parse() refuse it.
+        for size in [limit + 1, 70_000] {
+            let head = "POST /notify HTTP/1.1\r\nContent-Length: \(size)\r\n\r\n"
+            #expect(parse(head + String(repeating: "a", count: size)) == nil, "\(size) bytes")
+        }
         #expect(parse("POST /notify HTTP/1.1\r\nContent-Length: -1\r\n\r\n") == nil)
         #expect(parse("POST /notify HTTP/1.1\r\nContent-Length: abc\r\n\r\n") == nil)
-        #expect(parse("POST /notify HTTP/1.1\r\nContent-Length: 70000\r\n\r\n") == nil)
         // A request without the header has no body; the limit itself is allowed (the body is still to come).
         #expect(parse("POST /notify HTTP/1.1\r\nX-A: b\r\n\r\n")?.body.isEmpty == true)
         #expect(parse("POST /notify HTTP/1.1\r\nContent-Length: \(limit)\r\n\r\n") == nil)
@@ -129,7 +132,7 @@ struct NotifyServerRoutingTests {
         }
     }
 
-    @Test func anAgentEventReachesTheCountOnceAndAGarbageOneDoesNot() throws {
+    @Test func anAgentEventIsRoutedAndAGarbageOneIsDropped() throws {
         try withTempHome { _ in
             let server = NotifyServer()
             let good = server.route(request("/agent", headers: authorized(server, ["x-session": "s-1", "x-event": "Stop", "x-app": "com.apple.Terminal"])))

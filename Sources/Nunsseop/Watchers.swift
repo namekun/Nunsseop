@@ -174,7 +174,7 @@ final class NotifyServer: @unchecked Sendable {
     /// Touched only on `queue`.
     private var openConnections = 0
     private static let maxConnections = 8
-    private static let maxRequestBytes = 65_536
+    static let maxRequestBytes = 65_536
     let token: String
 
     /// A shell command for Claude Code's Notification hook. Claude Code passes the event as
