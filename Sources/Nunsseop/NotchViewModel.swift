@@ -351,6 +351,11 @@ final class NotchViewModel: ObservableObject {
         return HUDContent.line(for: event)
     }
 
+    /// On a display without a notch the sneak peek or lyric sits between the artwork and the visualizer, not in a row below.
+    var sneakPeekInline: Bool { !geometry.hasNotch && showsSneakPeek }
+    /// The line's room when it sits inline; fixed, so the shape doesn't resize with every lyric.
+    static let inlinePeekWidth: CGFloat = 300
+
     /// On a display without a notch every HUD is one line: the symbol beside its text, level bar or percent.
     var hudSingleRow: Bool {
         guard !geometry.hasNotch, let event = hud.event else { return false }
@@ -383,7 +388,9 @@ final class NotchViewModel: ObservableObject {
         } else if showsIdleEars {
             size.width += (idleOneSide == nil ? 2 : 1) * Self.idleEarWidth
         }
-        if showsSneakPeek {
+        if sneakPeekInline {
+            size.width = max(size.width, (showsLiveActivity ? 2 * earWidth : 0) + Self.inlinePeekWidth + 2 * 13)
+        } else if showsSneakPeek {
             size.width = max(size.width, 300)
             size.height += Self.sneakPeekHeight
         }
