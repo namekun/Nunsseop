@@ -1,6 +1,7 @@
 #!/bin/bash
 # Renders docs/images/og.png, the 1200×630 link preview, from scripts/og/og.html in headless Chromium.
 # Uses docs/images/home.png and icon.png, so run it after either changes. Needs Playwright like site-test.sh.
+# Messengers keep a preview by its URL, so raise the ?v= on og:image and twitter:image in docs/index.html after.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 NODE_PATH="$(npm root -g)" node -e '
