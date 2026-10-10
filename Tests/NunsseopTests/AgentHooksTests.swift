@@ -49,6 +49,15 @@ struct AgentHookEventTests {
         #expect(AgentHook.event(headers: ["x-session": "s", "x-event": "Nope"]) == nil)
     }
 
+    @Test func aBackgroundSessionIsNeitherInHerdrNorInAnApp() {
+        let headers = ["x-session": "s", "x-event": "UserPromptSubmit", "x-app": "com.apple.Terminal", "x-herdr": "1"]
+        #expect(AgentHook.event(headers: headers.merging(["x-background": "1"]) { $1 })
+                == AgentEvent(session: "s", action: .working, app: nil, inHerdr: false))
+        #expect(AgentHook.event(headers: headers.merging(["x-background": ""]) { $1 })
+                == AgentEvent(session: "s", action: .working, app: "com.apple.Terminal", inHerdr: true))
+        #expect(NotifyServer.agentHookCommand.contains("X-Background: ${CLAUDE_JOB_DIR:+1}"))
+    }
+
     @Test func subagentCallsAreDropped() {
         #expect(AgentHook.event(headers: ["x-session": "s", "x-event": "Stop", "x-subagent": "agent-1"]) == nil)
         #expect(AgentHook.event(headers: ["x-session": "s", "x-event": "Stop", "x-subagent": ""]) != nil)

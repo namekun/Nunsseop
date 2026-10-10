@@ -130,6 +130,8 @@ enum AgentHook {
 
     /// The event a request's headers describe. The hook already trims its values; anything outside the
     /// whitelist is refused here as well. A call from a subagent (`X-Subagent`) is the main session's business.
+    /// A background session (`X-Background`, from `claude --bg`) runs in Claude Code's daemon, so the app and the herdr
+    /// pane it seems to be in are only the daemon's, inherited from wherever it was first started.
     static func event(headers: [String: String]) -> AgentEvent? {
         let word = { (name: String) -> String? in
             guard let value = headers[name], !value.isEmpty, value.count <= 64,
@@ -139,11 +141,12 @@ enum AgentHook {
         guard headers["x-subagent"]?.isEmpty ?? true,
               let session = word("x-session"), let name = word("x-event"),
               let action = action(event: name, type: word("x-type")) else { return nil }
-        let app = headers["x-app"].flatMap { value in
+        let background = headers["x-background"]?.isEmpty == false
+        let app = background ? nil : headers["x-app"].flatMap { value in
             !value.isEmpty && value.count <= 80 && value.unicodeScalars.allSatisfy(CharacterSet.bundleIDCharacters.contains)
                 ? value : nil
         }
-        return AgentEvent(session: session, action: action, app: app, inHerdr: headers["x-herdr"]?.isEmpty == false)
+        return AgentEvent(session: session, action: action, app: app, inHerdr: !background && headers["x-herdr"]?.isEmpty == false)
     }
 }
 
@@ -195,6 +198,7 @@ final class NotifyServer: @unchecked Sendable {
             + "-H \"Authorization: Bearer $(cat \"$HOME/Library/Application Support/Nunsseop/notify-token\")\" "
             + "-H \"X-Session: $(k session_id)\" -H \"X-Event: $(k hook_event_name)\" -H \"X-Type: $(k notification_type)\" "
             + "-H \"X-Subagent: $(k agent_id)\" -H \"X-App: $__CFBundleIdentifier\" -H \"X-Herdr: ${HERDR_PANE_ID:+1}\" "
+            + "-H \"X-Background: ${CLAUDE_JOB_DIR:+1}\" "
             + ">/dev/null 2>&1 || true"
     }
 
