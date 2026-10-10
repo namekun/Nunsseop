@@ -51,6 +51,7 @@ struct SettingsView: View {
 private struct GeneralPane: View {
     @ObservedObject var settings: AppSettings
     @ObservedObject private var updates = UpdateChecker.shared
+    @State private var copiedUpdateCommand = false
     @StateObject private var launchAtLogin = LaunchAtLogin()
 
     var body: some View {
@@ -78,7 +79,11 @@ private struct GeneralPane: View {
                     if let release = updates.available {
                         Text("Version \(release.version) is available")
                         Spacer()
-                        Button("Download") { NSWorkspace.shared.open(release.url) }
+                        Button(copiedUpdateCommand ? String(localized: "Copied") : String(localized: "Copy Update Command")) {
+                            updates.copyUpdateCommand()
+                            copiedUpdateCommand = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { copiedUpdateCommand = false }
+                        }
                     } else {
                         Text(updates.isChecking ? String(localized: "Checking…")
                              : updates.failed ? String(localized: "Couldn't check for updates")
@@ -88,6 +93,10 @@ private struct GeneralPane: View {
                         Spacer()
                         Button("Check Now") { updates.check() }.disabled(updates.isChecking)
                     }
+                }
+                if updates.available != nil {
+                    Text("The command goes to the clipboard. Paste it in Terminal and press Return.")
+                        .font(.caption).foregroundStyle(.secondary)
                 }
                 Text("Version \(updates.currentVersion)").font(.caption).foregroundStyle(.secondary)
             }

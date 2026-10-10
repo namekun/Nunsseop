@@ -30,18 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-<details>
-<summary>Prefer a download?</summary>
-
-1. Grab `Nunsseop-<version>.dmg` from [Releases](https://github.com/namekun/Nunsseop/releases/latest).
-2. Drag Nunsseop into Applications.
-3. The app isn't notarized yet, so run this once before the first launch (Homebrew does it for you):
-
-   ```sh
-   xattr -dr com.apple.quarantine /Applications/Nunsseop.app
-   ```
-
-</details>
+Homebrew clears the quarantine flag, so the app opens right away. To update, run `brew upgrade --cask nunsseop`; when an update is out, Settings › General › Updates copies that command to your clipboard.
 
 Needs macOS 14 Sonoma or later. Works on Apple silicon and Intel, and on screens without a notch.
 
@@ -112,7 +101,7 @@ There's no Dock icon. Nunsseop lives in the notch.
 <details>
 <summary><b>macOS says Nunsseop can't be opened.</b></summary>
 
-The app isn't notarized yet. Install with Homebrew, or run `xattr -dr com.apple.quarantine /Applications/Nunsseop.app` once.
+The app isn't notarized yet, so install it with Homebrew (`brew install --cask namekun/tap/nunsseop`). Homebrew clears the quarantine flag, and the app opens right away.
 </details>
 
 <details>

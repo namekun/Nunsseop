@@ -84,7 +84,6 @@
 "Updates" = "アップデート";
 "Check for updates automatically" = "アップデートを自動的に確認";
 "Version %@ is available" = "バージョン %@ が利用可能です";
-"Download" = "ダウンロード";
 "Checking…" = "確認中…";
 "Couldn't check for updates" = "アップデートを確認できませんでした";
 "Not checked yet" = "まだ確認していません";
@@ -341,3 +340,8 @@
 "Hide after" = "隠すまでの時間";
 "Move the pointer to the top edge to bring it back." = "ポインタを画面の上端に動かすと再び表示されます。";
 "Eyebrow glass tint" = "眉のガラスの濃さ";
+
+/* Updates through Homebrew */
+"Copy Update Command" = "アップデートコマンドをコピー";
+"Copied" = "コピーしました";
+"The command goes to the clipboard. Paste it in Terminal and press Return." = "コマンドがクリップボードにコピーされます。ターミナルに貼り付けて Return キーを押してください。";

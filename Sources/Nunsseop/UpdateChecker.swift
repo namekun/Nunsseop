@@ -7,7 +7,6 @@ final class UpdateChecker: ObservableObject {
 
     struct Release: Equatable {
         let version: String
-        let url: URL
     }
 
     @Published private(set) var available: Release?
@@ -60,7 +59,23 @@ final class UpdateChecker: ObservableObject {
               let page = (json["html_url"] as? String).flatMap(URL.init(string:)),
               page.scheme == "https", page.host == "github.com",
               page.path.hasPrefix("/namekun/Nunsseop/") else { return nil }
-        return Release(version: tag.trimmingCharacters(in: CharacterSet(charactersIn: "vV")), url: page)
+        return Release(version: tag.trimmingCharacters(in: CharacterSet(charactersIn: "vV")))
+    }
+
+    /// The Terminal line that updates the app. One installed some other way is replaced by Homebrew's, since only
+    /// Homebrew installs are offered now.
+    nonisolated static func brewCommand(installedWithBrew: Bool) -> String {
+        installedWithBrew ? "brew upgrade --cask nunsseop" : "brew install --cask --force namekun/tap/nunsseop"
+    }
+
+    /// Homebrew keeps a folder in its Caskroom for every cask it installed.
+    nonisolated static var installedWithBrew: Bool {
+        ["/opt/homebrew/Caskroom/nunsseop", "/usr/local/Caskroom/nunsseop"].contains { FileManager.default.fileExists(atPath: $0) }
+    }
+
+    func copyUpdateCommand() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(Self.brewCommand(installedWithBrew: Self.installedWithBrew), forType: .string)
     }
 
     nonisolated static func isNewer(_ candidate: String, than current: String) -> Bool {

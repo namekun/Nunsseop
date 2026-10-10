@@ -109,7 +109,6 @@
 "Updates" = "업데이트";
 "Check for updates automatically" = "자동으로 업데이트 확인";
 "Version %@ is available" = "새 버전 %@이 있습니다";
-"Download" = "다운로드";
 "Checking…" = "확인 중…";
 "Couldn't check for updates" = "업데이트를 확인하지 못했습니다";
 "Not checked yet" = "아직 확인하지 않음";
@@ -366,3 +365,8 @@
 "Hide after" = "숨기기까지 시간";
 "Move the pointer to the top edge to bring it back." = "마우스를 화면 맨 위로 가져가면 다시 나타납니다.";
 "Eyebrow glass tint" = "눈썹 유리 농도";
+
+/* Updates through Homebrew */
+"Copy Update Command" = "업데이트 명령 복사";
+"Copied" = "복사됨";
+"The command goes to the clipboard. Paste it in Terminal and press Return." = "명령이 클립보드에 복사됩니다. 터미널에 붙여 넣고 Return을 누르세요.";
