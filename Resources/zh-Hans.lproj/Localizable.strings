@@ -111,7 +111,7 @@
 "Copy Claude Code hook command" = "拷贝 Claude Code 钩子命令";
 "Connect" = "连接";
 "Disconnect" = "断开连接";
-"Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here." = "连接会修改该工具自己的设置文件，并以 `.nunsseop-backup` 扩展名保留原文件。之后启动的会话会把通知发送到这里。";
+"Connecting changes the tool's own settings file and keeps the old one with a `.nunsseop-backup` extension. Sessions started afterwards send their notifications here. Claude Code also reports its sessions for the agents count in the closed notch, which works while notifications from local tools are on." = "连接会修改该工具自己的设置文件，并以 `.nunsseop-backup` 扩展名保留原文件。之后启动的会话会把通知发送到这里。Claude Code 还会把会话上报给收起刘海中的工作中代理数量；该功能在本地工具通知开启时有效。";
 "Couldn't change %@. Copy the hook command and add it by hand." = "无法修改 %@。请拷贝钩子命令并手动添加。";
 "Copy command for scripts" = "拷贝脚本用命令";
 "Timer" = "计时器";

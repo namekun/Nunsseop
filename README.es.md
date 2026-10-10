@@ -87,7 +87,7 @@ No hay icono en el Dock. Nunsseop vive en el notch.
 - **Límites de Claude en tiempo real (opcional).** Para cuando usas Claude en otro sitio, la pestaña de IA pregunta una vez si quieres obtener de Anthropic tus límites de Claude de 5 horas y semanales, aproximadamente cada hora, con el inicio de sesión que Claude Code guarda en el llavero. Desactivado hasta que digas que sí; puedes cambiarlo después en Ajustes › Servicios. Gana la fuente más reciente.
 - **Notificaciones de agentes y terminales.** Los hooks de Claude Code, Codex, Gemini CLI y OpenCode, los agentes de Muxy, cmux y herdr, y las campanas de tmux y WezTerm aparecen en el notch. Haz clic en un aviso para traer al frente su terminal, panel o pestaña ([configuración más abajo](#notificaciones-de-agentes-y-terminales)).
 - **Pestaña Notificaciones.** Los últimos 30 avisos de agentes, terminales y tu calendario, con una insignia para los no vistos; haz clic en uno para volver al lugar de donde vino. Desactivada por defecto (Ajustes › Notch) y guardada solo en memoria.
-- **Agentes en marcha.** Un elemento del notch plegado que muestra cuántos agentes de programación te esperan (una mano amarilla) o, si ninguno espera, cuántos están trabajando (un rayo verde). Por ahora sigue a herdr.
+- **Agentes en marcha.** Un elemento del notch plegado que muestra cuántos agentes de programación te esperan (una mano amarilla) o, si ninguno espera, cuántos están trabajando (un rayo verde). Sigue a herdr y a Claude Code a través de su hook (conéctalo en Ajustes › Avisos).
 
 **🧩 Hazlo tuyo**
 - Elige tus pestañas y su orden, qué muestran la cabecera y el notch plegado, y qué ventanas emergentes recibes. **Lo que desactivas deja de ejecutarse.**

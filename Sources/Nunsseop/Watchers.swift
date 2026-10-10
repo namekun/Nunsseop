@@ -85,9 +85,72 @@ final class CapsLockWatcher {
     }
 }
 
+/// What an agent's hook said happened to one session, for the agents count.
+enum AgentAction: Equatable {
+    /// A turn started.
+    case working
+    /// Asking for permission or an answer.
+    case needsInput
+    /// A turn ended.
+    case finished
+    /// Waiting at the prompt: a turn that was cut short no longer works and nothing is being asked, but a finished hand stays.
+    case idle
+    /// The session is over.
+    case remove
+}
+
+/// One hook call from a Claude Code session, reduced to what the count needs.
+struct AgentEvent: Equatable {
+    let session: String
+    let action: AgentAction
+    /// The bundle id of the app the session runs in.
+    var app: String?
+    /// Whether it runs in a herdr pane, which herdr's own count covers.
+    var inHerdr = false
+}
+
+/// Claude Code's hook events as the agents count reads them.
+enum AgentHook {
+    /// What an event means; nil for the ones that say nothing about work (`auth_success`, `SubagentStop`).
+    static func action(event: String, type: String?) -> AgentAction? {
+        switch event {
+        case "UserPromptSubmit": return .working
+        case "Stop", "StopFailure": return .finished
+        case "SessionEnd": return .remove
+        case "Notification":
+            switch type {
+            case "permission_prompt", "elicitation_dialog", "elicitation_url_dialog", "agent_needs_input": return .needsInput
+            case "idle_prompt": return .idle
+            case "elicitation_response", "elicitation_complete": return .working
+            default: return nil
+            }
+        default: return nil
+        }
+    }
+
+    /// The event a request's headers describe. The hook already trims its values; anything outside the
+    /// whitelist is refused here as well. A call from a subagent (`X-Subagent`) is the main session's business.
+    static func event(headers: [String: String]) -> AgentEvent? {
+        let word = { (name: String) -> String? in
+            guard let value = headers[name], !value.isEmpty, value.count <= 64,
+                  value.unicodeScalars.allSatisfy(CharacterSet.agentIDCharacters.contains) else { return nil }
+            return value
+        }
+        guard headers["x-subagent"]?.isEmpty ?? true,
+              let session = word("x-session"), let name = word("x-event"),
+              let action = action(event: name, type: word("x-type")) else { return nil }
+        let app = headers["x-app"].flatMap { value in
+            !value.isEmpty && value.count <= 80 && value.unicodeScalars.allSatisfy(CharacterSet.bundleIDCharacters.contains)
+                ? value : nil
+        }
+        return AgentEvent(session: session, action: action, app: app, inHerdr: headers["x-herdr"]?.isEmpty == false)
+    }
+}
+
 /// Accepts notifications from local tools such as Claude Code hooks:
 /// `POST http://127.0.0.1:47750/notify` with `Authorization: Bearer <token>` and a JSON body
 /// `{"title": "...", "message": "..."}`. The token lives in Application Support/Nunsseop/notify-token.
+/// `POST /agent` takes Claude Code's session events for the agents count, as headers only (see `agentHookCommand`).
 final class NotifyServer: @unchecked Sendable {
     static let port: UInt16 = 47750
     /// A notification a local tool sent, with where it came from when the tool said so.
@@ -101,6 +164,7 @@ final class NotifyServer: @unchecked Sendable {
     }
 
     var onNotify: (@MainActor (Notice) -> Void)?
+    var onAgent: (@MainActor (AgentEvent) -> Void)?
 
     private var listener: NWListener?
     private let queue = DispatchQueue(label: "nunsseop.notify")
@@ -119,6 +183,19 @@ final class NotifyServer: @unchecked Sendable {
         "plutil -extract message raw -o - - 2>/dev/null | curl -s -m 2 -X POST http://127.0.0.1:\(port)/notify "
             + "-H \"Authorization: Bearer $(cat \"$HOME/Library/Application Support/Nunsseop/notify-token\")\" "
             + "-H 'X-Title: \(title)' -H \"X-App: $__CFBundleIdentifier\" --data-binary @- >/dev/null || true"
+    }
+
+    /// Claude Code's hook for the agents count, the same for every event. Claude Code passes the event as JSON on
+    /// stdin; only the ids and names below leave it, as headers (no prompt, reply, folder or transcript), trimmed to
+    /// safe characters so a stray newline can't break one. Nothing may reach stdout, which `UserPromptSubmit` adds to
+    /// Claude's context, and a closed or stuck Nunsseop costs a session at most a second.
+    static var agentHookCommand: String {
+        "in=$(cat); k() { printf '%s' \"$in\" | plutil -extract \"$1\" raw -o - - 2>/dev/null | tr -cd 'A-Za-z0-9_.-' | cut -c1-64; }; "
+            + "curl -s -m 1 --connect-timeout 1 -X POST http://127.0.0.1:\(port)/agent -d '' "
+            + "-H \"Authorization: Bearer $(cat \"$HOME/Library/Application Support/Nunsseop/notify-token\")\" "
+            + "-H \"X-Session: $(k session_id)\" -H \"X-Event: $(k hook_event_name)\" -H \"X-Type: $(k notification_type)\" "
+            + "-H \"X-Subagent: $(k agent_id)\" -H \"X-App: $__CFBundleIdentifier\" -H \"X-Herdr: ${HERDR_PANE_ID:+1}\" "
+            + ">/dev/null 2>&1 || true"
     }
 
     /// A command for scripts: the text after `--data-binary` becomes the notification.
@@ -220,11 +297,18 @@ final class NotifyServer: @unchecked Sendable {
     }
 
     private func respond(to request: Request, on connection: NWConnection) {
-        guard request.method == "POST", request.path == "/notify" else {
+        guard request.method == "POST", request.path == "/notify" || request.path == "/agent" else {
             return reply(connection, status: "404 Not Found")
         }
         guard Self.constantTimeEqual(request.headers["authorization"] ?? "", "Bearer \(token)") else {
             return reply(connection, status: "401 Unauthorized")
+        }
+        if request.path == "/agent" {
+            if let event = AgentHook.event(headers: request.headers) {
+                let handler = onAgent
+                DispatchQueue.main.async { MainActor.assumeIsolated { handler?(event) } }
+            }
+            return reply(connection, status: "204 No Content")
         }
         // The body is either JSON {"title", "message"} or plain text with the title in X-Title.
         let json = (try? JSONSerialization.jsonObject(with: request.body)) as? [String: Any]
@@ -264,6 +348,7 @@ final class NotifyServer: @unchecked Sendable {
 }
 
 private extension CharacterSet {
+    static let agentIDCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")
     static let bundleIDCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-")
     static let targetCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_:%")
 }
