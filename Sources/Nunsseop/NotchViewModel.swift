@@ -345,8 +345,20 @@ final class NotchViewModel: ObservableObject {
     /// Room for a short value such as "73%" or "16°" on each side while idle.
     static let idleEarWidth: CGFloat = 70
 
+    /// On a display without a notch nothing hides in the middle, so a notice or headphone battery is one line.
+    var hudLine: String? {
+        guard !geometry.hasNotch, let event = hud.event else { return nil }
+        return HUDContent.line(for: event)
+    }
+
     var collapsedSize: CGSize {
         var size = geometry.collapsedSize
+        if let line = hudLine {
+            // The symbol, the gap after it and the side padding, then the text; long lines truncate at a third of the screen.
+            let text = ceil((line as NSString).size(withAttributes: [.font: HUDContent.lineFont]).width)
+            size.width = min(max(size.width, 2 * 18 + 16 + 7 + text), max(size.width, geometry.screenFrame.width / 3))
+            return size
+        }
         if let event = hud.event {
             size.width += 2 * Self.hudEarWidth
             switch event {

@@ -30,7 +30,7 @@ struct NotchView: View {
                     // Without this, content being removed is drawn under the black body and vanishes instead of fading.
                     .zIndex(-1)
 
-                if !model.isExpanded && !model.geometry.hasNotch {
+                if !model.isExpanded && !model.geometry.hasNotch && model.hudLine == nil {
                     EyebrowMark(lifted: model.browLifted)
                         .animation(motion.brow, value: model.browLifted)
                         .frame(width: model.geometry.collapsedSize.width, height: notchHeight)
@@ -93,7 +93,8 @@ struct NotchView: View {
                     // No scale here: scaling the scrolling tab row while it appears leaves it a few points off.
                     .transition(motion.expandedContent)
                 } else if let event = model.hud.event {
-                    HUDContent(event: event, height: notchHeight, earWidth: NotchViewModel.hudEarWidth, leadingInset: earLead)
+                    HUDContent(event: event, height: notchHeight, earWidth: NotchViewModel.hudEarWidth, leadingInset: earLead,
+                               singleLine: model.hudLine != nil)
                         .padding(.horizontal, topRadius + 12)
                         .transition(motion.hudContent)
                 } else if model.showsLiveActivity || model.showsSneakPeek || model.showsIdleEars {

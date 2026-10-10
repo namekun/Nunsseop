@@ -101,6 +101,7 @@ final class HUDCenter: ObservableObject {
             case "power": .power(PowerState(percent: 76, isCharging: true, onAC: true))
             case "brightness": .brightness(0.6)
             case "keyboard": .keyboard(0.7)
+            case "notice": .notice(symbol: "sparkles", title: "Claude Code", detail: "Claude is waiting for your input")
             default: .headphones(HeadphoneBattery(name: "AirPods Pro", levels: [(String(localized: "Left"), 90), (String(localized: "Right"), 85), (String(localized: "Case"), 60)]))
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.show(demo, duration: 30) }

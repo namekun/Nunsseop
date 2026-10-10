@@ -10,50 +10,23 @@ func render(size: CGFloat) -> NSBitmapImageRep {
     let s = size / 1024
     // macOS icon grid: 824pt rounded square centered in 1024.
     let body = NSRect(x: 100 * s, y: 100 * s, width: 824 * s, height: 824 * s)
-    let squircle = NSBezierPath(roundedRect: body, xRadius: 185 * s, yRadius: 185 * s)
-    NSGradient(colors: [NSColor(calibratedRed: 0.17, green: 0.08, blue: 0.30, alpha: 1),
-                        NSColor(calibratedRed: 0.05, green: 0.04, blue: 0.08, alpha: 1)])!
-        .draw(in: squircle, angle: -90)
-    squircle.addClip()
+    NSColor(srgbRed: 0.067, green: 0.067, blue: 0.067, alpha: 1).setFill()
+    NSBezierPath(roundedRect: body, xRadius: 185 * s, yRadius: 185 * s).fill()
 
-    // The notch hanging from the top edge.
-    let notchWidth = 420 * s, notchHeight = 150 * s, r = 60 * s
-    let top = body.maxY
-    let left = body.midX - notchWidth / 2
-    let notch = NSBezierPath()
-    notch.move(to: NSPoint(x: left - 30 * s, y: top))
-    notch.curve(to: NSPoint(x: left, y: top - 30 * s), controlPoint1: NSPoint(x: left, y: top), controlPoint2: NSPoint(x: left, y: top))
-    notch.line(to: NSPoint(x: left, y: top - notchHeight + r))
-    notch.curve(to: NSPoint(x: left + r, y: top - notchHeight), controlPoint1: NSPoint(x: left, y: top - notchHeight), controlPoint2: NSPoint(x: left, y: top - notchHeight))
-    notch.line(to: NSPoint(x: left + notchWidth - r, y: top - notchHeight))
-    notch.curve(to: NSPoint(x: left + notchWidth, y: top - notchHeight + r), controlPoint1: NSPoint(x: left + notchWidth, y: top - notchHeight), controlPoint2: NSPoint(x: left + notchWidth, y: top - notchHeight))
-    notch.line(to: NSPoint(x: left + notchWidth, y: top - 30 * s))
-    notch.curve(to: NSPoint(x: left + notchWidth + 30 * s, y: top), controlPoint1: NSPoint(x: left + notchWidth, y: top), controlPoint2: NSPoint(x: left + notchWidth, y: top))
-    notch.close()
-    NSColor.black.setFill()
-    notch.fill()
-
-    // The eyebrow: a thick arc under the notch in the accent gradient.
+    // The eyebrow: the same brush stroke as the collapsed notch on a 100 × 40 grid (y down), thick head on the left.
+    let grid: [CGFloat] = [4, 30, 18, 16, 44, 9, 68, 11, 81, 12, 91, 16, 97, 21,
+                           89, 19, 79, 18, 68, 19, 47, 20, 27, 26, 11, 35, 7, 37, 2, 34, 4, 30]
+    let k = 5.1 * s
+    let point = { (i: Int) in NSPoint(x: body.midX + (grid[2 * i] - 50) * k, y: body.midY - (grid[2 * i + 1] - 22) * k) }
     let brow = NSBezierPath()
-    brow.move(to: NSPoint(x: body.midX - 230 * s, y: body.midY + 30 * s))
-    brow.curve(to: NSPoint(x: body.midX + 250 * s, y: body.midY + 55 * s),
-               controlPoint1: NSPoint(x: body.midX - 80 * s, y: body.midY + 120 * s),
-               controlPoint2: NSPoint(x: body.midX + 140 * s, y: body.midY + 125 * s))
-    brow.lineWidth = 74 * s
-    brow.lineCapStyle = .round
-    let strokePath = NSBezierPath()
-    strokePath.append(brow)
-    NSGraphicsContext.saveGraphicsState()
-    let cg = NSGraphicsContext.current!.cgContext
-    cg.setLineWidth(74 * s)
-    cg.setLineCap(.round)
-    cg.addPath(brow.cgPath)
-    cg.replacePathWithStrokedPath()
-    cg.clip()
-    NSGradient(colors: [NSColor(calibratedRed: 1.0, green: 0.37, blue: 0.56, alpha: 1),
-                        NSColor(calibratedRed: 0.78, green: 0.42, blue: 0.98, alpha: 1)])!
-        .draw(in: body, angle: 0)
-    NSGraphicsContext.restoreGraphicsState()
+    brow.move(to: point(0))
+    for curve in 0..<5 {
+        let i = 1 + curve * 3
+        brow.curve(to: point(i + 2), controlPoint1: point(i), controlPoint2: point(i + 1))
+    }
+    brow.close()
+    NSColor(srgbRed: 0.957, green: 0.957, blue: 0.945, alpha: 1).setFill()
+    brow.fill()
 
     NSGraphicsContext.restoreGraphicsState()
     return rep
