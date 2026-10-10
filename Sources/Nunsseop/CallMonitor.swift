@@ -121,24 +121,8 @@ final class CallMonitor: ObservableObject {
     }
 
     private func apply(_ processes: [AudioProcess]) {
-        let own = getpid()
         let now = Date()
-        var apps: [String: pid_t] = [:]
-        var browsers: Set<String> = []
-        var alive: Set<String> = []
-        for process in processes where process.pid != own {
-            let key: String
-            if let app = Self.appBundleID(for: process.bundleID) {
-                key = app
-                if process.isRunningInput { apps[app] = apps[app] ?? process.pid }
-            } else if let browser = Self.browser(for: process.bundleID) {
-                key = browser.bundleID
-                if process.isRunningInput { browsers.insert(key) }
-            } else {
-                continue
-            }
-            if process.isRunningInput || process.isRunningOutput { alive.insert(key) }
-        }
+        let (apps, browsers, alive) = Self.classify(processes, own: getpid())
         // A browser is asked for its tabs once each time its input starts; a call found stays until it ends.
         tabChecks = tabChecks.filter { browsers.contains($0.key) || ($0.value.isFound && $0.key == tracker.key) }
         tabRetry = tabRetry.filter { browsers.contains($0.key) }
@@ -162,6 +146,28 @@ final class CallMonitor: ObservableObject {
             let app = Self.appInfo(pid: apps[key], fallback: key)
             call = Call(appName: app.name, bundleID: key, icon: app.icon, startedAt: startedAt, title: nil)
         }
+    }
+
+    /// Call apps with a microphone-using process, browsers with one, and every app or browser still producing audio.
+    nonisolated static func classify(_ processes: [AudioProcess], own: pid_t)
+        -> (apps: [String: pid_t], browsers: Set<String>, alive: Set<String>) {
+        var apps: [String: pid_t] = [:]
+        var browsers: Set<String> = []
+        var alive: Set<String> = []
+        for process in processes where process.pid != own {
+            let key: String
+            if let app = appBundleID(for: process.bundleID) {
+                key = app
+                if process.isRunningInput { apps[app] = apps[app] ?? process.pid }
+            } else if let browser = browser(for: process.bundleID) {
+                key = browser.bundleID
+                if process.isRunningInput { browsers.insert(key) }
+            } else {
+                continue
+            }
+            if process.isRunningInput || process.isRunningOutput { alive.insert(key) }
+        }
+        return (apps, browsers, alive)
     }
 
     private func checkTabs(of browser: BrowserMedia) {

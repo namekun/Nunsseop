@@ -1,6 +1,6 @@
 import AppKit
 
-struct MediaRemoteUpdate {
+struct MediaRemoteUpdate: Equatable {
     var track: NowPlayingTrack?
     var artwork: Data?
     /// The helper sends artwork only when it changes: true means keep the current artwork,
@@ -88,7 +88,7 @@ final class MediaRemoteBridge {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in self?.start() }
     }
 
-    private func receive(_ data: Data) {
+    func receive(_ data: Data) {
         guard !data.isEmpty else { return }
         buffer.append(data)
         while let newline = buffer.firstIndex(of: UInt8(ascii: "\n")) {
@@ -98,21 +98,32 @@ final class MediaRemoteBridge {
         }
     }
 
+    enum Message {
+        case failure
+        case update(MediaRemoteUpdate)
+    }
+
     private func handle(line: Data) {
-        guard let info = try? JSONSerialization.jsonObject(with: line) as? [String: Any] else { return }
-        if info["error"] != nil {
-            process?.terminate()
-            return
+        switch Self.message(from: line, now: Date()) {
+        case nil: return
+        case .failure?: process?.terminate()
+        case .update(let update)?:
+            restarts = 0
+            onUpdate?(update)
         }
-        restarts = 0
+    }
+
+    /// Nil for a line that is not a JSON object.
+    static func message(from line: Data, now: Date) -> Message? {
+        guard let info = try? JSONSerialization.jsonObject(with: line) as? [String: Any] else { return nil }
+        if info["error"] != nil { return .failure }
         guard info["active"] as? Bool == true, let title = info["title"] as? String, !title.isEmpty else {
-            onUpdate?(MediaRemoteUpdate(track: nil, artwork: nil))
-            return
+            return .update(MediaRemoteUpdate(track: nil, artwork: nil))
         }
         let rate = info["rate"] as? Double ?? 0
         var position = info["elapsed"] as? Double ?? 0
         if let timestamp = info["timestamp"] as? Double, rate > 0 {
-            position += (Date().timeIntervalSince1970 - timestamp) * rate
+            position += (now.timeIntervalSince1970 - timestamp) * rate
         }
         // MRMediaRemoteCommand codes: 19 changes the playback rate, 24 seeks. Nil when the helper could not read them.
         let commands = info["commands"] as? [Int]
@@ -124,12 +135,12 @@ final class MediaRemoteBridge {
             position: position,
             isPlaying: rate > 0,
             sourceBundleID: info["bundleID"] as? String ?? "",
-            fetchedAt: Date(),
+            fetchedAt: now,
             rate: rate > 0 ? rate : 1,
             canSeek: commands?.contains(24) ?? true,
             canChangeRate: commands?.contains(19) ?? false
         )
         let artwork = (info["artwork"] as? String).flatMap { Data(base64Encoded: $0) }
-        onUpdate?(MediaRemoteUpdate(track: track, artwork: artwork, artworkUnchanged: info["artworkUnchanged"] as? Bool == true))
+        return .update(MediaRemoteUpdate(track: track, artwork: artwork, artworkUnchanged: info["artworkUnchanged"] as? Bool == true))
     }
 }

@@ -71,7 +71,7 @@ struct BrowserMedia {
         """
     }
 
-    private static func commandJS(_ command: NowPlayingCommand) -> String {
+    static func commandJS(_ command: NowPlayingCommand) -> String {
         let media = "const els = [...document.querySelectorAll('video,audio')]; " +
             "const m = els.find(e => !e.paused) || els.find(e => e.currentTime > 0);"
         switch command {
@@ -198,12 +198,12 @@ struct BrowserMedia {
         return value
     }
 
-    private static func appleScriptLiteral(_ string: String) -> String {
+    static func appleScriptLiteral(_ string: String) -> String {
         "\"" + string.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"") + "\""
     }
 
     /// Runs `js` only if the tab at `location` still shows the URL it had when scanned.
-    private func guardedScript(_ js: String, at location: Location) -> String {
+    func guardedScript(_ js: String, at location: Location) -> String {
         let w = "\(location.window)", t = "\(location.tab)"
         return """
         tell application id "\(bundleID)"
@@ -235,11 +235,15 @@ struct BrowserMedia {
         if let errorInfo {
             let code = errorInfo[NSAppleScript.errorNumber] as? Int ?? 0
             let message = errorInfo[NSAppleScript.errorMessage] as? String ?? ""
-            if code == -1743 { return .failure(.notAuthorized) }
-            if message.localizedCaseInsensitiveContains("javascript") { return .failure(.javaScriptDisabled) }
-            return .failure(.other)
+            return .failure(failure(code: code, message: message))
         }
         return .success(result)
+    }
+
+    static func failure(code: Int, message: String) -> Failure {
+        if code == -1743 { return .notAuthorized }
+        if message.localizedCaseInsensitiveContains("javascript") { return .javaScriptDisabled }
+        return .other
     }
 
     func scan() -> Result<Hit?, Failure> {
@@ -270,7 +274,7 @@ struct BrowserMedia {
         return .success(nil)
     }
 
-    private func makeHit(_ jsonString: String?, location: Location) -> Hit? {
+    func makeHit(_ jsonString: String?, location: Location) -> Hit? {
         guard let json = jsonString?.data(using: .utf8),
               let info = try? JSONSerialization.jsonObject(with: json) as? [String: Any] else { return nil }
 

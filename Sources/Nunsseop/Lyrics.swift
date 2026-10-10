@@ -8,8 +8,12 @@ final class LyricsModel: ObservableObject {
         let text: String
     }
 
-    @Published private(set) var lines: [Line] = []
+    @Published private(set) var lines: [Line]
     var isEnabled = true
+
+    init(lines: [Line] = []) {
+        self.lines = lines
+    }
 
     private var identity: String?
     private var cache: [String: [Line]] = [:]
@@ -69,7 +73,7 @@ final class LyricsModel: ObservableObject {
     /// Parses LRC lines such as `[01:23.45] text`.
     nonisolated static func parse(_ lrc: String) -> [Line] {
         var result: [Line] = []
-        for raw in lrc.split(separator: "\n") {
+        for raw in lrc.split(whereSeparator: \.isNewline) {
             var rest = Substring(raw)
             var times: [TimeInterval] = []
             while rest.hasPrefix("["), let close = rest.firstIndex(of: "]") {

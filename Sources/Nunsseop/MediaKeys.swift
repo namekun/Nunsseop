@@ -87,6 +87,24 @@ final class MediaKeyInterceptor {
         source = nil
     }
 
+    static func decode(data1: Int) -> (code: Int, isDown: Bool) {
+        ((data1 & 0xFFFF_0000) >> 16, ((data1 & 0xFF00) >> 8) == 0xA)
+    }
+
+    static func key(forCode code: Int, volume: () -> Bool, brightness: () -> Bool, keyboard: () -> Bool) -> MediaKey? {
+        switch code {
+        case 0 where volume(): return .volumeUp
+        case 1 where volume(): return .volumeDown
+        case 7 where volume(): return .mute
+        case 2 where brightness(): return .brightnessUp
+        case 3 where brightness(): return .brightnessDown
+        case 21 where keyboard(): return .keyboardUp
+        case 22 where keyboard(): return .keyboardDown
+        case 23 where keyboard(): return .keyboardToggle
+        default: return nil
+        }
+    }
+
     private func handle(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
             if let tap { CGEvent.tapEnable(tap: tap, enable: true) }
@@ -95,19 +113,9 @@ final class MediaKeyInterceptor {
         guard type.rawValue == 14, let ns = NSEvent(cgEvent: event), ns.subtype.rawValue == 8 else {
             return Unmanaged.passUnretained(event)
         }
-        let code = (ns.data1 & 0xFFFF_0000) >> 16
-        let isDown = ((ns.data1 & 0xFF00) >> 8) == 0xA
-        let key: MediaKey
-        switch code {
-        case 0 where handlesVolume(): key = .volumeUp
-        case 1 where handlesVolume(): key = .volumeDown
-        case 7 where handlesVolume(): key = .mute
-        case 2 where handlesBrightness(): key = .brightnessUp
-        case 3 where handlesBrightness(): key = .brightnessDown
-        case 21 where handlesKeyboard(): key = .keyboardUp
-        case 22 where handlesKeyboard(): key = .keyboardDown
-        case 23 where handlesKeyboard(): key = .keyboardToggle
-        default: return Unmanaged.passUnretained(event)
+        let (code, isDown) = Self.decode(data1: ns.data1)
+        guard let key = Self.key(forCode: code, volume: handlesVolume, brightness: handlesBrightness, keyboard: handlesKeyboard) else {
+            return Unmanaged.passUnretained(event)
         }
         if isDown {
             let fine = ns.modifierFlags.contains([.option, .shift])
