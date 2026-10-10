@@ -238,10 +238,24 @@ struct ClaudeUsageAPISchedulingTests {
     }
 
     @Test func theSecondLookupOnlyRunsWhenTheFirstFails() {
+        // The first lookup is good: the second never runs.
         var looked = 0
         let lookups = [entry("A"), entry("B")].lazy.map { data -> Data? in looked += 1; return data }
         #expect(ClaudeUsageAPI.usable(lookups, now: now)?.token == "A")
         #expect(looked == 1)
+    }
+
+    @Test(arguments: ["missing", "expired", "corrupt"])
+    func theSecondLookupRunsAndIsUsedWhenTheFirstYieldsNothingUsable(first: String) {
+        let unusable: Data? = switch first {
+        case "missing": nil
+        case "expired": entry("old", expiresAtMilliseconds: nowMilliseconds - 1)
+        default: Data("garbage".utf8)
+        }
+        var looked = 0
+        let lookups = [unusable, entry("B")].lazy.map { data -> Data? in looked += 1; return data }
+        #expect(ClaudeUsageAPI.usable(lookups, now: now)?.token == "B")
+        #expect(looked == 2)
     }
 
     // MARK: Resets
