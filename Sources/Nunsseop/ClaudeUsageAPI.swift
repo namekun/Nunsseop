@@ -24,6 +24,8 @@ enum ClaudeUsageAPI {
         var limits: AIUsageModel.Limits?
         /// No usable sign-in at the last attempt: none in the Keychain, expired, or refused by the server.
         var signedOut = false
+        /// A request to Anthropic is on its way.
+        var inFlight = false
         var nextAttempt = Date.distantPast
     }
 
@@ -56,8 +58,10 @@ enum ClaudeUsageAPI {
     enum Status: Equatable {
         /// Not asked at all.
         case off
-        /// Asked, with no answer yet: the first request, or one the server put off.
+        /// A request is on its way and no limits are known yet.
         case waiting
+        /// No limits are known and none are on their way: the last request failed, or the server put it off.
+        case unavailable
         /// Claude Code's sign-in is missing or no longer works.
         case signedOut
         case ready
@@ -65,7 +69,14 @@ enum ClaudeUsageAPI {
 
     static var status: Status {
         guard isEnabled else { return .off }
-        return state.withLock { $0.signedOut ? .signedOut : $0.limits == nil ? .waiting : .ready }
+        return state.withLock { status(signedOut: $0.signedOut, hasLimits: $0.limits != nil, inFlight: $0.inFlight) }
+    }
+
+    /// Placeholders only stand in while a request is out, so an answer that never comes doesn't leave them pulsing.
+    static func status(signedOut: Bool, hasLimits: Bool, inFlight: Bool) -> Status {
+        if signedOut { return .signedOut }
+        if hasLimits { return .ready }
+        return inFlight ? .waiting : .unavailable
     }
 
     // MARK: Parsing
@@ -174,23 +185,33 @@ enum ClaudeUsageAPI {
         state.withLock { state -> Bool in
             guard now >= state.nextAttempt else { return false }
             state.nextAttempt = now.addingTimeInterval(interval)
+            state.inFlight = true
             return true
         }
     }
 
     private static func fetch(now: Date) async {
+        defer { state.withLock { $0.inFlight = false } }
         guard let credentials = keychainCredentials(now: now) else {
             // Not signed in, or the sign-in expired: asked again later, not on every refresh.
             state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff); $0.signedOut = true }
             return
         }
+        // A sign-in is there again, so the warning goes even if this request then fails.
+        state.withLock { $0.signedOut = false }
         guard let (data, response) = try? await session.data(for: request(token: credentials.token)),
-              let response = response as? HTTPURLResponse else { return }
+              let response = response as? HTTPURLResponse else {
+            // Offline or unreachable: soon again, not after the full interval.
+            state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff) }
+            return
+        }
         switch response.statusCode {
         case 200:
             if var limits = limits(from: data, fetchedAt: .now) {
                 limits.plan = credentials.plan
-                state.withLock { $0.limits = limits; $0.signedOut = false }
+                state.withLock { $0.limits = limits }
+            } else {
+                state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff) }
             }
         case 429:
             // Capped, so an odd retry-after can't switch this off until relaunch.

@@ -57,6 +57,14 @@ struct ClaudeUsageAPITests {
         #expect(ClaudeUsageAPI.limits(from: older, fetchedAt: fetched)?.models == [])
     }
 
+    @Test func placeholdersOnlyWhileARequestIsOut() {
+        #expect(ClaudeUsageAPI.status(signedOut: false, hasLimits: false, inFlight: true) == .waiting)
+        // A request that failed or was put off leaves nothing on its way, so no placeholders.
+        #expect(ClaudeUsageAPI.status(signedOut: false, hasLimits: false, inFlight: false) == .unavailable)
+        #expect(ClaudeUsageAPI.status(signedOut: false, hasLimits: true, inFlight: true) == .ready)
+        #expect(ClaudeUsageAPI.status(signedOut: true, hasLimits: true, inFlight: false) == .signedOut)
+    }
+
     @Test func readsThePlanFromTheKeychainEntry() {
         let entry = Data(#"{"claudeAiOauth":{"accessToken":"t","subscriptionType":"max"}}"#.utf8)
         #expect(ClaudeUsageAPI.credentials(from: entry)?.plan == "Max")
