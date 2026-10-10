@@ -49,7 +49,7 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
     }
 
     /// Connecting, disconnecting and the update at launch all change the same files, so they take turns here.
-    private static let queue = DispatchQueue(label: "nunsseop.integrations")
+    static let queue = DispatchQueue(label: "nunsseop.integrations")
 
     /// Connects the tool, or brings a connection from an older version up to date (a hook command without
     /// the X-App header, say), leaving a connection that's already current alone.
@@ -104,7 +104,7 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
 
     // MARK: Files
 
-    private static func loadJSON(at url: URL) throws -> [String: Any] {
+    static func loadJSON(at url: URL) throws -> [String: Any] {
         guard FileManager.default.fileExists(atPath: url.path) else { return [:] }
         guard let settings = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any] else {
             throw IntegrationError.unreadableConfig
@@ -117,7 +117,7 @@ enum NotifyIntegration: String, CaseIterable, Identifiable {
         return try String(contentsOf: url, encoding: .utf8)
     }
 
-    private static func writeJSON(_ settings: [String: Any], to url: URL) throws {
+    static func writeJSON(_ settings: [String: Any], to url: URL) throws {
         let data = try JSONSerialization.data(withJSONObject: settings,
                                               options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
         try write(data, to: url)

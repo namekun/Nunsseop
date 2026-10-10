@@ -348,6 +348,12 @@
 "Paste it into ~/.wezterm.lua before `return config`. Bells from any WezTerm pane then show in the notch; WezTerm's config isn't changed for you." = "~/.wezterm.lua의 `return config` 앞에 붙여 넣으면 모든 WezTerm 창의 벨이 노치에 표시됩니다. WezTerm 설정은 자동으로 바꾸지 않습니다.";
 "Ask Anthropic for Claude's limits" = "Anthropic에서 Claude 사용 한도 받아오기";
 "Reads the sign-in Claude Code keeps in the Keychain and asks api.anthropic.com for your 5-hour and weekly limits about once an hour, so they also move when another app or claude.ai uses them. While that sign-in has expired they stop updating, until Claude Code signs in again. The sign-in is never changed or sent anywhere else." = "Claude Code가 키체인에 보관한 로그인 정보를 읽어 약 1시간마다 api.anthropic.com에 5시간·주간 한도를 묻습니다. 다른 앱이나 claude.ai에서 쓴 양도 반영됩니다. 그 로그인이 만료된 동안에는 Claude Code가 다시 로그인할 때까지 갱신되지 않습니다. 로그인 정보는 바꾸지 않고 다른 곳으로 보내지도 않습니다.";
+"Claude Code status line" = "Claude Code 상태 표시줄";
+"Takes Claude's 5-hour and weekly limits from what Claude Code passes to its status line, and keeps running your own status line as before. Nothing leaves this Mac." = "Claude Code가 상태 표시줄에 넘기는 정보에서 Claude의 5시간·주간 한도를 가져오고, 기존 상태 표시줄도 그대로 실행합니다. 데이터는 이 Mac 밖으로 나가지 않습니다.";
+"Connected. The limits update while Claude Code runs." = "연결됨. Claude Code가 실행되는 동안 한도가 갱신됩니다.";
+"Not connected." = "연결되지 않음.";
+"Something else has changed Claude Code's status line since you connected. Connect again to use the new one." = "연결한 뒤 다른 것이 Claude Code의 상태 표시줄을 바꿨습니다. 새 설정을 쓰려면 다시 연결하세요.";
+"Couldn't change Claude Code's settings." = "Claude Code 설정을 바꾸지 못했습니다.";
 "Live Claude limits?" = "Claude 한도를 실시간으로 받을까요?";
 "Nunsseop can read the sign-in Claude Code keeps in the Keychain and ask Anthropic directly for your 5-hour and weekly limits, about once an hour, so they update without Claude Code running." = "Claude Code가 키체인에 보관한 로그인 정보를 읽어, 약 1시간마다 Anthropic에 5시간·주간 한도를 직접 묻습니다. Claude Code를 켜지 않아도 한도가 갱신됩니다.";
 "Turn On" = "켜기";

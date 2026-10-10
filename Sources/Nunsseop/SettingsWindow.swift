@@ -373,6 +373,8 @@ private struct AlertsPane: View {
 /// Features that use the network, the camera or other apps' data.
 private struct ServicesPane: View {
     @ObservedObject var settings: AppSettings
+    @State private var statusLine = ClaudeStatusLine.State.notConnected
+    @State private var statusLineFailed = false
 
     var body: some View {
         Form {
@@ -384,6 +386,30 @@ private struct ServicesPane: View {
                     .onChange(of: settings.claudeLimitsFromAnthropic) { _, _ in settings.claudeLimitsAsked = true }
                 Text("Reads the sign-in Claude Code keeps in the Keychain and asks api.anthropic.com for your 5-hour and weekly limits about once an hour, so they also move when another app or claude.ai uses them. While that sign-in has expired they stop updating, until Claude Code signs in again. The sign-in is never changed or sent anywhere else.")
                     .font(.caption).foregroundStyle(.secondary)
+                if NotifyIntegration.claudeCode.isPresent || statusLine != .notConnected {
+                    HStack {
+                        Text("Claude Code status line")
+                        if statusLine == .connected {
+                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                        }
+                        Spacer()
+                        Button(statusLine == .connected ? LocalizedStringKey("Disconnect") : LocalizedStringKey("Connect"), action: toggleStatusLine)
+                    }
+                    Text("Takes Claude's 5-hour and weekly limits from what Claude Code passes to its status line, and keeps running your own status line as before. Nothing leaves this Mac.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    switch statusLine {
+                    case .connected:
+                        Text("Connected. The limits update while Claude Code runs.").font(.caption).foregroundStyle(.secondary)
+                    case .notConnected:
+                        Text("Not connected.").font(.caption).foregroundStyle(.secondary)
+                    case .changed:
+                        Text("Something else has changed Claude Code's status line since you connected. Connect again to use the new one.")
+                            .font(.caption).foregroundStyle(.orange)
+                    }
+                    if statusLineFailed {
+                        Text("Couldn't change Claude Code's settings.").font(.caption).foregroundStyle(.red)
+                    }
+                }
             }
             Section("Weather") {
                 TextField("Weather city (e.g. Seoul)", text: $settings.weatherCity)
@@ -444,6 +470,17 @@ private struct ServicesPane: View {
             }
         }
         .formStyle(.grouped)
+        .onAppear { statusLine = ClaudeStatusLine.state() }
+    }
+
+    private func toggleStatusLine() {
+        do {
+            if statusLine == .connected { try ClaudeStatusLine.disconnect() } else { try ClaudeStatusLine.connect() }
+            statusLineFailed = false
+        } catch {
+            statusLineFailed = true
+        }
+        statusLine = ClaudeStatusLine.state()
     }
 }
 

@@ -131,7 +131,7 @@ Auf einem Bildschirm ohne Notch, etwa einem externen Monitor bei geschlossenem D
 <details>
 <summary><b>Warum zeigt die KI-Nutzung veraltete Claude-Limits?</b></summary>
 
-Standardmäßig stammen die 5-Stunden- und Wochenwerte von Claude aus Caches, die andere Tools schreiben: das HUD von [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode), während du Claude Code in einem Terminal nutzt, oder gjc. Die Karte zeigt, wann sie zuletzt aktualisiert wurden. Für Limits, die auch ohne diese Tools aktuell bleiben, schalte die Live-Abfrage der Claude-Limits im Tab „KI-Nutzung“ oder unter Einstellungen › Dienste ein. Die Token-Summen sind immer live.
+Standardmäßig stammen die 5-Stunden- und Wochenwerte von Claude aus Caches, die andere Tools schreiben: das HUD von [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode), während du Claude Code in einem Terminal nutzt, oder gjc. Die Karte zeigt, wann sie zuletzt aktualisiert wurden. Claudes Limits können auch direkt aus der Statuszeile von Claude Code kommen, sobald du sie unter Einstellungen › Dienste verbindest. Für Limits, die auch ohne diese Tools aktuell bleiben, schalte die Live-Abfrage der Claude-Limits im Tab „KI-Nutzung“ oder unter Einstellungen › Dienste ein. Die Token-Summen sind immer live.
 </details>
 
 <details>

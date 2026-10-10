@@ -323,6 +323,12 @@
 "Paste it into ~/.wezterm.lua before `return config`. Bells from any WezTerm pane then show in the notch; WezTerm's config isn't changed for you." = "~/.wezterm.lua の `return config` の前に貼り付けると、すべての WezTerm ペインのベルがノッチに表示されます。WezTerm の設定は自動では変更しません。";
 "Ask Anthropic for Claude's limits" = "Claude の上限を Anthropic から取得";
 "Reads the sign-in Claude Code keeps in the Keychain and asks api.anthropic.com for your 5-hour and weekly limits about once an hour, so they also move when another app or claude.ai uses them. While that sign-in has expired they stop updating, until Claude Code signs in again. The sign-in is never changed or sent anywhere else." = "Claude Code がキーチェーンに保存したサインイン情報を読み、約 1 時間ごとに api.anthropic.com に 5 時間と週の上限を問い合わせます。ほかのアプリや claude.ai での使用も反映されます。そのサインインが期限切れの間は、Claude Code が再びサインインするまで更新されません。サインイン情報は変更せず、ほかへ送ることもありません。";
+"Claude Code status line" = "Claude Code のステータスライン";
+"Takes Claude's 5-hour and weekly limits from what Claude Code passes to its status line, and keeps running your own status line as before. Nothing leaves this Mac." = "Claude Code がステータスラインに渡す情報から Claude の 5 時間と週の上限を取得し、元のステータスラインもそのまま実行します。データはこの Mac の外に出ません。";
+"Connected. The limits update while Claude Code runs." = "接続済み。Claude Code の実行中は上限が更新されます。";
+"Not connected." = "未接続。";
+"Something else has changed Claude Code's status line since you connected. Connect again to use the new one." = "接続後に、ほかのものが Claude Code のステータスラインを変更しました。新しい設定を使うには、もう一度接続してください。";
+"Couldn't change Claude Code's settings." = "Claude Code の設定を変更できませんでした。";
 "Live Claude limits?" = "Claude の上限をリアルタイムで取得しますか?";
 "Nunsseop can read the sign-in Claude Code keeps in the Keychain and ask Anthropic directly for your 5-hour and weekly limits, about once an hour, so they update without Claude Code running." = "Claude Code がキーチェーンに保存したサインイン情報を読み、約 1 時間ごとに Anthropic に 5 時間と週の上限を直接問い合わせます。Claude Code を起動していなくても更新されます。";
 "Turn On" = "オンにする";

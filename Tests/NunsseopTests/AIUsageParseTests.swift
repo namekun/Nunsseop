@@ -161,4 +161,30 @@ struct AIUsageParseTests {
         #expect(codex.weekly?.percent == 15)
         #expect(codex.updatedAt == ISO8601DateFormatter().date(from: "2026-10-01T10:00:00Z"))
     }
+
+    @Test func statusLineSnapshotGivesBothWindows() throws {
+        let later = Date().addingTimeInterval(3600).timeIntervalSince1970
+        let json = #"{"model":{"id":"x"},"rate_limits":{"five_hour":{"used_percentage":23.5,"resets_at":\#(Int(later))},"seven_day":{"used_percentage":41,"resets_at":\#(Int(later))}}}"#
+        let stamp = Date(timeIntervalSince1970: 1_790_000_000)
+        let limits = try #require(AIUsageModel.statusLineLimits(Data(json.utf8), modified: stamp))
+        #expect(limits.session?.percent == 23.5)
+        #expect(limits.weekly?.percent == 41)
+        #expect(limits.session?.resetsAt == Date(timeIntervalSince1970: TimeInterval(Int(later))))
+        #expect(limits.updatedAt == stamp)
+        #expect(limits.source == "Claude Code")
+    }
+
+    @Test func statusLineSnapshotIgnoresWindowsThatHaveReset() throws {
+        let later = Int(Date().addingTimeInterval(3600).timeIntervalSince1970)
+        let json = #"{"rate_limits":{"five_hour":{"used_percentage":90,"resets_at":1738425600},"seven_day":{"used_percentage":10,"resets_at":\#(later)}}}"#
+        let limits = try #require(AIUsageModel.statusLineLimits(Data(json.utf8), modified: .now))
+        #expect(limits.session == nil)
+        #expect(limits.weekly?.percent == 10)
+
+        let onlyWeekly = #"{"rate_limits":{"seven_day":{"used_percentage":5,"resets_at":\#(later)}}}"#
+        #expect(AIUsageModel.statusLineLimits(Data(onlyWeekly.utf8), modified: .now)?.session == nil)
+        #expect(AIUsageModel.statusLineLimits(Data(#"{"rate_limits":{"five_hour":{"used_percentage":90,"resets_at":1738425600}}}"#.utf8), modified: .now)?.session == nil)
+        #expect(AIUsageModel.statusLineLimits(Data(#"{"model":{}}"#.utf8), modified: .now) == nil)
+        #expect(AIUsageModel.statusLineLimits(Data("not json".utf8), modified: .now) == nil)
+    }
 }

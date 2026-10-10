@@ -131,7 +131,7 @@ Nunsseop 显示的是 macOS 列为“正在播放”的内容，所以播放器�
 <details>
 <summary><b>为什么 AI 用量显示的是旧的 Claude 用量上限？</b></summary>
 
-默认情况下，Claude 的 5 小时和每周百分比来自其他工具写入的缓存：在终端里使用 Claude Code 时来自 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) 的 HUD，或者来自 gjc。卡片上会显示它们上次更新的时间。如果想不依赖这些工具也让用量上限保持最新，请在 AI 标签或设置 › 服务中开启实时获取 Claude 用量上限。令牌总数始终是实时的。
+默认情况下，Claude 的 5 小时和每周百分比来自其他工具写入的缓存：在终端里使用 Claude Code 时来自 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) 的 HUD，或者来自 gjc。卡片上会显示它们上次更新的时间。在设置 › 服务中连接后，Claude 的用量上限也可以直接来自 Claude Code 的状态栏。如果想不依赖这些工具也让用量上限保持最新，请在 AI 标签或设置 › 服务中开启实时获取 Claude 用量上限。令牌总数始终是实时的。
 </details>
 
 <details>

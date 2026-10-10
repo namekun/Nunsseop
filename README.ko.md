@@ -131,7 +131,7 @@ Nunsseop은 macOS가 '지금 재생 중'으로 아는 것을 보여 줍니다. �
 <details>
 <summary><b>AI 사용량의 Claude 한도가 오래된 값이에요.</b></summary>
 
-기본으로는 Claude의 5시간·주간 %를 다른 도구가 남기는 캐시에서 읽습니다. 터미널에서 Claude Code를 쓸 때 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD가 저장하는 캐시나 gjc의 캐시입니다. 카드에 마지막 갱신 시각이 함께 나옵니다. 그런 도구 없이도 최신 값을 보려면 AI 탭이나 설정 → 서비스에서 Claude 실시간 한도를 켜세요. 토큰 사용량은 항상 실시간입니다.
+기본으로는 Claude의 5시간·주간 %를 다른 도구가 남기는 캐시에서 읽습니다. 터미널에서 Claude Code를 쓸 때 [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) HUD가 저장하는 캐시나 gjc의 캐시입니다. 카드에 마지막 갱신 시각이 함께 나옵니다. 설정 → 서비스에서 연결하면 Claude 한도를 Claude Code의 상태 표시줄에서 바로 가져올 수도 있습니다. 그런 도구 없이도 최신 값을 보려면 AI 탭이나 설정 → 서비스에서 Claude 실시간 한도를 켜세요. 토큰 사용량은 항상 실시간입니다.
 </details>
 
 <details>

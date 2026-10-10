@@ -4,7 +4,7 @@ import SQLite3
 import SwiftUI
 
 /// Usage of AI coding tools, read from files those tools already keep on this Mac.
-/// Limits: Claude's from Anthropic with Claude Code's own sign-in (ClaudeUsageAPI) or the oh-my-claudecode HUD cache,
+/// Limits: Claude's from Anthropic with Claude Code's own sign-in (ClaudeUsageAPI), the status line Nunsseop connects in Claude Code or the oh-my-claudecode HUD cache,
 /// Codex's from Codex's session logs, or either from the usage cache gjc keeps, whichever was fetched last. Token totals add up the logs of every tool that used the provider's
 /// models: Claude Code, Codex, gjc, omo and OpenCode.
 @MainActor
@@ -195,6 +195,7 @@ final class AIUsageModel: ObservableObject {
         }
         offer(.claude, (try? Data(contentsOf: home.appendingPathComponent(".claude/plugins/oh-my-claudecode/.usage-cache-anthropic.json"))).flatMap(omcLimits))
         offer(.claude, anthropic)
+        offer(.claude, statusLineLimits())
         offer(.codex, codexLimits())
         let gjc = home.appendingPathComponent(".gjc/agent/agent.db").path
         // Only the usage cache is read; this database also holds gjc's credentials, which are never touched.
@@ -214,6 +215,27 @@ final class AIUsageModel: ObservableObject {
         return Limits(session: window(percent: usage["fiveHourPercent"] as? Double, resetsAt: date("fiveHourResetsAt")),
                       weekly: window(percent: usage["weeklyPercent"] as? Double, resetsAt: date("weeklyResetsAt")),
                       updatedAt: Date(timeIntervalSince1970: stamp / 1000))
+    }
+
+    /// The rate limits Claude Code last passed to its status line, kept by the script Nunsseop connects there.
+    nonisolated private static func statusLineLimits() -> Limits? {
+        let url = ClaudeStatusLine.Paths.live.snapshot
+        guard let data = try? Data(contentsOf: url),
+              let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate else { return nil }
+        return statusLineLimits(data, modified: modified)
+    }
+
+    /// Claude Code leaves out a window once its reset time has passed, and a copy kept from before that is dropped too.
+    nonisolated static func statusLineLimits(_ data: Data, modified: Date) -> Limits? {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let limits = json["rate_limits"] as? [String: Any] else { return nil }
+        func parse(_ key: String) -> Window? {
+            guard let entry = limits[key] as? [String: Any], let percent = entry["used_percentage"] as? Double else { return nil }
+            let reset = (entry["resets_at"] as? Double).map { Date(timeIntervalSince1970: $0) }
+            if let reset, reset < .now { return nil }
+            return Window(percent: percent, resetsAt: reset)
+        }
+        return Limits(session: parse("five_hour"), weekly: parse("seven_day"), updatedAt: modified, source: "Claude Code")
     }
 
     /// One provider's report from gjc's usage cache: 5-hour and 7-day windows with the time it was fetched.
