@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Nécessite [Homebrew](https://brew.sh). Homebrew retire l’attribut de quarantaine, l’app s’ouvre donc tout de suite. Pour la mettre à jour, lancez `brew upgrade --cask nunsseop` ; quand une mise à jour est disponible, Réglages › Général › Mises à jour copie cette commande dans le presse-papiers.
+Nécessite [Homebrew](https://brew.sh). Homebrew retire l’attribut de quarantaine, l’app s’ouvre donc tout de suite. Pour la mettre à jour, lancez `brew update && brew upgrade --cask nunsseop` ; quand une mise à jour est disponible, Réglages › Général › Mises à jour copie cette commande dans le presse-papiers.
 
 Nécessite macOS 14 Sonoma ou ultérieur. Fonctionne sur Apple silicon et sur Intel, ainsi que sur les écrans sans encoche.
 

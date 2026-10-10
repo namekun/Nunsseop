@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-需要 [Homebrew](https://brew.sh)。Homebrew 会清除隔离属性，所以应用可以直接打开。要更新，请运行 `brew upgrade --cask nunsseop`；有新版本时，设置 › 通用 › 更新中的“拷贝更新命令”会把这条命令拷贝到剪贴板。
+需要 [Homebrew](https://brew.sh)。Homebrew 会清除隔离属性，所以应用可以直接打开。要更新，请运行 `brew update && brew upgrade --cask nunsseop`；有新版本时，设置 › 通用 › 更新中的“拷贝更新命令”会把这条命令拷贝到剪贴板。
 
 需要 macOS 14 Sonoma 或更高版本。支持 Apple 芯片和 Intel，也支持没有刘海的屏幕。
 

@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Needs [Homebrew](https://brew.sh). Homebrew clears the quarantine flag, so the app opens right away. To update, run `brew upgrade --cask nunsseop`; when an update is out, Settings › General › Updates copies that command to your clipboard.
+Needs [Homebrew](https://brew.sh). Homebrew clears the quarantine flag, so the app opens right away. To update, run `brew update && brew upgrade --cask nunsseop`; when an update is out, Settings › General › Updates copies that command to your clipboard.
 
 Needs macOS 14 Sonoma or later. Works on Apple silicon and Intel, and on screens without a notch.
 

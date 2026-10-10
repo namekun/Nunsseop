@@ -63,9 +63,10 @@ final class UpdateChecker: ObservableObject {
     }
 
     /// The Terminal line that updates the app. One installed some other way is replaced by Homebrew's, since only
-    /// Homebrew installs are offered now.
+    /// Homebrew installs are offered now. `brew update` comes first: Homebrew skips refreshing its taps when it did so
+    /// recently, and would then report the old version as the latest.
     nonisolated static func brewCommand(installedWithBrew: Bool) -> String {
-        installedWithBrew ? "brew upgrade --cask nunsseop" : "brew install --cask --force namekun/tap/nunsseop"
+        installedWithBrew ? "brew update && brew upgrade --cask nunsseop" : "brew update && brew install --cask --force namekun/tap/nunsseop"
     }
 
     /// Homebrew keeps a folder in its Caskroom for every cask it installed.

@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-Dafür brauchst du [Homebrew](https://brew.sh). Homebrew entfernt das Quarantäne-Flag, sodass sich die App sofort öffnen lässt. Zum Aktualisieren führst du `brew upgrade --cask nunsseop` aus; sobald ein Update verfügbar ist, kopiert Einstellungen › Allgemein › Updates diesen Befehl in deine Zwischenablage.
+Dafür brauchst du [Homebrew](https://brew.sh). Homebrew entfernt das Quarantäne-Flag, sodass sich die App sofort öffnen lässt. Zum Aktualisieren führst du `brew update && brew upgrade --cask nunsseop` aus; sobald ein Update verfügbar ist, kopiert Einstellungen › Allgemein › Updates diesen Befehl in deine Zwischenablage.
 
 Erfordert macOS 14 Sonoma oder neuer. Läuft auf Apple Silicon und Intel sowie auf Bildschirmen ohne Notch.
 

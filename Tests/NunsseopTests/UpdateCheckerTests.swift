@@ -12,7 +12,7 @@ struct UpdateCheckerTests {
     }
 
     @Test func updateCommandUpgradesAHomebrewInstallAndReplacesAnyOther() {
-        #expect(UpdateChecker.brewCommand(installedWithBrew: true) == "brew upgrade --cask nunsseop")
-        #expect(UpdateChecker.brewCommand(installedWithBrew: false) == "brew install --cask --force namekun/tap/nunsseop")
+        #expect(UpdateChecker.brewCommand(installedWithBrew: true) == "brew update && brew upgrade --cask nunsseop")
+        #expect(UpdateChecker.brewCommand(installedWithBrew: false) == "brew update && brew install --cask --force namekun/tap/nunsseop")
     }
 }

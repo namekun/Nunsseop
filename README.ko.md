@@ -30,7 +30,7 @@
 brew install --cask namekun/tap/nunsseop
 ```
 
-[Homebrew](https://brew.sh)가 필요합니다. Homebrew는 격리 플래그를 지워 주기 때문에 앱이 바로 열립니다. 업데이트는 `brew upgrade --cask nunsseop`으로 하세요. 새 버전이 나오면 설정 → 일반 → 업데이트에서 이 명령을 클립보드에 복사해 줍니다.
+[Homebrew](https://brew.sh)가 필요합니다. Homebrew는 격리 플래그를 지워 주기 때문에 앱이 바로 열립니다. 업데이트는 `brew update && brew upgrade --cask nunsseop`으로 하세요. 새 버전이 나오면 설정 → 일반 → 업데이트에서 이 명령을 클립보드에 복사해 줍니다.
 
 macOS 14 Sonoma 이상이면 됩니다. Apple 실리콘과 Intel 모두, 노치가 없는 화면에서도 동작합니다.
 
