@@ -235,6 +235,9 @@
 "No AI usage found" = "AI の使用履歴がありません";
 "Updated %@" = "%@ に更新";
 "5-hour" = "5 時間";
+"Sign in to Claude Code again to update the limits." = "制限を更新するには Claude Code に再度サインインしてください。";
+"Weekly · all models" = "週間 · すべてのモデル";
+"Weekly · %@" = "週間 · %@";
 "Weekly" = "週間";
 "Last 5 hours" = "過去 5 時間";
 "Last 7 days" = "過去 7 日間";

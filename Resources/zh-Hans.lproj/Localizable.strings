@@ -235,6 +235,9 @@
 "No AI usage found" = "没有 AI 使用记录";
 "Updated %@" = "%@更新";
 "5-hour" = "5 小时";
+"Sign in to Claude Code again to update the limits." = "请重新登录 Claude Code 以更新限额。";
+"Weekly · all models" = "每周 · 所有模型";
+"Weekly · %@" = "每周 · %@";
 "Weekly" = "每周";
 "Last 5 hours" = "过去 5 小时";
 "Last 7 days" = "过去 7 天";

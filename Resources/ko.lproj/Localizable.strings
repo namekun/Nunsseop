@@ -260,6 +260,9 @@
 "No AI usage found" = "AI 사용 기록이 없습니다";
 "Updated %@" = "%@ 갱신";
 "5-hour" = "5시간";
+"Sign in to Claude Code again to update the limits." = "한도를 갱신하려면 Claude Code에 다시 로그인하세요.";
+"Weekly · all models" = "주간 · 모든 모델";
+"Weekly · %@" = "주간 · %@";
 "Weekly" = "주간";
 "Last 5 hours" = "최근 5시간";
 "Last 7 days" = "최근 7일";

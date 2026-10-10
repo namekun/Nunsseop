@@ -32,6 +32,37 @@ struct ClaudeUsageAPITests {
         #expect(ClaudeUsageAPI.limits(from: Data(#"{"type":"error"}"#.utf8), fetchedAt: fetched) == nil)
     }
 
+    @Test func readsEachModelsWeeklyLimit() throws {
+        // As the endpoint answers, trimmed: per-model limits come only in `limits`, the "seven_day_*" keys stay null.
+        let response = Data(#"""
+        {"five_hour":{"utilization":8.0,"resets_at":"2026-10-08T21:40:00.502316+00:00"},
+         "seven_day":{"utilization":7.0,"resets_at":"2026-10-15T08:00:00.502335+00:00"},
+         "seven_day_opus":null,"seven_day_oauth_apps":null,
+         "limits":[{"kind":"session","group":"session","percent":8,"resets_at":"2026-10-08T21:40:00.502316+00:00","scope":null},
+                   {"kind":"weekly_all","group":"weekly","percent":7,"resets_at":"2026-10-15T08:00:00.502335+00:00","scope":null},
+                   {"kind":"weekly_scoped","group":"weekly","percent":0,"resets_at":"2026-10-15T08:00:00+00:00",
+                    "scope":{"model":{"id":null,"display_name":"Fable"},"surface":null}},
+                   {"kind":"weekly_scoped","group":"weekly","percent":12,"resets_at":"2026-10-15T08:00:00+00:00",
+                    "scope":{"model":null,"surface":"cowork"}}]}
+        """#.utf8)
+        let fetched = try #require(ClaudeUsageAPI.date("2026-10-08T18:00:00Z"))
+        let limits = try #require(ClaudeUsageAPI.limits(from: response, fetchedAt: fetched))
+        // Only limits scoped to a model; one scoped to something else has no model name to show.
+        #expect(limits.models.map(\.name) == ["Fable"])
+        #expect(limits.models.first?.window.percent == 0)
+        #expect(limits.models.first?.window.resetsAt == ClaudeUsageAPI.date("2026-10-15T08:00:00Z"))
+        #expect(limits.weekly?.percent == 7)
+        // Without `limits` there are no per-model bars.
+        let older = Data(#"{"five_hour":{"utilization":1.0},"seven_day":{"utilization":2.0}}"#.utf8)
+        #expect(ClaudeUsageAPI.limits(from: older, fetchedAt: fetched)?.models == [])
+    }
+
+    @Test func readsThePlanFromTheKeychainEntry() {
+        let entry = Data(#"{"claudeAiOauth":{"accessToken":"t","subscriptionType":"max"}}"#.utf8)
+        #expect(ClaudeUsageAPI.credentials(from: entry)?.plan == "Max")
+        #expect(ClaudeUsageAPI.credentials(from: Data(#"{"claudeAiOauth":{"accessToken":"t"}}"#.utf8))?.plan == nil)
+    }
+
     @Test func readsMicrosecondTimes() {
         let expected = Date(timeIntervalSince1970: 1_791_316_800.498)   // 2026-10-06T20:00:00.498Z
         #expect(ClaudeUsageAPI.date("2026-10-06T20:00:00.498908+00:00").map { abs($0.timeIntervalSince(expected)) < 0.001 } == true)

@@ -16,10 +16,14 @@ enum ClaudeUsageAPI {
     struct Credentials: Equatable {
         let token: String
         let expiresAt: Date?
+        /// The subscription, such as "Max", when the entry names one.
+        var plan: String?
     }
 
     private struct State {
         var limits: AIUsageModel.Limits?
+        /// No usable sign-in at the last attempt: none in the Keychain, expired, or refused by the server.
+        var signedOut = false
         var nextAttempt = Date.distantPast
     }
 
@@ -49,15 +53,31 @@ enum ClaudeUsageAPI {
         set { enabledFlag.withLock { $0 = newValue } }
     }
 
+    enum Status: Equatable {
+        /// Not asked at all.
+        case off
+        /// Asked, with no answer yet: the first request, or one the server put off.
+        case waiting
+        /// Claude Code's sign-in is missing or no longer works.
+        case signedOut
+        case ready
+    }
+
+    static var status: Status {
+        guard isEnabled else { return .off }
+        return state.withLock { $0.signedOut ? .signedOut : $0.limits == nil ? .waiting : .ready }
+    }
+
     // MARK: Parsing
 
-    /// Claude Code's Keychain entry: `{"claudeAiOauth": {"accessToken", "expiresAt" (ms)}}`.
+    /// Claude Code's Keychain entry: `{"claudeAiOauth": {"accessToken", "expiresAt" (ms), "subscriptionType"}}`.
     static func credentials(from data: Data) -> Credentials? {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
         let oauth = json["claudeAiOauth"] as? [String: Any] ?? json
         guard let token = oauth["accessToken"] as? String, !token.isEmpty else { return nil }
         let expires = (oauth["expiresAt"] as? Double).map { Date(timeIntervalSince1970: $0 / 1000) }
-        return Credentials(token: token, expiresAt: expires)
+        let plan = (oauth["subscriptionType"] as? String).flatMap { $0.isEmpty ? nil : $0.capitalized }
+        return Credentials(token: token, expiresAt: expires, plan: plan)
     }
 
     /// The 5-hour and 7-day windows of a usage response.
@@ -71,7 +91,18 @@ enum ClaudeUsageAPI {
         }
         let session = window("five_hour"), weekly = window("seven_day")
         guard session != nil || weekly != nil else { return nil }
-        return AIUsageModel.Limits(session: session, weekly: weekly, updatedAt: fetchedAt)
+        // A model with a weekly limit of its own is a "weekly_scoped" entry of `limits`, named by its scope.
+        let models = (json["limits"] as? [[String: Any]] ?? []).compactMap { entry -> AIUsageModel.ModelWindow? in
+            guard entry["kind"] as? String == "weekly_scoped",
+                  let model = (entry["scope"] as? [String: Any])?["model"] as? [String: Any],
+                  let name = model["display_name"] as? String, !name.isEmpty,
+                  let percent = (entry["percent"] as? NSNumber)?.doubleValue else { return nil }
+            let resets = (entry["resets_at"] as? String).flatMap(date)
+            let window = resets.map { $0 < fetchedAt } == true
+                ? AIUsageModel.Window(percent: 0, resetsAt: nil) : AIUsageModel.Window(percent: percent, resetsAt: resets)
+            return AIUsageModel.ModelWindow(name: name, window: window)
+        }
+        return AIUsageModel.Limits(session: session, weekly: weekly, models: models, updatedAt: fetchedAt)
     }
 
     /// ISO 8601 times with up to microseconds (`2026-10-06T20:00:00.498908+00:00`), which ISO8601DateFormatter
@@ -112,6 +143,7 @@ enum ClaudeUsageAPI {
         var limits = limits
         limits.session = reset(limits.session)
         limits.weekly = reset(limits.weekly)
+        limits.models = limits.models.compactMap { model in reset(model.window).map { AIUsageModel.ModelWindow(name: model.name, window: $0) } }
         return limits
     }
 
@@ -120,26 +152,46 @@ enum ClaudeUsageAPI {
     /// The last limits, asking Anthropic again when they're due.
     static func current(now: Date = .now) async -> AIUsageModel.Limits? {
         guard isEnabled else { return nil }
-        let due = state.withLock { state -> Bool in
+        if claimAttempt(now: now) { await fetch(now: now) }
+        return state.withLock { $0.limits }.map { fresh($0, now: now) }
+    }
+
+    /// The last limits without waiting for Anthropic, so what's known shows at once: a request that is due starts
+    /// in the background, and `answered` runs once it is done.
+    static func latest(now: Date = .now, answered: @escaping @Sendable () -> Void) -> AIUsageModel.Limits? {
+        guard isEnabled else { return nil }
+        if claimAttempt(now: now) {
+            Task.detached(priority: .utility) {
+                await fetch(now: now)
+                answered()
+            }
+        }
+        return state.withLock { $0.limits }.map { fresh($0, now: now) }
+    }
+
+    /// Whether a request is due, booking the next one if so.
+    private static func claimAttempt(now: Date) -> Bool {
+        state.withLock { state -> Bool in
             guard now >= state.nextAttempt else { return false }
             state.nextAttempt = now.addingTimeInterval(interval)
             return true
         }
-        if due { await fetch(now: now) }
-        return state.withLock { $0.limits }.map { fresh($0, now: now) }
     }
 
     private static func fetch(now: Date) async {
         guard let credentials = keychainCredentials(now: now) else {
             // Not signed in, or the sign-in expired: asked again later, not on every refresh.
-            state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff) }
+            state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff); $0.signedOut = true }
             return
         }
         guard let (data, response) = try? await session.data(for: request(token: credentials.token)),
               let response = response as? HTTPURLResponse else { return }
         switch response.statusCode {
         case 200:
-            if let limits = limits(from: data, fetchedAt: .now) { state.withLock { $0.limits = limits } }
+            if var limits = limits(from: data, fetchedAt: .now) {
+                limits.plan = credentials.plan
+                state.withLock { $0.limits = limits; $0.signedOut = false }
+            }
         case 429:
             // Capped, so an odd retry-after can't switch this off until relaunch.
             let asked = response.value(forHTTPHeaderField: "retry-after").flatMap(Double.init) ?? 0
@@ -147,7 +199,7 @@ enum ClaudeUsageAPI {
             state.withLock { $0.nextAttempt = now.addingTimeInterval(wait) }
         default:
             // 401/403: a token that stopped working; Claude Code will sign in again, and it's asked later.
-            state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff) }
+            state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff); $0.signedOut = true }
         }
     }
 

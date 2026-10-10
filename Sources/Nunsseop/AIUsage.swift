@@ -14,11 +14,22 @@ final class AIUsageModel: ObservableObject {
         let resetsAt: Date?
     }
 
+    /// A weekly limit of its own for one model, on top of the weekly limit for all of them.
+    struct ModelWindow: Equatable {
+        let name: String
+        let window: Window
+    }
+
     struct Provider: Identifiable, Equatable {
         let id: String
         let name: String
         var session: Window?
         var weekly: Window?
+        var models: [ModelWindow] = []
+        /// The subscription the limits belong to, such as "Max".
+        var plan: String?
+        /// Where asking Anthropic stands, for Claude only.
+        var anthropic: ClaudeUsageAPI.Status?
         var sessionTokens: Int?
         var weeklyTokens: Int?
         var updatedAt: Date?
@@ -38,6 +49,8 @@ final class AIUsageModel: ObservableObject {
     struct Limits: Equatable {
         var session: Window?
         var weekly: Window?
+        var models: [ModelWindow] = []
+        var plan: String?
         var updatedAt: Date
         var source: String?
     }
@@ -58,45 +71,72 @@ final class AIUsageModel: ObservableObject {
 
     @Published private(set) var providers: [Provider] = []
     @Published private(set) var loading = false
+    /// Adding up the logs, which the token totals wait for.
+    @Published private(set) var countingTokens = false
     /// A token refresh asked for while another refresh ran, which runs as soon as that one is done.
     private var tokensPending = false
+    /// Likewise for limits alone, such as when Anthropic answers during a refresh.
+    private var limitsPending = false
 
     /// Without `includeTokens` only the limits are read, which is cheap; the token totals from the last refresh are kept.
     func refresh(includeTokens: Bool = true) {
         guard !loading else {
-            if includeTokens { tokensPending = true }
+            if includeTokens { tokensPending = true } else { limitsPending = true }
             return
         }
         loading = true
         Task.detached(priority: .utility) {
-            let limits = await Self.limits()
+            // Anthropic isn't waited for: the card shows at once, and refreshes again when it answers.
+            let limits = Self.limits { Task { @MainActor [weak self] in self?.refresh(includeTokens: false) } }
+            let anthropic = ClaudeUsageAPI.status
+            // Adding up the logs takes a while, so the limits (or where they will go) show first.
+            if includeTokens {
+                await MainActor.run {
+                    self.countingTokens = true
+                    self.publish(limits: limits, anthropic: anthropic, totals: nil)
+                }
+            }
             let totals = includeTokens ? Self.tokenTotals() : nil
             await MainActor.run {
-                self.providers = Family.allCases.compactMap { family in
-                    var provider = Provider(id: family.rawValue, name: family.name)
-                    if let limits = limits[family] {
-                        provider.session = limits.session
-                        provider.weekly = limits.weekly
-                        provider.updatedAt = limits.updatedAt
-                        provider.limitsSource = limits.source
-                    }
-                    if let totals {
-                        provider.sessionTokens = totals[family]?.session
-                        provider.weeklyTokens = totals[family]?.weekly
-                        provider.tools = totals[family]?.tools ?? []
-                    } else if let old = self.providers.first(where: { $0.id == provider.id }) {
-                        provider.sessionTokens = old.sessionTokens
-                        provider.weeklyTokens = old.weeklyTokens
-                        provider.tools = old.tools
-                    }
-                    return provider.session == nil && provider.weekly == nil && provider.weeklyTokens == nil ? nil : provider
-                }
+                self.publish(limits: limits, anthropic: anthropic, totals: totals)
+                self.countingTokens = false
                 self.loading = false
                 if self.tokensPending {
                     self.tokensPending = false
+                    self.limitsPending = false
                     self.refresh(includeTokens: true)
+                } else if self.limitsPending {
+                    self.limitsPending = false
+                    self.refresh(includeTokens: false)
                 }
             }
+        }
+    }
+
+    /// Without `totals` the token totals from the last refresh are kept.
+    private func publish(limits: [Family: Limits], anthropic: ClaudeUsageAPI.Status, totals: [Family: Totals]?) {
+        providers = Family.allCases.compactMap { family in
+            var provider = Provider(id: family.rawValue, name: family.name)
+            if family == .claude { provider.anthropic = anthropic }
+            if let limits = limits[family] {
+                provider.session = limits.session
+                provider.weekly = limits.weekly
+                provider.models = limits.models
+                provider.plan = limits.plan
+                provider.updatedAt = limits.updatedAt
+                provider.limitsSource = limits.source
+            }
+            if let totals {
+                provider.sessionTokens = totals[family]?.session
+                provider.weeklyTokens = totals[family]?.weekly
+                provider.tools = totals[family]?.tools ?? []
+            } else if let old = providers.first(where: { $0.id == provider.id }) {
+                provider.sessionTokens = old.sessionTokens
+                provider.weeklyTokens = old.weeklyTokens
+                provider.tools = old.tools
+            }
+            let waiting = provider.anthropic == .waiting
+            return provider.session == nil && provider.weekly == nil && provider.weeklyTokens == nil && !waiting ? nil : provider
         }
     }
 
@@ -143,8 +183,8 @@ final class AIUsageModel: ObservableObject {
     // MARK: Limits
 
     /// Each provider's limits from whichever source fetched them last.
-    nonisolated private static func limits() async -> [Family: Limits] {
-        let anthropic = await ClaudeUsageAPI.current()
+    nonisolated private static func limits(answered: @escaping @Sendable () -> Void) -> [Family: Limits] {
+        let anthropic = ClaudeUsageAPI.latest(answered: answered)
         var result: [Family: Limits] = [:]
         func offer(_ family: Family, _ limits: Limits?) {
             guard let limits, (limits.session ?? limits.weekly) != nil else { return }
@@ -448,6 +488,12 @@ struct AIUsageTab: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(provider.name).font(.system(size: 13, weight: .semibold))
+                        if let plan = provider.plan {
+                            Text(verbatim: plan.uppercased())
+                                .font(.system(size: 9, weight: .bold)).foregroundStyle(.white.opacity(0.7))
+                                .padding(.horizontal, 5).padding(.vertical, 1)
+                                .background(Capsule().fill(.white.opacity(0.12)))
+                        }
                         // The tools whose logs are counted, e.g. "Claude Code · gjc".
                         Text(verbatim: provider.tools.joined(separator: " · "))
                             .font(.system(size: 10)).foregroundStyle(.white.opacity(0.4)).lineLimit(1)
@@ -459,16 +505,16 @@ struct AIUsageTab: View {
                                 .layoutPriority(1)
                         }
                     }
-                    if let window = provider.session {
-                        UsageBar(title: String(localized: "5-hour"), window: window)
-                    }
-                    if let window = provider.weekly {
-                        UsageBar(title: String(localized: "Weekly"), window: window)
-                    }
+                    UsageBars(provider: provider)
                     if let session = provider.sessionTokens, let weekly = provider.weeklyTokens {
                         HStack(spacing: 12) {
                             TokenRow(title: String(localized: "Last 5 hours"), tokens: session)
                             TokenRow(title: String(localized: "Last 7 days"), tokens: weekly)
+                        }
+                    } else if usage.countingTokens {
+                        HStack(spacing: 12) {
+                            TokenRowSkeleton()
+                            TokenRowSkeleton()
                         }
                     }
                     Spacer(minLength: 0)
@@ -539,6 +585,90 @@ private struct TokenRow: View {
                 .lineLimit(1).minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// The 5-hour and weekly limits, then each model's weekly limit. Past two bars they share rows two by two,
+/// so a model's limit doesn't push the token totals out of the card.
+private struct UsageBars: View {
+    let provider: AIUsageModel.Provider
+
+    private var bars: [(title: String, window: AIUsageModel.Window)] {
+        var bars: [(title: String, window: AIUsageModel.Window)] = []
+        if let window = provider.session { bars.append((String(localized: "5-hour"), window)) }
+        if let window = provider.weekly {
+            bars.append((provider.models.isEmpty ? String(localized: "Weekly") : String(localized: "Weekly · all models"), window))
+        }
+        bars += provider.models.map { (String(localized: "Weekly · \($0.name)"), $0.window) }
+        return bars
+    }
+
+    var body: some View {
+        let bars = bars
+        if bars.isEmpty && provider.anthropic == .waiting {
+            UsageBarSkeleton()
+            UsageBarSkeleton()
+        } else if bars.count > 2 {
+            Grid(horizontalSpacing: 16, verticalSpacing: 6) {
+                ForEach(Array(stride(from: 0, to: bars.count, by: 2)), id: \.self) { start in
+                    GridRow {
+                        UsageBar(title: bars[start].title, window: bars[start].window)
+                        if start + 1 < bars.count {
+                            UsageBar(title: bars[start + 1].title, window: bars[start + 1].window)
+                        } else {
+                            Color.clear.gridCellUnsizedAxes(.vertical)
+                        }
+                    }
+                }
+            }
+        } else {
+            ForEach(bars, id: \.title) { bar in UsageBar(title: bar.title, window: bar.window) }
+        }
+        if provider.anthropic == .signedOut {
+            Text("Sign in to Claude Code again to update the limits.")
+                .font(.system(size: 10)).foregroundStyle(.orange.opacity(0.9)).lineLimit(1)
+        }
+    }
+}
+
+/// Where a limit bar goes while Anthropic hasn't answered yet, laid out like `UsageBar`.
+private struct UsageBarSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Capsule().frame(width: 96, height: 9)
+                Spacer()
+                Capsule().frame(width: 26, height: 9)
+            }
+            .frame(height: 13)
+            Capsule().frame(height: 6)
+        }
+        .modifier(SkeletonPulse())
+    }
+}
+
+/// Where a token total goes while the logs are being added up, laid out like `TokenRow`.
+private struct TokenRowSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Capsule().frame(width: 64, height: 8).frame(height: 12)
+            Capsule().frame(width: 88, height: 10).frame(height: 15)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .modifier(SkeletonPulse())
+    }
+}
+
+/// Gray shapes that fade in and out while what they stand for loads.
+private struct SkeletonPulse: ViewModifier {
+    @State private var dim = false
+
+    func body(content: Content) -> some View {
+        content
+            .foregroundStyle(.white.opacity(dim ? 0.06 : 0.14))
+            .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: dim)
+            .onAppear { dim = true }
+            .accessibilityLabel(Text("Loading…"))
     }
 }
 

@@ -235,6 +235,9 @@
 "No AI usage found" = "No hay uso de IA";
 "Updated %@" = "Actualizado %@";
 "5-hour" = "5 horas";
+"Sign in to Claude Code again to update the limits." = "Vuelve a iniciar sesión en Claude Code para actualizar los límites.";
+"Weekly · all models" = "Semanal · todos los modelos";
+"Weekly · %@" = "Semanal · %@";
 "Weekly" = "Semanal";
 "Last 5 hours" = "Últimas 5 horas";
 "Last 7 days" = "Últimos 7 días";
