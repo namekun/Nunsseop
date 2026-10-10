@@ -33,8 +33,9 @@ struct NotesModelTests {
         try "kept".write(to: folder.url, atomically: true, encoding: .utf8)
         let notes = NotesModel(url: folder.url, debounce: 60)
         #expect(notes.text == "kept")
+        try "other".write(to: folder.url, atomically: true, encoding: .utf8)
         notes.flush()
-        #expect(folder.contents == "kept")
+        #expect(folder.contents == "other")
     }
 
     @Test func rapidTypingEndsWithTheLastTextOnDisk() async {

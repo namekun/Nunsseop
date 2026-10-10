@@ -15,7 +15,6 @@ struct SystemStatsTests {
     func aCounterThatWentDownShowsNoTraffic(previous: UInt64, current: UInt64) {
         let rate = SystemStats.rate(previous: previous, current: current, seconds: 0.5)
         #expect(rate == 0)
-        #expect(Int64(exactly: rate) != nil)
     }
 
     @MainActor
