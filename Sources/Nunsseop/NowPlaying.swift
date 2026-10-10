@@ -341,10 +341,37 @@ final class NowPlayingController: ObservableObject {
                                 duration: long ? 3_720 : 214, position: long ? 1_250 : 71, isPlaying: true,
                                 sourceBundleID: "com.apple.Music", fetchedAt: Date(),
                                 rate: long ? 1.5 : 1, canChangeRate: long)
-        artwork = NSImage(size: NSSize(width: 300, height: 300), flipped: false) { rect in
-            NSGradient(colors: [.systemPink, .systemPurple, .systemIndigo])?.draw(in: rect, angle: -45)
-            return true
+        artwork = Self.demoArtwork
+    }
+
+    /// A night road under a moon, in flat colors, so screenshots don't lean on a stock gradient.
+    private static let demoArtwork = NSImage(size: NSSize(width: 300, height: 300), flipped: false) { rect in
+        NSColor(srgbRed: 0.08, green: 0.10, blue: 0.13, alpha: 1).setFill()
+        rect.fill()
+        NSColor(srgbRed: 0.91, green: 0.90, blue: 0.86, alpha: 1).setFill()
+        NSBezierPath(ovalIn: NSRect(x: 196, y: 206, width: 40, height: 40)).fill()
+        let horizon: CGFloat = 132
+        NSColor(srgbRed: 0.16, green: 0.19, blue: 0.24, alpha: 1).setFill()
+        let road = NSBezierPath()
+        road.move(to: NSPoint(x: 0, y: 0))
+        road.line(to: NSPoint(x: 300, y: 0))
+        road.line(to: NSPoint(x: 156, y: horizon))
+        road.line(to: NSPoint(x: 144, y: horizon))
+        road.close()
+        road.fill()
+        // Dashes shrink toward the horizon.
+        NSColor(srgbRed: 0.95, green: 0.66, blue: 0.23, alpha: 1).setFill()
+        for (bottom, top) in [(8.0, 46.0), (62.0, 86.0), (98.0, 112.0), (120.0, 127.0)] as [(CGFloat, CGFloat)] {
+            let half = { (y: CGFloat) in 7 * (1 - y / horizon) + 0.5 }
+            let dash = NSBezierPath()
+            dash.move(to: NSPoint(x: 150 - half(bottom), y: bottom))
+            dash.line(to: NSPoint(x: 150 + half(bottom), y: bottom))
+            dash.line(to: NSPoint(x: 150 + half(top), y: top))
+            dash.line(to: NSPoint(x: 150 - half(top), y: top))
+            dash.close()
+            dash.fill()
         }
+        return true
     }
 
     private struct ScriptError: Error { let code: Int }
