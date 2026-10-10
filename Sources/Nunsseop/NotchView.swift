@@ -150,9 +150,11 @@ struct NotchView: View {
                 airDropRect: airDropRect(in: size)
             ))
             .offset(x: shift)
-            .opacity(model.browFaded ? 0 : 1)
             // Fading out waits for the brow to lower first, like an eye closing; coming back shows at once.
-            .animation(model.browFaded ? .easeIn(duration: 0.3).delay(0.28) : .easeOut(duration: 0.2), value: model.browFaded)
+            // Scoped to the opacity, so the shape resizing when a HUD or live activity ends isn't held back too.
+            .animation(model.browFaded ? .easeIn(duration: 0.3).delay(0.28) : .easeOut(duration: 0.2)) {
+                $0.opacity(model.browFaded ? 0 : 1)
+            }
             .padding(.top, model.isExpanded ? 0 : model.geometry.topInset)
             // Ears appearing is when the app's menus matter, so they are read again then.
             .onChange(of: model.collapsedSize.width) { old, new in
