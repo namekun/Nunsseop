@@ -10,6 +10,9 @@ struct HUDContent: View {
     var singleLine = false
 
     static let lineFont = NSFont.systemFont(ofSize: 11, weight: .medium)
+    /// The symbol's slot in the single line; the widest symbol a notice uses (a battery) fits.
+    static let lineSymbolWidth: CGFloat = 20
+    static let lineGap: CGFloat = 7
 
     /// The text a notice or headphone battery shows under the notch.
     static func line(for event: HUDEvent) -> String? {
@@ -25,10 +28,11 @@ struct HUDContent: View {
 
     var body: some View {
         if singleLine, let line = Self.line(for: event) {
-            HStack(spacing: 7) {
+            HStack(spacing: Self.lineGap) {
                 Image(systemName: symbol)
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.white)
+                    .frame(width: Self.lineSymbolWidth)
                 Text(line)
                     .font(Font(Self.lineFont))
                     .foregroundStyle(.white.opacity(0.85))

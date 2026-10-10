@@ -356,7 +356,8 @@ final class NotchViewModel: ObservableObject {
         if let line = hudLine {
             // The symbol, the gap after it and the side padding, then the text; long lines truncate at a third of the screen.
             let text = ceil((line as NSString).size(withAttributes: [.font: HUDContent.lineFont]).width)
-            size.width = min(max(size.width, 2 * 18 + 16 + 7 + text), max(size.width, geometry.screenFrame.width / 3))
+            let content = HUDContent.lineSymbolWidth + HUDContent.lineGap + text
+            size.width = min(max(size.width, 2 * 18 + content), max(size.width, geometry.screenFrame.width / 3))
             return size
         }
         if let event = hud.event {
