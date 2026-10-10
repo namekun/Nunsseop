@@ -207,8 +207,9 @@ enum ClaudeUsageAPI {
         }
         switch response.statusCode {
         case 200:
-            if var limits = limits(from: data, fetchedAt: .now) {
-                limits.plan = credentials.plan
+            if var fetched = limits(from: data, fetchedAt: .now) {
+                fetched.plan = credentials.plan
+                let limits = fetched
                 state.withLock { $0.limits = limits }
             } else {
                 state.withLock { $0.nextAttempt = now.addingTimeInterval(backoff) }
