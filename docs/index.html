@@ -132,13 +132,17 @@
   @keyframes nn-shot { 0%, 32% { opacity: 0; } 40%, 74% { opacity: 1; } 80%, 100% { opacity: 0; } }
   .nn-stage { cursor: default; }
   .nn-stage:focus-visible { outline: 2px solid var(--paper); outline-offset: -5px; }
-  /* Pointer or keyboard focus on the stage: the loop stops and the notch settles open. Letting go eases it shut, then the loop picks up from its closed start. */
-  .nn-stage.held .nn-notch, .nn-stage.releasing .nn-notch { animation: none; transition: top .5s cubic-bezier(.3, 1, .4, 1), width .5s cubic-bezier(.3, 1, .4, 1), height .5s cubic-bezier(.3, 1, .4, 1), border-radius .5s cubic-bezier(.3, 1, .4, 1); }
-  .nn-stage.held .nn-shot, .nn-stage.releasing .nn-shot { animation: none; transition: opacity .4s ease; }
-  .nn-stage.held .nn-brow, .nn-stage.releasing .nn-brow { animation: none; transition: opacity .2s ease, transform .2s ease; }
-  .nn-stage.held .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; }
-  .nn-stage.held .nn-shot { opacity: 1; }
-  .nn-stage.held .nn-brow { opacity: 0; }
+  /* Pointing at the eyebrow drives the notch the way the app does: the loop stops, the brow lifts with a bounce, and
+     0.1 s later the notch opens against the top edge with a slight overshoot, its content fading in halfway. It stays
+     open while the pointer is over it; 0.2 s after leaving, the content goes first and the notch closes without a bounce. */
+  .nn-stage.live .nn-notch, .nn-stage.live .nn-shot, .nn-stage.live .nn-brow { animation: none; }
+  .nn-stage.live .nn-notch { transition: top .3s cubic-bezier(.3, 0, .2, 1) .04s, width .3s cubic-bezier(.3, 0, .2, 1) .04s, height .3s cubic-bezier(.3, 0, .2, 1) .04s, border-radius .3s cubic-bezier(.3, 0, .2, 1) .04s; }
+  .nn-stage.live .nn-shot { transition: opacity .08s ease-in; }
+  .nn-stage.live .nn-brow { transform-origin: 30% 70%; transition: transform .3s cubic-bezier(.3, 1.8, .5, 1), opacity .15s ease; }
+  .nn-stage.lifted .nn-brow { transform: translateY(-2px) rotate(-6deg); }
+  .nn-stage.open .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; transition: top .45s cubic-bezier(.34, 1.25, .5, 1), width .45s cubic-bezier(.34, 1.25, .5, 1), height .45s cubic-bezier(.34, 1.25, .5, 1), border-radius .45s cubic-bezier(.34, 1.25, .5, 1); }
+  .nn-stage.open .nn-shot { opacity: 1; transition: opacity .22s ease-out .09s; }
+  .nn-stage.open .nn-brow { opacity: 0; transition: opacity .1s ease; }
   .stage-band p { margin: 0 auto; max-width: 1200px; padding: 0 24px; text-align: center; font: 400 13px/1.6 var(--mono); color: var(--dim); }
 
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 32px; padding-top: 56px; }
@@ -928,32 +932,56 @@ open build/Nunsseop.app</pre></div>
   function stageLabel() { stage.setAttribute('aria-label', STAGE_LABEL[document.body.dataset.lang] || STAGE_LABEL.en); }
   langListeners.push(stageLabel); stageLabel();
   if (!reduce) {
-    var frozen = [[stage.querySelector('.nn-notch'), ['top', 'width', 'height', 'borderRadius']], [stage.querySelector('.nn-shot'), ['opacity']], [stage.querySelector('.nn-brow'), ['opacity', 'transform']]];
-    var over = false, kbd = false, tapped = false, open = false, relTimer = 0;
-    var syncStage = function () {
-      var want = over || kbd || tapped;
-      if (want === open) return;
-      open = want;
-      clearTimeout(relTimer);
-      if (want) {
-        if (!stage.classList.contains('releasing')) {
-          // Pin the running animation's current values so the notch eases from where it is instead of jumping.
-          frozen.forEach(function (f) { var cs = getComputedStyle(f[0]); f[1].forEach(function (p) { f[0].style[p] = cs[p]; }); });
-        }
-        stage.classList.add('held'); stage.classList.remove('releasing');
-        stage.offsetWidth;
-        frozen.forEach(function (f) { f[1].forEach(function (p) { f[0].style[p] = ''; }); });
-      } else {
-        stage.classList.remove('held'); stage.classList.add('releasing');
-        relTimer = setTimeout(function () { stage.classList.remove('releasing'); }, 550);
-      }
+    var notch = stage.querySelector('.nn-notch');
+    var frozen = [[notch, ['top', 'width', 'height', 'borderRadius']], [stage.querySelector('.nn-shot'), ['opacity']], [stage.querySelector('.nn-brow'), ['opacity', 'transform']]];
+    var live = false, isOpen = false, kbd = false, openT = 0, closeT = 0, resumeT = 0;
+    // Leave the loop where it is: pin its current values, switch to transitions, then let them run from there.
+    var goLive = function () {
+      if (live) return;
+      frozen.forEach(function (f) { var cs = getComputedStyle(f[0]); f[1].forEach(function (p) { f[0].style[p] = cs[p]; }); });
+      stage.classList.add('live');
+      stage.offsetWidth;
+      frozen.forEach(function (f) { f[1].forEach(function (p) { f[0].style[p] = ''; }); });
+      live = true;
     };
-    stage.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') { over = true; syncStage(); } });
-    stage.addEventListener('pointerleave', function () { over = false; syncStage(); });
-    stage.addEventListener('focus', function () { kbd = stage.matches(':focus-visible'); syncStage(); });
-    stage.addEventListener('blur', function () { kbd = false; syncStage(); });
-    // Touch has no hover: a tap holds it open, another tap lets go.
-    stage.addEventListener('pointerup', function (e) { if (e.pointerType === 'touch') { tapped = !tapped; syncStage(); } });
+    var setOpen = function (v) {
+      isOpen = v;
+      stage.classList.toggle('open', v);
+      if (!v) stage.classList.remove('lifted');
+    };
+    // The app's sequence: the brow lifts, then the notch opens 0.1 s later.
+    var arrive = function () {
+      clearTimeout(closeT); closeT = 0; clearTimeout(resumeT);
+      var wasLoopOpen = !live && notch.getBoundingClientRect().height > 60;
+      goLive();
+      if (wasLoopOpen) { setOpen(true); return; }
+      if (isOpen || openT) return;
+      stage.classList.add('lifted');
+      openT = setTimeout(function () { openT = 0; setOpen(true); }, 100);
+    };
+    var leave = function () {
+      if (!live) return;
+      clearTimeout(openT); openT = 0;
+      if (isOpen) { if (!closeT) closeT = setTimeout(function () { closeT = 0; setOpen(false); }, 200); }
+      else stage.classList.remove('lifted');
+      clearTimeout(resumeT);
+      resumeT = setTimeout(function () { if (!isOpen && !kbd) { stage.classList.remove('live'); live = false; } }, 2500);
+    };
+    // Closed, only the eyebrow and the strip of menu bar around it count; open, the notch itself and a few points around it.
+    var within = function (x, y) {
+      var r = notch.getBoundingClientRect(), s = stage.getBoundingClientRect();
+      if (isOpen || r.height > 60) return x >= r.left - 6 && x <= r.right + 6 && y >= s.top && y <= r.bottom + 6;
+      return x >= r.left - 16 && x <= r.right + 16 && y >= s.top && y <= r.bottom + 6;
+    };
+    stage.addEventListener('pointermove', function (e) { if (e.pointerType === 'touch') return; if (within(e.clientX, e.clientY)) arrive(); else leave(); });
+    stage.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'touch' && !kbd) leave(); });
+    stage.addEventListener('focus', function () { kbd = stage.matches(':focus-visible'); if (kbd) arrive(); });
+    stage.addEventListener('blur', function () { kbd = false; leave(); });
+    // Touch has no hover: a tap on the eyebrow or the open notch opens it, a tap elsewhere closes it.
+    stage.addEventListener('pointerup', function (e) {
+      if (e.pointerType !== 'touch') return;
+      if (!isOpen && within(e.clientX, e.clientY)) arrive(); else leave();
+    });
   }
 
   // Links into a closed FAQ item open it.
