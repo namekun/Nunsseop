@@ -18,7 +18,49 @@ jobs:
       - uses: actions/checkout@v4
       - name: Toolchain
         run: swift --version
-      - name: Build
-        run: swift build
+      - name: Build, with no warnings
+        run: |
+          swift build 2>&1 | tee build.log
+          if grep -q "warning:" build.log; then grep "warning:" build.log | sort -u; exit 1; fi
       - name: Test
         run: swift test
+      # A second run catches a test that passes only sometimes.
+      - name: Test again
+        run: swift test
+
+  intel:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rosetta
+        run: /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
+      - name: Test as x86_64
+        run: swift test --triple x86_64-apple-macosx14.0
+
+  bundle:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Universal release app
+        run: ./scripts/bundle.sh release
+      - name: Both architectures and an intact signature
+        run: |
+          for binary in Contents/MacOS/Nunsseop Contents/Resources/libNowPlayingHelper.dylib; do
+            lipo "build/Nunsseop.app/$binary" -verify_arch arm64 x86_64
+          done
+          codesign --verify --deep --strict build/Nunsseop.app
+
+  site:
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Playwright
+        run: npm i -g playwright && playwright install chromium-headless-shell
+      - name: Site test
+        run: bash scripts/site-test.sh

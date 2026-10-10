@@ -4,17 +4,40 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # Pass "release" for a build to use day to day; the debug build adds snapshot/demo flags.
+# A release build is universal (Apple silicon and Intel); a debug build is for this Mac only.
 CONFIG="${1:-debug}"
-swift build -c "$CONFIG"
-BIN_DIR="$(swift build -c "$CONFIG" --show-bin-path)"
+ARCHS=()
+if [[ "$CONFIG" == "release" ]]; then
+    ARCHS=(arm64 x86_64)
+    for arch in "${ARCHS[@]}"; do
+        swift build -c release --triple "$arch-apple-macosx14.0" --scratch-path ".build-$arch"
+    done
+else
+    swift build -c "$CONFIG"
+    BIN_DIR="$(swift build -c "$CONFIG" --show-bin-path)"
+fi
+# Puts a built product into the bundle, joining the architectures of a release build.
+place() {
+    if (( ${#ARCHS[@]} )); then
+        local parts=()
+        for arch in "${ARCHS[@]}"; do
+            parts+=("$(swift build -c release --triple "$arch-apple-macosx14.0" --scratch-path ".build-$arch" --show-bin-path)/$1")
+        done
+        lipo -create "${parts[@]}" -output "$2/$1"
+        lipo "$2/$1" -verify_arch "${ARCHS[@]}"
+    else
+        cp "$BIN_DIR/$1" "$2/$1"
+    fi
+}
 
 # Assemble and sign outside the project folder: a synced folder (iCloud Desktop) keeps adding
 # Finder info to the bundle, which a certificate signature rejects.
 WORK="$(mktemp -d)"
 APP="$WORK/Nunsseop.app"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp "$BIN_DIR/Nunsseop" "$APP/Contents/MacOS/Nunsseop"
-cp "$BIN_DIR/libNowPlayingHelper.dylib" Resources/nowplaying.pl "$APP/Contents/Resources/"
+place Nunsseop "$APP/Contents/MacOS"
+place libNowPlayingHelper.dylib "$APP/Contents/Resources"
+cp Resources/nowplaying.pl "$APP/Contents/Resources/"
 cp -R Resources/*.lproj Resources/AppIcon.icns "$APP/Contents/Resources/"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 xattr -cr "$APP"

@@ -1,6 +1,6 @@
 #!/bin/bash
-# Releases a new version: bumps the version, commits, tags, builds the DMG, publishes the GitHub release
-# and updates the Homebrew tap.
+# Releases a new version: runs every check (scripts/preflight.sh), bumps the version, builds the DMG and checks
+# it (scripts/check-dmg.sh), and only then commits, tags, publishes the GitHub release and updates the Homebrew tap.
 #
 #   scripts/release.sh <version> [notes-file]
 #
@@ -27,22 +27,34 @@ if [[ -z "$NOTES_FILE" ]]; then
 fi
 [[ -s "$NOTES_FILE" ]] || { echo "Release notes are empty" >&2; exit 1; }
 
+./scripts/preflight.sh
+
+# Until the version commit is pushed, a failure puts the bumped files back.
+PUSHED=0
+trap '(( PUSHED )) || git checkout -q -- "$PLIST" docs/index.html' EXIT
+
 OLD_VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$PLIST")"
 BUILD="$(( $(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$PLIST") + 1 ))"
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" -c "Set :CFBundleVersion $BUILD" "$PLIST"
 sed -i '' "s|<b>v$OLD_VERSION</b>|<b>v$VERSION</b>|" docs/index.html
+grep -q "<b>v$VERSION</b>" docs/index.html || { echo "The site's version badge wasn't updated" >&2; exit 1; }
+
+DMG="$(./scripts/make-dmg.sh)"
+./scripts/check-dmg.sh "$DMG" "$VERSION"
 
 git add "$PLIST" docs/index.html
 git commit -q -m "Version $VERSION"
 git tag "v$VERSION"
 git push -q origin main "v$VERSION"
+PUSHED=1
 
-DMG="$(./scripts/make-dmg.sh)"
 gh release create "v$VERSION" "$DMG" --title "v$VERSION" --notes-file "$NOTES_FILE"
 
 SHA="$(shasum -a 256 "$DMG" | cut -d' ' -f1)"
 git -C "$TAP_DIR" pull -q --ff-only
 sed -i '' -e "s/version \"[0-9.]*\"/version \"$VERSION\"/" -e "s/sha256 \"[0-9a-f]*\"/sha256 \"$SHA\"/" "$CASK"
+grep -q "version \"$VERSION\"" "$CASK" && grep -q "sha256 \"$SHA\"" "$CASK" \
+    || { echo "The cask wasn't updated; fix $CASK by hand" >&2; exit 1; }
 git -C "$TAP_DIR" commit -qam "nunsseop $VERSION"
 git -C "$TAP_DIR" push -q
 
