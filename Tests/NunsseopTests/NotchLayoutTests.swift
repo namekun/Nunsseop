@@ -61,3 +61,16 @@ struct InlinePeekWidthTests {
         #expect(NotchViewModel.peekLineWidth(lines: [""]) == 34)
     }
 }
+
+struct IdleEarWidthTests {
+    @Test func aLongerValueTakesMoreRoom() {
+        let short = NotchViewModel.idleEarWidth(for: IdleValue(symbol: "bolt.fill", tint: nil, text: "1"))
+        let long = NotchViewModel.idleEarWidth(for: IdleValue(symbol: "bolt.fill", tint: nil, text: "12"))
+        #expect(long > short)
+    }
+
+    @Test func roomForThePaddingWithNothingToShow() {
+        // 10 from the wall and 8 to the stroke, which leaves 10 of its frame empty.
+        #expect(NotchViewModel.idleEarWidth(for: IdleValue(symbol: nil, tint: nil, text: "")) == 8)
+    }
+}

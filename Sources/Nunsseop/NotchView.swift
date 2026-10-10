@@ -111,7 +111,8 @@ struct NotchView: View {
                                 .padding(.leading, earLead)
                             } else if model.showsIdleEars && !model.sneakPeekInline {
                                 IdleEars(model: model, height: notchHeight)
-                                    .padding(.leading, earLead)
+                                    // A single side's value sits right against the eyebrow; its width leaves just that room.
+                                    .padding(.leading, model.idleOneSide == nil ? earLead : 0)
                             } else {
                                 Color.clear.frame(height: notchHeight)
                             }
