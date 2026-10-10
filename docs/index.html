@@ -945,7 +945,7 @@ open build/Nunsseop.app</pre></div>
   if (!still) {
     var notch = stage.querySelector('.nn-notch');
     var frozen = [[notch, ['top', 'width', 'height', 'borderRadius']], [stage.querySelector('.nn-shot'), ['opacity']], [stage.querySelector('.nn-brow'), ['opacity', 'transform']]];
-    var live = false, isOpen = false, kbd = false, openT = 0, closeT = 0, resumeT = 0;
+    var live = false, isOpen = false, kbd = false, pointerIn = false, openT = 0, closeT = 0, resumeT = 0;
     // Leave the loop where it is: pin its current values, switch to transitions, then let them run from there.
     var goLive = function () {
       if (live) return;
@@ -984,10 +984,15 @@ open build/Nunsseop.app</pre></div>
       if (isOpen || r.height > 60) return x >= r.left - 6 && x <= r.right + 6 && y >= s.top && y <= r.bottom + 6;
       return x >= r.left - 16 && x <= r.right + 16 && y >= s.top && y <= r.bottom + 6;
     };
-    stage.addEventListener('pointermove', function (e) { if (e.pointerType === 'touch') return; if (within(e.clientX, e.clientY)) arrive(); else leave(); });
-    stage.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'touch' && !kbd) leave(); });
+    // While keyboard focus holds it open, the pointer can come and go without closing it; leaving focus closes it unless the pointer is on it.
+    stage.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
+      pointerIn = within(e.clientX, e.clientY);
+      if (pointerIn) arrive(); else if (!kbd) leave();
+    });
+    stage.addEventListener('pointerleave', function (e) { if (e.pointerType === 'touch') return; pointerIn = false; if (!kbd) leave(); });
     stage.addEventListener('focus', function () { kbd = stage.matches(':focus-visible'); if (kbd) arrive(); });
-    stage.addEventListener('blur', function () { kbd = false; leave(); });
+    stage.addEventListener('blur', function () { kbd = false; if (!pointerIn) leave(); });
     // Touch has no hover: a tap on the eyebrow or the open notch opens it, a tap elsewhere closes it.
     stage.addEventListener('pointerup', function (e) {
       if (e.pointerType !== 'touch') return;
