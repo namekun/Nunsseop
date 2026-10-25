@@ -66,12 +66,20 @@ jobs:
             --jq '"#\(.number) \(.title)\nAuthor: \(.author.login)\nBase: \(.baseRefName)\nFiles: \(.changedFiles) (+\(.additions) -\(.deletions))\n\nDescription:\n\(.body)"' \
             > "$dir/full-view.txt"
           gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" > "$dir/full.diff"
-          # Claude Code attaches any file named as @path in a prompt, so no @ from the pull request may reach it as is.
-          perl -CSD -pi -e 's/\@/\@\x{200B}/g' "$dir/full-view.txt" "$dir/full.diff"
-          # The action passes the prompt in environment variables twice (once JSON-escaped), and each one must stay
-          # under Linux's 128 KiB limit: cut by bytes, drop a character split by the cut and control characters,
-          # which JSON escaping would blow up.
-          clip() { head -c "$1" "$2" | iconv -c -f UTF-8 -t UTF-8 | tr -d '\000-\010\013\014\016-\037'; }
+          # Claude Code attaches any file named as @path in a prompt, so no @ from the pull request may reach it as
+          # is. The text is decoded leniently, control characters (which JSON escaping would blow up) are dropped,
+          # every @ is broken with a zero-width space, and only then is it cut by bytes; an @ whose space the cut took
+          # goes too. The action passes the prompt in environment variables twice (once JSON-escaped), and each one
+          # must stay under Linux's 128 KiB limit.
+          clip() {
+            python3 -I -c '
+          import re, sys
+          text = open(sys.argv[2], "rb").read().decode("utf-8", "ignore")
+          text = re.sub("[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", text).replace("@", "@\u200b")
+          text = text.encode()[: int(sys.argv[1])].decode("utf-8", "ignore")
+          sys.stdout.buffer.write(re.sub("@(?!\u200b)", "", text).encode())
+          ' "$1" "$2"
+          }
           clip 6000 "$dir/full-view.txt" > "$dir/view.txt"
           clip 50000 "$dir/full.diff" > "$dir/diff.txt"
           if [ "$(wc -c < "$dir/full.diff")" -gt 50000 ]; then
