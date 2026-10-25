@@ -66,15 +66,17 @@ jobs:
             --jq '"#\(.number) \(.title)\nAuthor: \(.author.login)\nBase: \(.baseRefName)\nFiles: \(.changedFiles) (+\(.additions) -\(.deletions))\n\nDescription:\n\(.body)"' \
             > "$dir/full-view.txt"
           gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" > "$dir/full.diff"
+          # Claude Code attaches any file named as @path in a prompt, so no @ from the pull request may reach it as is.
+          perl -CSD -pi -e 's/\@/\@\x{200B}/g' "$dir/full-view.txt" "$dir/full.diff"
           # The action passes the prompt in environment variables twice (once JSON-escaped), and each one must stay
-          # under Linux's 128 KiB limit.
-          head -c 6000 "$dir/full-view.txt" > "$dir/view.txt"
-          head -c 50000 "$dir/full.diff" > "$dir/diff.txt"
+          # under Linux's 128 KiB limit: cut by bytes, drop a character split by the cut and control characters,
+          # which JSON escaping would blow up.
+          clip() { head -c "$1" "$2" | iconv -c -f UTF-8 -t UTF-8 | tr -d '\000-\010\013\014\016-\037'; }
+          clip 6000 "$dir/full-view.txt" > "$dir/view.txt"
+          clip 50000 "$dir/full.diff" > "$dir/diff.txt"
           if [ "$(wc -c < "$dir/full.diff")" -gt 50000 ]; then
             printf '\n\n[diff truncated at 50000 bytes; %s bytes in total]\n' "$(wc -c < "$dir/full.diff")" >> "$dir/diff.txt"
           fi
-          # Claude Code attaches any file named as @path in a prompt, so no @ from the pull request may reach it as is.
-          perl -CSD -pi -e 's/\@/\@\x{200B}/g' "$dir/view.txt" "$dir/diff.txt"
           # A random delimiter, so no line in the pull request can end the output early.
           delim="PROMPT_$(openssl rand -hex 16)"
           {
@@ -151,12 +153,12 @@ jobs:
             echo "::error::Claude returned no review text"
             exit 1
           fi
-          if [ "$(wc -c < "$body")" -gt 60000 ]; then
+          # The text may have been steered by the pull request: no mentions, images or links-as-HTML in the comment.
+          perl -CSD -pi -e 's/\@/\@\x{200B}/g; s/!+\[/[/g; s/<(?=\s*\/?\s*(?:img|a|picture|source|video|iframe|audio|svg|object|embed)\b)/&lt;/gi' "$body"
+          if [ "$(wc -m < "$body")" -gt 60000 ]; then
             echo "::error::review text is too long for a comment"
             exit 1
           fi
-          # The text may have been steered by the pull request: no mentions, images or links-as-HTML in the comment.
-          perl -CSD -pi -e 's/\@/\@\x{200B}/g; s/!\[/[/g; s/<(?=\s*\/?\s*(?:img|a|picture|source|video|iframe)\b)/&lt;/gi' "$body"
           {
             printf '_Automated review by Claude, requested by %s. It only saw the diff and may have been influenced by text in the pull request, so take it as a first pass._\n\n' "$REQUESTED_BY"
             cat "$body"
