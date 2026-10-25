@@ -8,7 +8,7 @@
 #
 # Pull requests from this repository run on `pull_request` (the workflow file in the branch), pull requests from
 # forks on `pull_request_target` (the workflow file in the base branch). Either way only someone who can add
-# labels (write access) can start it, and the action checks that too.
+# labels can start it, and the action then refuses anyone without write access.
 name: Claude review
 
 on:
@@ -26,7 +26,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: claude-review-${{ github.event.pull_request.number || inputs.pr }}-${{ github.event.label.name }}
+  group: claude-review-${{ github.event_name }}-${{ github.event.pull_request.number || inputs.pr }}-${{ github.event.label.name }}
   cancel-in-progress: true
 
 jobs:
@@ -64,12 +64,17 @@ jobs:
           gh pr view "$PR" --repo "$GITHUB_REPOSITORY" \
             --json number,title,author,baseRefName,changedFiles,additions,deletions,body \
             --jq '"#\(.number) \(.title)\nAuthor: \(.author.login)\nBase: \(.baseRefName)\nFiles: \(.changedFiles) (+\(.additions) -\(.deletions))\n\nDescription:\n\(.body)"' \
-            | head -c 6000 > "$dir/view.txt"
+            > "$dir/full-view.txt"
           gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" > "$dir/full.diff"
-          head -c 90000 "$dir/full.diff" > "$dir/diff.txt"
-          if [ "$(wc -c < "$dir/full.diff")" -gt 90000 ]; then
-            printf '\n\n[diff truncated at 90000 bytes; %s bytes in total]\n' "$(wc -c < "$dir/full.diff")" >> "$dir/diff.txt"
+          # The action passes the prompt in environment variables twice (once JSON-escaped), and each one must stay
+          # under Linux's 128 KiB limit.
+          head -c 6000 "$dir/full-view.txt" > "$dir/view.txt"
+          head -c 50000 "$dir/full.diff" > "$dir/diff.txt"
+          if [ "$(wc -c < "$dir/full.diff")" -gt 50000 ]; then
+            printf '\n\n[diff truncated at 50000 bytes; %s bytes in total]\n' "$(wc -c < "$dir/full.diff")" >> "$dir/diff.txt"
           fi
+          # Claude Code attaches any file named as @path in a prompt, so no @ from the pull request may reach it as is.
+          perl -CSD -pi -e 's/\@/\@\x{200B}/g' "$dir/view.txt" "$dir/diff.txt"
           # A random delimiter, so no line in the pull request can end the output early.
           delim="PROMPT_$(openssl rand -hex 16)"
           {
@@ -150,8 +155,10 @@ jobs:
             echo "::error::review text is too long for a comment"
             exit 1
           fi
+          # The text may have been steered by the pull request: no mentions, images or links-as-HTML in the comment.
+          perl -CSD -pi -e 's/\@/\@\x{200B}/g; s/!\[/[/g; s/<(?=\s*\/?\s*(?:img|a|picture|source|video|iframe)\b)/&lt;/gi' "$body"
           {
-            printf '_Automated review by Claude, requested by @%s. It only saw the diff, so take it as a first pass._\n\n' "$REQUESTED_BY"
+            printf '_Automated review by Claude, requested by %s. It only saw the diff and may have been influenced by text in the pull request, so take it as a first pass._\n\n' "$REQUESTED_BY"
             cat "$body"
           } > "$RUNNER_TEMP/comment.md"
           gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"
