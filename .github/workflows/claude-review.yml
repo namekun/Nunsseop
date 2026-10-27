@@ -142,6 +142,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prompt: ${{ steps.prep.outputs.prompt }}
+          show_full_output: true
           # No tools: --restricted removes the shell, code execution and WebFetch outright, and the rest are
           # removed by name. Nothing in the repository's own settings is loaded either.
           claude_args: |
