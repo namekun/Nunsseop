@@ -109,8 +109,9 @@ jobs:
           - user-facing strings without translations in every language, and missing or weakened tests.
 
           Be concrete: name the file and line, say what goes wrong and suggest the fix. Skip style nits. Be
-          welcoming but honest. Write in English, in GitHub Markdown, as a single review comment of at most about
-          800 words. Return it in the `review` field.
+          welcoming but honest. Write in the language the pull request's title and description are written in
+          (English when that's unclear), in GitHub Markdown, as a single review comment of at most about 800 words.
+          Return it in the `review` field.
 
           ===== PULL REQUEST =====
           INSTRUCTIONS
