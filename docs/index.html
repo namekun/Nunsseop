@@ -918,8 +918,7 @@ open build/Nunsseop.app</pre></div>
   show(0);
   holdCopy();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(holdCopy);
-  if (window.ResizeObserver) new ResizeObserver(holdCopy).observe(tourBox);
-  else window.addEventListener('resize', holdCopy);
+  window.addEventListener('resize', holdCopy);
 
   // Hero stage: pointer or keyboard focus holds the notch open on the screenshot; letting go lets the loop resume.
   var stage = document.querySelector('.nn-stage');
