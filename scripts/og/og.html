@@ -2,26 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   html, body { margin: 0; }
-  body { width: 1200px; height: 630px; background: #ECECE8; color: #121212; font-family: "Helvetica Neue", sans-serif; overflow: hidden; }
-  .band { height: 300px; background: #121212; display: flex; justify-content: center; align-items: flex-start; }
-  .band img { width: 980px; display: block; }
-  .text { padding: 44px 72px 0; display: flex; flex-direction: column; gap: 22px; }
-  .mark { display: flex; align-items: center; gap: 14px; font-family: Archivo, "Helvetica Neue", sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.01em; }
-  .mark img { width: 56px; height: 56px; margin: -6px; }
-  .mark span { font-family: "Apple SD Gothic Neo", sans-serif; font-weight: 500; font-size: 22px; color: #555; }
-  h1 { margin: 0; font-family: Archivo, "Helvetica Neue", sans-serif; font-weight: 800; font-size: 96px; line-height: 0.95; letter-spacing: -0.035em; }
-  .cmd { position: absolute; right: 72px; top: 352px; font-family: "IBM Plex Mono", Menlo, monospace; font-size: 18px; color: #555; }
+  body { position: relative; width: 1200px; height: 630px; overflow: hidden; background: #fff; color: #1D1D1F; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; -webkit-font-smoothing: antialiased; text-align: center; }
+  .mark { display: inline-flex; align-items: center; gap: 16px; margin-top: 56px; font-weight: 600; font-size: 32px; line-height: 40px; letter-spacing: -.01em; }
+  .mark img { width: 56px; height: 56px; }
+  h1 { margin: 24px 0 0; font-weight: 700; font-size: 80px; line-height: 88px; letter-spacing: -.03em; }
+  .screen { position: absolute; left: 120px; right: 120px; top: 312px; height: 400px; box-sizing: border-box; border: 8px solid #000; border-radius: 24px; background: radial-gradient(80% 120% at 16% 0%, #EDF3FA 0%, rgba(237, 243, 250, 0) 60%), radial-gradient(88% 136% at 100% 100%, #5F84B8 0%, rgba(95, 132, 184, 0) 64%), linear-gradient(135deg, #CAD8E9, #93ADCE); overflow: hidden; }
+  .screen img { display: block; width: 900px; margin: 0 auto; }
 </style>
 </head>
 <body>
-  <div class="band"><img src="../../docs/images/home.png" alt=""></div>
-  <div class="text">
-    <div class="mark"><img src="../../docs/images/icon.png" alt="">Nunsseop <span>눈썹</span></div>
-    <h1>Your notch, finally useful.</h1>
-  </div>
-  <div class="cmd">brew install --cask namekun/tap/nunsseop</div>
+  <div class="mark"><img src="../../docs/images/icon.png" alt="">Nunsseop</div>
+  <h1>Your notch, finally useful.</h1>
+  <div class="screen"><img src="../../docs/images/home.png" alt=""></div>
 </body>
 </html>
