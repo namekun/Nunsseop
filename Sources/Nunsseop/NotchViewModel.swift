@@ -387,6 +387,7 @@ final class NotchViewModel: ObservableObject {
         settings.objectWillChange
             .sink { [weak self] in self?.objectWillChange.send() }
             .store(in: &cancellables)
+        AlarmRuntime.shared.notices = notices
     }
 
     private func announceLimits(_ providers: [AIUsageModel.Provider]) {
