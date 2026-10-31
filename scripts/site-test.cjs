@@ -18,7 +18,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); };
 // A panel slides in when its tab is chosen; a click during that can land beside the button it aims at.
 const settledPanel = page => page.waitForFunction(() => !document.querySelector('.panel.active').getAnimations({ subtree: true })
   .some(a => a.playState === 'running'));
-// The page waits on Google Fonts, which can take longer than a navigation is given. The document is what the checks
+// The page waits on its web font, which can take longer than a navigation is given. The document is what the checks
 // need; the fonts get another minute, without failing anything when they take longer.
 const openPage = async (page) => {
   await page.goto(url, { waitUntil: 'domcontentloaded' });
@@ -267,6 +267,28 @@ const pickLang = async (page, lang) => {
     }
   }
 
+  // Spacing sits on an 8-point grid: every margin, padding and gap that shows is a multiple of 8. Margins that centre a box are the exception.
+  for (const [p, name] of [[page, 'desktop'], [mobile, 'mobile']]) {
+    for (const lang of langs) {
+      await pickLang(p, lang);
+      const off = await p.evaluate(() => {
+        const props = ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'marginTop', 'marginBottom', 'rowGap', 'columnGap'];
+        const out = new Set();
+        for (const el of document.querySelectorAll('body, body *')) {
+          if (!el.getClientRects().length || el.closest('svg') || el.classList.contains('sr-only')) continue;
+          const cs = getComputedStyle(el);
+          const sides = cs.marginLeft === cs.marginRight ? [] : ['marginLeft', 'marginRight'];
+          for (const k of [...props, ...sides]) {
+            const v = parseFloat(cs[k]);
+            if (Number.isFinite(v) && v % 8) out.add(`${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0]} ${k} ${cs[k]}`);
+          }
+        }
+        return [...out];
+      });
+      check(off.length === 0, `${name} ${lang}: spacing off the 8-point grid: ${off.join('; ')}`);
+    }
+  }
+
   // Every Copy button (hero, Homebrew tab, Source tab): "Copied" only when the clipboard write really succeeded.
   const copied = { en: 'Copied', ko: '복사됨', ja: 'コピーしました', zh: '已复制', es: 'Copiado', de: 'Kopiert', fr: 'Copié' };
   const copyFailed = { en: 'Copy failed', ko: '복사 실패', ja: 'コピーできませんでした', zh: '复制失败', es: 'No se pudo copiar', de: 'Kopieren fehlgeschlagen', fr: 'Échec de la copie' };
@@ -429,7 +451,7 @@ const pickLang = async (page, lang) => {
     await sleep(1300);
     check((await cb.innerText()).trim() === 'Copy', 'motion: copy button did not go back to Copy');
 
-    // Install tabs: the underline lands under the selected tab, and the panel changes.
+    // Install tabs: the sliding fill lands on the selected tab, and the panel changes.
     await mp.click('[data-tab="src"]');
     const inkSettled = () => {
       const on = document.querySelector('.tabs [aria-selected="true"]'), i = document.querySelector('.tabs-ink');
@@ -442,14 +464,14 @@ const pickLang = async (page, lang) => {
       const ir = i.getBoundingClientRect(), br = on.getBoundingClientRect();
       return { dx: Math.abs(ir.left - br.left), dw: Math.abs(ir.width - br.width), panel: document.querySelector('.panel.active').dataset.panel };
     });
-    check(ink.dx < 1 && ink.dw < 1 && ink.panel === 'src', `motion: tab underline is off by ${ink.dx}/${ink.dw}px or panel is ${ink.panel}`);
+    check(ink.dx < 1 && ink.dw < 1 && ink.panel === 'src', `motion: tab fill is off by ${ink.dx}/${ink.dw}px or panel is ${ink.panel}`);
     await pickLang(mp, 'de');
     await mp.waitForFunction(inkSettled, null, { timeout: 30000 }).catch(() => {});
     const inkDe = await mp.evaluate(() => {
       const on = document.querySelector('.tabs [aria-selected="true"]'), i = document.querySelector('.tabs-ink');
       return Math.abs(i.getBoundingClientRect().width - on.getBoundingClientRect().width);
     });
-    check(inkDe < 1, `motion: tab underline does not follow a language change (off by ${inkDe}px)`);
+    check(inkDe < 1, `motion: tab fill does not follow a language change (off by ${inkDe}px)`);
     await pickLang(mp, 'en');
     await sleep(100);
 

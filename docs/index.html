@@ -9,356 +9,353 @@
 <meta property="og:description" content="Now playing, a file shelf with AirDrop, Spotlight-style search, AI usage, your calendar and system HUDs in your MacBook notch. Free and open source.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://namekun.github.io/Nunsseop/">
-<meta property="og:image" content="https://namekun.github.io/Nunsseop/images/og.png?v=3">
+<meta property="og:image" content="https://namekun.github.io/Nunsseop/images/og.png?v=4">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Nunsseop: the expanded notch showing now playing and calendar, with the headline Your notch, finally useful.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://namekun.github.io/Nunsseop/images/og.png?v=3">
-<meta name="theme-color" content="#ECECE8">
+<meta name="twitter:image" content="https://namekun.github.io/Nunsseop/images/og.png?v=4">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="images/icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root {
-    --bg: #ECECE8;
-    --ink: #121212;
-    --g3: #333333;
-    --g4: #4A4A4A;
-    --g5: #555555;
-    --g6: #6B6B66;
-    --rule: #C9C9C3;
-    --hover: #E2E2DD;
-    --paper: #F4F4F1;
-    --dim: #A3A3A0;
-    --amber: #F2A93B;
-    --nw: min(740px, 92vw);
-    --nh: calc(var(--nw) * .2783);
-    --sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "PingFang SC", "Segoe UI", sans-serif;
-    --head: Archivo, "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "PingFang SC", "Segoe UI", sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --bg: #FFFFFF;
+    --surface: #F5F5F7;
+    --ink: #1D1D1F;
+    --ink-2: #6E6E73;
+    --line: rgba(0, 0, 0, .08);
+    --accent: #0066CC;
+    --band: #000000;
+    --band-surface: #1D1D1F;
+    --band-raised: #3A3A3C;
+    --band-ink-2: #A1A1A6;
+    --amber: #FFB340;
+    --green: #30D158;
+    /* Spacing: every margin, padding and gap is one of these, multiples of 8. scripts/site-test.cjs holds the page to it. */
+    --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 40px; --s6: 48px; --s7: 56px; --s8: 64px; --s10: 80px; --s12: 96px; --s15: 120px; --s20: 160px;
+    --wrap: 1120px;
+    /* The open notch, at the screenshots' own 2× size so they stay sharp. They are 1308 × 392 with 70 clear at each side. */
+    --nw: min(584px, calc(100vw - 96px));
+    --nh: calc(var(--nw) * .3356);
+    --cw: 160px;
+    --ch: 32px;
+    --wall: radial-gradient(80% 120% at 16% 0%, #EDF3FA 0%, rgba(237, 243, 250, 0) 60%), radial-gradient(88% 136% at 100% 100%, #5F84B8 0%, rgba(95, 132, 184, 0) 64%), linear-gradient(135deg, #CAD8E9, #93ADCE);
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Hiragino Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     color-scheme: light;
   }
-  /* Transitions.dev motion tokens (https://transitions.dev), free transitions used under the Transitions.dev License.
-     Only the tokens this page references are copied. Durations and easings are matched by what the motion does, then slowed by about 1.6x with a gentler ease-out for a calmer feel. */
+  /* Motion tokens follow Transitions.dev (https://transitions.dev), free transitions used under the Transitions.dev License.
+     Interface motion stays under 300 ms; only the notch opening and the entrance of a block take longer. */
   :root {
-    --duration-stagger: 60ms;  /* per-item stagger offset */
-    --duration-fast: 400ms;  /* dropdown open, tabs sliding, accordion, hover slide */
-    --ease-smooth-out: cubic-bezier(0.33, 1, 0.68, 1);  /* open + close, slide, position change */
-    --blur-small: 2px;  /* text swap, cross-fade */
-    /* Menu dropdown */
-    --dropdown-open-dur: 400ms;
-    --dropdown-close-dur: 240ms;
-    --dropdown-pre-scale: 0.97;
-    --dropdown-closing-scale: 0.99;
-    --dropdown-ease: cubic-bezier(0.33, 1, 0.68, 1);
-    /* Text states swap */
-    --text-swap-dur: 260ms;
+    --ease-out: cubic-bezier(.23, 1, .32, 1);
+    --duration-stagger: 48ms;
+    --press: transform 160ms var(--ease-out);
+    --dropdown-open-dur: 200ms;
+    --dropdown-close-dur: 150ms;
+    --dropdown-pre-scale: .97;
+    --dropdown-closing-scale: .99;
+    --text-swap-dur: 200ms;
     --text-swap-translate-y: 4px;
     --text-swap-blur: 2px;
-    /* Error state shake */
     --shake-distance: 6px;
     --shake-overshoot: 4px;
-    /* Tabs sliding */
-    --tabs-dur: 420ms;
-    --tabs-ease: cubic-bezier(0.33, 1, 0.68, 1);
-    /* Accordion expand */
-    --acc-expand: 420ms;
-    --acc-collapse: 360ms;
-    --acc-chevron: 380ms;
-    --acc-ease: cubic-bezier(0.33, 1, 0.68, 1);
-    /* Texts reveal */
-    --stagger-dur: 800ms;
-    --stagger-distance: 12px;
-    --stagger-blur: 3px;
-    --stagger-ease: cubic-bezier(0.33, 1, 0.68, 1);
-    /* Skeleton loader and reveal (cross-fade) */
-    --reveal-dur: 600ms;
-    --reveal-blur: 2px;
-    --reveal-ease: ease-in-out;
+    --tabs-dur: 240ms;
+    --acc-expand: 280ms;
+    --acc-collapse: 200ms;
+    --stagger-dur: 640ms;
+    --stagger-distance: 16px;
+    --reveal-dur: 280ms;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 76px; overflow-x: clip; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: var(--s10); overflow-x: clip; }
+  body, h1, h2, h3, p, ul, figure, pre { margin: 0; }
+  ul { padding: 0; list-style: none; }
   body {
-    margin: 0; background: var(--bg); color: var(--ink); overflow-x: clip;
-    font: 400 16px/1.6 var(--sans);
+    background: var(--bg); color: var(--ink); overflow-x: clip;
+    font: 400 16px/24px var(--sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  /* Korean wraps between words, not inside them. */
-  body[data-lang="ko"] { word-break: keep-all; }
-  a { color: var(--ink); text-underline-offset: 3px; }
-  a:hover { color: var(--g5); }
+  /* Korean wraps between words, not inside them, and is set in Pretendard; everyone else gets the system's own face. */
+  body[data-lang="ko"] { word-break: keep-all; font-family: "Pretendard Variable", Pretendard, var(--sans); }
+  a { color: var(--accent); text-decoration: none; }
+  @media (hover: hover) { a:hover { text-decoration: underline; text-underline-offset: 4px; } }
   img { max-width: 100%; display: block; }
-  code, pre { font-family: var(--mono); }
+  code, pre, kbd { font-family: var(--mono); }
   button { font-family: inherit; }
-  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-  @media (max-width: 600px) { .wrap { padding: 0 20px; } }
+  h1, h2, h3 { text-wrap: balance; overflow-wrap: break-word; }
+  p { text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .wrap { max-width: calc(var(--wrap) + var(--s6)); margin: 0 auto; padding: 0 var(--s3); }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
-  /* Navigation */
-  nav.top { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--rule); }
-  nav.top .wrap { display: flex; align-items: center; gap: 24px; min-height: 64px; }
-  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-  .brand { display: flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; }
-  .brand .mark { width: 32px; height: 32px; border-radius: 8px; background: #111; display: flex; align-items: center; justify-content: center; flex: none; }
-  .brand .name { font-family: var(--head); font-weight: 800; font-size: 19px; letter-spacing: -0.01em; }
-  .brand small { font-size: 14px; color: var(--g5); }
-  .nn-logo-brow { transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); transform-origin: 30% 70%; }
-  .nn-logo:hover .nn-logo-brow, .nn-logo:focus-visible .nn-logo-brow { transform: translateY(-1.5px) rotate(-7deg); }
-  .nav-links { display: flex; gap: 24px; margin-left: auto; font-size: 15px; }
-  .nav-links a { text-decoration: none; }
+  /* Navigation: a layer of material the page scrolls under. */
+  nav.top { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, .72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 1px 0 var(--line); }
+  nav.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); min-height: var(--s7); }
+  .brand { display: flex; align-items: center; gap: var(--s1); min-height: var(--s5); color: var(--ink); text-decoration: none !important; }
+  .brand .mark { width: var(--s4); height: var(--s4); border-radius: var(--s1); background: #000; display: flex; align-items: center; justify-content: center; flex: none; }
+  .brand .name { font-weight: 600; font-size: 16px; line-height: 24px; letter-spacing: -.01em; }
+  .brand small { font-size: 14px; color: var(--ink-2); white-space: nowrap; }
+  .nn-logo-brow { transition: transform 300ms cubic-bezier(.3, 1.6, .5, 1); transform-origin: 30% 70%; }
+  @media (hover: hover) { .nn-logo:hover .nn-logo-brow { transform: translateY(-1.5px) rotate(-7deg); } }
+  .nn-logo:focus-visible .nn-logo-brow { transform: translateY(-1.5px) rotate(-7deg); }
+  .nav-links { display: flex; flex: 1; justify-content: flex-end; gap: var(--s3); font-size: 14px; line-height: 24px; }
+  .nav-links a { color: var(--ink); opacity: .72; text-decoration: none; white-space: nowrap; transition: opacity 160ms ease; }
+  @media (hover: hover) { .nav-links a:hover { opacity: 1; } }
+  .nav-end { display: flex; align-items: center; gap: var(--s1); }
+  .nav-dl { display: inline-flex; align-items: center; height: var(--s4); padding: 0 var(--s2); border-radius: var(--s2); background: var(--ink); color: #fff; font-size: 14px; line-height: 24px; font-weight: 500; text-decoration: none !important; transition: var(--press); }
+  .nav-dl:active { transform: scale(.97); }
   .lang { position: relative; }
-  .lang-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: transparent; color: var(--ink); font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color .15s; }
-  .lang-btn:hover, .lang.open .lang-btn { background: var(--hover); }
-  .lang-btn svg { width: 15px; height: 15px; flex: none; }
-  .lang-btn .chev { width: 11px; height: 11px; transition: transform var(--acc-chevron) var(--acc-ease); }
+  .lang-btn { display: inline-flex; align-items: center; gap: var(--s1); height: var(--s5); padding: 0 var(--s1); border: 0; border-radius: var(--s1); background: transparent; color: var(--ink); opacity: .72; font-size: 14px; line-height: 24px; cursor: pointer; transition: opacity 160ms ease, background-color 160ms ease, var(--press); }
+  @media (hover: hover) { .lang-btn:hover { opacity: 1; } }
+  .lang-btn:active { transform: scale(.97); }
+  .lang.open .lang-btn { opacity: 1; background: var(--surface); }
+  .lang-btn svg { width: 16px; height: 16px; flex: none; }
+  .lang-btn .chev { width: 12px; height: 12px; transition: transform 200ms var(--ease-out); }
   .lang.open .lang-btn .chev { transform: rotate(180deg); }
-  /* Transitions.dev — Menu dropdown */
-  .lang-menu { position: absolute; right: 0; top: calc(100% + 8px); min-width: 176px; margin: 0; padding: 6px; list-style: none; border-radius: 8px; border: 1px solid var(--ink); background: var(--bg); opacity: 0; visibility: hidden; pointer-events: none; transform-origin: top right; transform: scale(var(--dropdown-pre-scale)); will-change: transform, opacity; transition: transform var(--dropdown-open-dur) var(--dropdown-ease), opacity var(--dropdown-open-dur) var(--dropdown-ease); }
+  .lang-menu { position: absolute; right: 0; top: calc(100% + var(--s1)); min-width: 176px; padding: var(--s1); border-radius: var(--s2); background: rgba(255, 255, 255, .88); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 1px var(--line), 0 16px 48px rgba(0, 0, 0, .16); opacity: 0; visibility: hidden; pointer-events: none; transform: scale(var(--dropdown-pre-scale)); transform-origin: top right; transition: transform var(--dropdown-open-dur) var(--ease-out), opacity var(--dropdown-open-dur) var(--ease-out); }
   .lang.open .lang-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: scale(1); }
-  .lang-menu.is-closing { opacity: 0; visibility: visible; pointer-events: none; transform: scale(var(--dropdown-closing-scale)); transition: transform var(--dropdown-close-dur) var(--dropdown-ease), opacity var(--dropdown-close-dur) var(--dropdown-ease); }
-  .lang-menu button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; border: 0; background: transparent; color: var(--g4); font-size: 15px; text-align: left; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
-  .lang-menu button:hover { background: var(--hover); color: var(--ink); }
-  .lang-menu button:focus-visible { background: var(--hover); color: var(--ink); outline: 2px solid var(--ink); outline-offset: -2px; }
-  .lang-menu button[aria-selected="true"] { color: var(--ink); font-weight: 600; }
-  .lang-menu button[aria-selected="true"]::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
-  @media (max-width: 720px) { .nav-links { display: none; } .lang { margin-left: auto; } }
+  .lang-menu.is-closing { opacity: 0; visibility: visible; pointer-events: none; transform: scale(var(--dropdown-closing-scale)); transition: transform var(--dropdown-close-dur) var(--ease-out), opacity var(--dropdown-close-dur) var(--ease-out); }
+  .lang-menu button { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); width: 100%; min-height: var(--s5); padding: var(--s1) var(--s2); border: 0; border-radius: var(--s1); background: transparent; color: var(--ink); font-size: 14px; line-height: 24px; text-align: left; cursor: pointer; }
+  @media (hover: hover) { .lang-menu button:hover { background: var(--line); } }
+  .lang-menu button:focus-visible { background: var(--line); outline: 2px solid var(--accent); outline-offset: -2px; }
+  .lang-menu button[aria-selected="true"] { font-weight: 600; }
+  .lang-menu button[aria-selected="true"]::after { content: ""; width: var(--s1); height: var(--s1); border-radius: 50%; background: var(--accent); }
 
   /* Hero */
-  .hero { padding: 72px 0 56px; }
-  .hero .wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
-  .eyebrow { margin: 0; font: 400 13px/1.5 var(--mono); color: var(--g5); }
-  .eyebrow b { font-weight: 500; color: var(--ink); margin-right: 10px; }
-  .eyebrow a { margin-right: 10px; color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
-  .eyebrow a:hover { color: var(--ink); text-decoration-color: var(--ink); }
-  .eyebrow a b { margin-right: 0; }
-  .hero h1 { margin: 0; font-family: var(--head); font-weight: 800; font-size: clamp(44px, 7.5vw, 104px); line-height: 0.95; letter-spacing: -0.035em; overflow-wrap: break-word; max-width: 100%; }
-  body[data-lang="ko"] .hero h1, body[data-lang="ja"] .hero h1, body[data-lang="zh"] .hero h1 { line-height: 1.08; letter-spacing: -0.02em; }
-  /* Transitions.dev — Texts reveal. The words rise in a few tens of milliseconds apart, then the line below and the buttons follow. */
-  .nn-word { display: inline-block; animation: nn-rise var(--stagger-dur) var(--stagger-ease) both; }
-  .hero .lead { animation: nn-rise var(--stagger-dur) var(--stagger-ease) calc(var(--duration-stagger) * 5) both; }
-  .hero .cta { animation: nn-rise var(--stagger-dur) var(--stagger-ease) calc(var(--duration-stagger) * 7) both; }
-  @keyframes nn-rise { from { opacity: 0; transform: translateY(var(--stagger-distance)); filter: blur(var(--stagger-blur)); } }
-  .hero .lead { margin: 0; font-size: 19px; line-height: 1.6; max-width: 36rem; color: var(--g3); }
-  .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; max-width: 100%; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 22px; border-radius: 8px; border: 1.5px solid var(--ink); font-weight: 600; font-size: 16px; text-decoration: none; transition: background-color .2s, color .2s; }
-  .btn svg { width: 18px; height: 18px; flex: none; }
-  .btn.primary { background: var(--ink); color: var(--paper); }
-  .btn.primary:hover { background: var(--g3); color: var(--paper); }
-  .btn.ghost { background: transparent; color: var(--ink); }
-  .btn.ghost:hover { background: var(--hover); color: var(--ink); }
-  .cta { align-items: flex-start; }
-  .brew-col { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; max-width: 100%; min-width: 0; }
-  .trouble { display: inline-block; padding: 8px 0; font-size: 14px; line-height: 1.4; color: var(--g4); text-decoration: underline; text-underline-offset: 3px; }
-  .trouble:hover { color: var(--ink); }
-  .brew { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 8px 0 18px; border-radius: 8px; background: var(--ink); color: var(--paper); max-width: 100%; min-width: 0; }
-  .brew code { flex: 1 1 auto; min-width: 0; font-size: 15px; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .hero { padding: var(--s12) 0 var(--s8); text-align: center; }
+  .hero .wrap { display: flex; flex-direction: column; align-items: center; }
+  .eyebrow { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: var(--s1); padding: 0 var(--s2); border-radius: var(--s2); background: var(--surface); font-size: 14px; line-height: 32px; color: var(--ink-2); }
+  .eyebrow b { font-weight: 500; }
+  .hero h1 { margin-top: var(--s3); font-weight: 700; font-size: 88px; line-height: 96px; letter-spacing: -.03em; max-width: 100%; }
+  body[data-lang="ko"] .hero h1, body[data-lang="ja"] .hero h1, body[data-lang="zh"] .hero h1 { letter-spacing: -.02em; }
+  .nn-word { display: inline-block; animation: nn-rise var(--stagger-dur) var(--ease-out) both; }
+  .hero .lead { margin-top: var(--s3); max-width: 640px; font-size: 24px; line-height: 32px; letter-spacing: -.01em; color: var(--ink-2); animation: nn-rise var(--stagger-dur) var(--ease-out) calc(var(--duration-stagger) * 5) both; }
+  .hero .cta { margin-top: var(--s5); justify-content: center; animation: nn-rise var(--stagger-dur) var(--ease-out) calc(var(--duration-stagger) * 7) both; }
+  @keyframes nn-rise { from { opacity: 0; transform: translateY(var(--stagger-distance)); } }
+  .cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); max-width: 100%; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s1); min-height: var(--s7); padding: 0 var(--s4); border: 0; border-radius: var(--s4); font-weight: 600; font-size: 16px; line-height: 24px; text-decoration: none !important; transition: background-color 160ms ease, var(--press); }
+  .btn:active { transform: scale(.97); }
+  .btn svg { width: var(--s3); height: var(--s3); flex: none; }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.ghost { background: var(--surface); color: var(--ink); }
+  @media (hover: hover) { .btn.primary:hover { background: #3A3A3C; } .btn.ghost:hover { background: #E8E8ED; } }
+  .trouble { margin-top: var(--s2); font-size: 14px; line-height: 24px; }
+  .brew { display: flex; align-items: center; gap: var(--s2); min-height: var(--s7); padding: var(--s1) var(--s1) var(--s1) var(--s3); border-radius: var(--s4); background: var(--surface); max-width: 100%; min-width: 0; }
+  .brew code { flex: 1 1 auto; min-width: 0; font-size: 14px; line-height: 24px; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
   .brew code::-webkit-scrollbar { display: none; }
-  /* On a phone the command wraps at its slashes instead of hiding its end. */
-  @media (max-width: 520px) { .brew { padding-top: 10px; padding-bottom: 10px; } .brew code { white-space: normal; overflow-wrap: anywhere; font-size: 14px; line-height: 1.5; } }
-  .copy { flex: none; min-width: 44px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 6px; background: #2A2A2A; color: var(--paper); font-size: 13px; font-weight: 500; cursor: pointer; transition: background-color .15s; position: relative; }
-  .copy:hover { background: #3A3A3A; }
-  /* Transitions.dev — Text states swap. The label changes at once; the old one leaves as a ghost and the new one arrives after it. */
+  .copy { position: relative; flex: none; min-width: var(--s7); height: var(--s5); padding: 0 var(--s2); border: 0; border-radius: var(--s3); background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--line); font-size: 14px; line-height: 24px; font-weight: 500; cursor: pointer; transition: background-color 160ms ease, var(--press); }
+  .copy:active { transform: scale(.97); }
   .copy > span { display: inline-block; }
   .copy::after { content: none; }
-  .copy[data-prev]::after { content: attr(data-prev); position: absolute; inset: 0; display: flex; align-items: center; padding: 0 14px; white-space: nowrap; pointer-events: none; }
-  .copy:focus-visible { outline-color: var(--paper); }
+  .copy[data-prev]::after { content: attr(data-prev); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; white-space: nowrap; pointer-events: none; }
 
-  /* The notch opening: a menu-bar strip, the eyebrow pill lifts its brow, the notch opens into the real screenshot. 9 s loop. */
-  .stage-band { background: var(--ink); padding-bottom: 48px; }
-  .nn-stage { position: relative; height: calc(var(--nh) + 40px); background: var(--ink); overflow: hidden; }
-  .nn-bar { position: absolute; left: 0; right: 0; top: 0; height: 36px; background: #1D1D1F; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font: 400 12px var(--mono); color: #8A8A86; white-space: nowrap; }
-  .nn-bar .l, .nn-bar .r { display: flex; gap: 1.6em; }
-  .nn-bar b { font-weight: 500; color: #C8C8C4; }
-  .nn-notch { position: absolute; left: 50%; top: 5px; width: 72px; height: 26px; border-radius: 13px; background: #000; transform: translateX(-50%); overflow: hidden; z-index: 2; animation: nn-open 9s cubic-bezier(.32, 1.12, .4, 1) infinite; }
-  @keyframes nn-open { 0%, 62% { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; } 72%, 90% { top: 5px; width: 72px; height: 26px; border-radius: 13px; } 100% { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; } }
-  .nn-brow { position: absolute; left: 50%; top: 50%; width: 40px; height: 16px; margin: -8px 0 0 -20px; animation: nn-brow 9s ease-in-out infinite; }
+  /* The notch opening, on a Mac's screen: a menu bar with a real notch in it, which opens into the real screenshot. 9 s loop. */
+  .stage-band { padding: 0 var(--s3); }
+  .nn-stage { position: relative; max-width: 960px; height: 320px; margin: 0 auto; overflow: hidden; border: 8px solid #000; border-radius: var(--s3); background: var(--wall); box-shadow: 0 32px 64px -32px rgba(16, 40, 80, .4); cursor: default; }
+  .nn-bar { position: absolute; left: 0; right: 0; top: 0; height: var(--ch); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--s2); background: rgba(255, 255, 255, .32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); font-size: 12px; line-height: 16px; color: rgba(0, 0, 0, .72); white-space: nowrap; }
+  .nn-bar .l, .nn-bar .r { display: flex; gap: var(--s2); }
+  .nn-bar b { font-weight: 600; color: #000; }
+  .nn-notch { position: absolute; left: 50%; top: 0; display: flex; align-items: center; justify-content: center; width: var(--cw); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); background: #000; transform: translateX(-50%); overflow: hidden; z-index: 2; animation: nn-open 9s cubic-bezier(.32, 1.12, .4, 1) infinite; }
+  @keyframes nn-open { 0%, 62% { width: var(--nw); height: var(--nh); border-radius: 0 0 var(--s4) var(--s4); } 72%, 90% { width: var(--cw); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); } 100% { width: var(--nw); height: var(--nh); border-radius: 0 0 var(--s4) var(--s4); } }
+  .nn-brow { flex: none; width: var(--s5); height: var(--s2); animation: nn-brow 9s ease-in-out infinite; }
   @keyframes nn-brow { 0%, 64% { opacity: 0; transform: none; } 72%, 78% { opacity: 1; transform: none; } 82%, 88% { opacity: 1; transform: translateY(-2px) rotate(-6deg); } 94%, 100% { opacity: 0; transform: translateY(-2px) rotate(-6deg); } }
-  .nn-shot { position: absolute; top: 0; left: 50%; max-width: none; width: calc(var(--nw) * 1.049); height: auto; transform: translateX(-50%); opacity: 0; animation: nn-shot 9s ease infinite; }
+  .nn-shot { position: absolute; top: 0; left: 50%; max-width: none; width: calc(var(--nw) * 1.1199); height: auto; transform: translateX(-50%); opacity: 0; animation: nn-shot 9s ease infinite; }
   @keyframes nn-shot { 0%, 60% { opacity: 1; } 66%, 92% { opacity: 0; } 100% { opacity: 1; } }
-  .nn-stage { cursor: default; }
-  .nn-stage:focus-visible { outline: 2px solid var(--paper); outline-offset: -5px; }
-  /* Pointing at the eyebrow drives the notch the way the app does: the loop stops, the brow lifts with a bounce, and
-     0.1 s later the notch opens against the top edge with a slight overshoot, its content fading in halfway. It stays
-     open while the pointer is over it; 0.2 s after leaving, the content goes first and the notch closes without a bounce. */
+  .nn-stage:focus-visible { outline-offset: 4px; }
+  /* Pointing at the notch drives it the way the app does: the loop stops, the brow lifts with a bounce, and 0.1 s later
+     the notch opens against the top edge with a slight overshoot, its content fading in halfway. It stays open while the
+     pointer is over it; 0.2 s after leaving, the content goes first and the notch closes without a bounce. */
   .nn-stage.live .nn-notch, .nn-stage.live .nn-shot, .nn-stage.live .nn-brow { animation: none; }
-  .nn-stage.live .nn-notch { transition: top .3s cubic-bezier(.3, 0, .2, 1) .04s, width .3s cubic-bezier(.3, 0, .2, 1) .04s, height .3s cubic-bezier(.3, 0, .2, 1) .04s, border-radius .3s cubic-bezier(.3, 0, .2, 1) .04s; }
-  .nn-stage.live .nn-shot { transition: opacity .08s ease-in; }
-  .nn-stage.live .nn-brow { transform-origin: 30% 70%; transition: transform .3s cubic-bezier(.3, 1.8, .5, 1), opacity .15s ease; }
+  .nn-stage.live .nn-notch { transition: width 300ms cubic-bezier(.3, 0, .2, 1) 40ms, height 300ms cubic-bezier(.3, 0, .2, 1) 40ms, border-radius 300ms cubic-bezier(.3, 0, .2, 1) 40ms; }
+  .nn-stage.live .nn-shot { transition: opacity 80ms ease-in; }
+  .nn-stage.live .nn-brow { transform-origin: 30% 70%; transition: transform 300ms cubic-bezier(.3, 1.8, .5, 1), opacity 150ms ease; }
   .nn-stage.lifted .nn-brow { transform: translateY(-2px) rotate(-6deg); }
-  .nn-stage.open .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; transition: top .45s cubic-bezier(.34, 1.25, .5, 1), width .45s cubic-bezier(.34, 1.25, .5, 1), height .45s cubic-bezier(.34, 1.25, .5, 1), border-radius .45s cubic-bezier(.34, 1.25, .5, 1); }
-  .nn-stage.open .nn-shot { opacity: 1; transition: opacity .22s ease-out .09s; }
-  .nn-stage.open .nn-brow { opacity: 0; transition: opacity .1s ease; }
+  .nn-stage.open .nn-notch { width: var(--nw); height: var(--nh); border-radius: 0 0 var(--s4) var(--s4); transition: width 450ms cubic-bezier(.34, 1.25, .5, 1), height 450ms cubic-bezier(.34, 1.25, .5, 1), border-radius 400ms ease; }
+  .nn-stage.open .nn-shot { opacity: 1; transition: opacity 220ms ease-out 90ms; }
+  .nn-stage.open .nn-brow { opacity: 0; transition: opacity 100ms ease; }
   /* Phones and other touch screens have no pointer to point with: the notch rests open on the screenshot, without the
      fake menu items it would cover or the caption about pointing. */
   @media (hover: none), (max-width: 600px) {
     .nn-notch, .nn-shot, .nn-brow { animation: none; }
-    .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; }
+    .nn-notch { width: var(--nw); height: var(--nh); border-radius: 0 0 var(--s3) var(--s3); }
     .nn-shot { opacity: 1; }
-    .nn-brow, .nn-bar .l, .stage-band p { display: none; }
-    .nn-stage { height: calc(var(--nh) + 8px); }
-    .stage-band { padding-bottom: 24px; }
+    .nn-brow, .nn-bar .l, .nn-bar .r, .stage-band p { display: none; }
+    .nn-stage { height: calc(var(--nh) + var(--s10)); border-radius: var(--s2); }
   }
-  .stage-band p { margin: 0 auto; max-width: 1200px; padding: 0 24px; text-align: center; font: 400 13px/1.6 var(--mono); color: var(--dim); }
-
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 32px; padding-top: 56px; }
-  .stats > div { border-top: 2px solid var(--ink); padding-top: 14px; }
-  .stats b { display: block; font-family: var(--head); font-weight: 800; font-size: 44px; line-height: 1; letter-spacing: -0.03em; margin-bottom: 8px; }
-  .stats span { display: block; font-size: 15px; color: var(--g4); }
-
-  .works { padding-top: 72px; }
-  .works p { margin: 0 0 16px; font: 400 13px/1.5 var(--mono); color: var(--g5); }
-  .players { list-style: none; margin: 0; padding: 16px 0 0; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 8px 28px; font: 400 14px/1.5 var(--mono); color: var(--g3); }
+  .stage-band p { margin: var(--s3) auto 0; max-width: var(--wrap); text-align: center; font-size: 14px; line-height: 24px; color: var(--ink-2); }
 
   /* Sections */
-  section.block { padding: 96px 0 0; }
-  .section-head { max-width: 46rem; margin: 0 0 40px; }
-  .section-head .kicker { font: 400 13px/1.5 var(--mono); color: var(--g5); margin-bottom: 16px; }
-  .section-head h2 { margin: 0 0 20px; font-family: var(--head); font-weight: 800; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter-spacing: -0.03em; text-wrap: balance; overflow-wrap: break-word; }
-  body[data-lang="ko"] .section-head h2, body[data-lang="ja"] .section-head h2, body[data-lang="zh"] .section-head h2 { line-height: 1.15; letter-spacing: -0.02em; }
-  .section-head p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--g3); }
+  section.block { padding-top: var(--s20); }
+  .section-head { max-width: 720px; margin: 0 auto var(--s8); text-align: center; }
+  .section-head .kicker { margin-bottom: var(--s1); font-size: 16px; line-height: 24px; font-weight: 600; color: var(--ink-2); }
+  .section-head h2 { font-weight: 700; font-size: 56px; line-height: 64px; letter-spacing: -.03em; }
+  body[data-lang="ko"] .section-head h2, body[data-lang="ja"] .section-head h2, body[data-lang="zh"] .section-head h2 { letter-spacing: -.02em; }
+  .section-head p { margin-top: var(--s2); font-size: 20px; line-height: 32px; color: var(--ink-2); }
 
-  /* Tour: rows on the left, one black figure on the right. The screens cross-fade (Transitions.dev — Skeleton loader and reveal). */
-  /* The heading runs across; below it the list and the screen sit side by side at the same height. */
-  .tour { display: grid; grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); grid-template-areas: "head head" "list fig"; column-gap: 48px; align-items: stretch; }
-  .tour .section-head { grid-area: head; margin-bottom: 28px; }
-  .tour-list { grid-area: list; display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
-  .tour-btn { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 48px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--rule); background: transparent; color: var(--g4); font-size: 16px; text-align: left; cursor: pointer; transition: padding-left var(--duration-fast) var(--ease-smooth-out), background-color var(--duration-fast) var(--ease-smooth-out); }
-  .tour-btn .num { font: 400 14px var(--mono); color: var(--g5); width: 24px; flex: none; }
-  .tour-btn .lbl { flex: 1; }
-  .tour-btn .mark { width: 10px; height: 10px; border-radius: 5px; background: transparent; flex: none; margin-right: 4px; }
-  .tour-btn[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
-  .tour-btn[aria-pressed="true"] .mark { background: var(--ink); }
-  @media (hover: hover) { .tour-btn:hover { padding-left: 10px; background-color: var(--hover); } }
-  .tour-stage { grid-area: fig; display: flex; flex-direction: column; margin: 0; background: var(--ink); color: var(--paper); border-radius: 10px; padding: 28px; }
-  .tour-screen { position: relative; aspect-ratio: 1478 / 422; margin-block: auto; }
-  .tour-screen img { position: absolute; left: 50%; top: 0; max-width: none; height: auto; transform: translateX(-50%); opacity: 0; filter: blur(var(--reveal-blur)); transition: opacity var(--reveal-dur) var(--reveal-ease), filter var(--reveal-dur) var(--reveal-ease); }
-  .tour-screen img.on { opacity: 1; filter: none; }
-  .tour-copy { margin-top: 20px; }
-  .tour-copy h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
-  .tour-copy p { margin: 0; font-size: 15px; line-height: 1.6; color: #C8C8C4; max-width: 640px; }
-  .tour-copy kbd { font: 500 12px var(--mono); padding: 2px 6px; border-radius: 4px; background: #2A2A2A; color: var(--paper); }
-  @media (max-width: 900px) {
-    .tour { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "list" "fig"; }
-    .tour-list { flex-direction: row; overflow-x: auto; border-top: 0; border-bottom: 1px solid var(--rule); scrollbar-width: none; margin-bottom: 20px; }
-    .tour-list::-webkit-scrollbar { display: none; }
-    .tour-btn { width: auto; flex: none; white-space: nowrap; gap: 8px; padding: 10px 14px 10px 0; margin-right: 8px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-    .tour-btn .mark { display: none; }
-    .tour-btn:focus-visible { outline-offset: -3px; }
-    .tour-btn[aria-pressed="true"] { border-bottom-color: var(--ink); }
-    .tour-btn .num { width: auto; }
-    .tour-stage { position: static; padding: 16px; }
+  /* Tour: the tabs as one row of pills, the screen below them, the notch hanging from its top edge as it does on a Mac. */
+  .tour-list { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s1); margin-bottom: var(--s4); }
+  .tour-btn { flex: none; height: var(--s5); padding: 0 var(--s2); border: 0; border-radius: var(--s3); background: transparent; color: var(--ink-2); font-size: 14px; line-height: 24px; font-weight: 500; cursor: pointer; transition: background-color 160ms ease, color 160ms ease, var(--press); }
+  .tour-btn:active { transform: scale(.97); }
+  @media (hover: hover) { .tour-btn:hover { background: var(--surface); color: var(--ink); } }
+  .tour-btn[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .tour-screen { position: relative; height: 288px; overflow: hidden; border-radius: var(--s3); background: var(--wall); }
+  .tour-screen img { position: absolute; left: 50%; top: 0; width: 654px; max-width: none; height: auto; transform: translateX(-50%); opacity: 0; transition: opacity var(--reveal-dur) ease; }
+  .tour-screen img.on { opacity: 1; }
+  .tour-copy { max-width: 640px; margin: var(--s4) auto 0; text-align: center; }
+  .tour-copy h3 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -.01em; }
+  .tour-copy p { margin-top: var(--s1); color: var(--ink-2); }
+  kbd { padding: 0 var(--s1); border-radius: var(--s1); background: var(--surface); color: var(--ink); font-size: 14px; }
+
+  /* The eyebrow: one short scene. An agent works (low and green), then it needs you (raised and yellow), and the notch opens
+     with the notice. Without motion the page rests on the last of these. */
+  .ag-stage { --aw: min(416px, calc(100vw - 96px)); --ah: 120px; position: relative; max-width: 960px; height: 200px; margin: 0 auto; overflow: hidden; border: 8px solid #000; border-radius: var(--s3); background: var(--wall); box-shadow: 0 32px 64px -32px rgba(16, 40, 80, .4); }
+  .ag-notch { position: absolute; left: 50%; top: 0; width: var(--aw); height: var(--ah); overflow: hidden; border-radius: 0 0 var(--s3) var(--s3); background: #000; color: #fff; transform: translateX(-50%); z-index: 2; animation: ag-notch 8s infinite; }
+  @keyframes ag-notch {
+    0%, 40% { width: var(--cw); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); animation-timing-function: cubic-bezier(.34, 1.25, .5, 1); }
+    48%, 90% { width: var(--aw); height: var(--ah); border-radius: 0 0 var(--s3) var(--s3); animation-timing-function: cubic-bezier(.3, 0, .2, 1); }
+    96%, 100% { width: var(--cw); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); }
   }
+  .ag-bar { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; height: var(--ch); padding: 0 var(--s2); }
+  .ag-brow { flex: none; width: var(--s4); height: 13px; fill: var(--amber); transform: translateY(-2px) rotate(-6deg); transform-origin: 30% 70%; animation: ag-brow 8s infinite; }
+  @keyframes ag-brow {
+    0%, 32% { fill: var(--green); transform: translateY(1px) rotate(5deg); animation-timing-function: cubic-bezier(.3, 1.8, .5, 1); }
+    36%, 94% { fill: var(--amber); transform: translateY(-2px) rotate(-6deg); }
+    98%, 100% { fill: var(--green); transform: translateY(1px) rotate(5deg); }
+  }
+  .ag-count { display: grid; font-size: 14px; line-height: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ag-count i { grid-area: 1 / 1; font-style: normal; color: var(--amber); }
+  .ag-count i:first-child { color: var(--green); opacity: 0; animation: ag-work 8s infinite; }
+  .ag-count i:last-child { animation: ag-wait 8s infinite; }
+  @keyframes ag-work { 0%, 32% { opacity: 1; } 36%, 94% { opacity: 0; } 98%, 100% { opacity: 1; } }
+  @keyframes ag-wait { 0%, 32% { opacity: 0; } 36%, 94% { opacity: 1; } 98%, 100% { opacity: 0; } }
+  .ag-note { position: absolute; left: var(--s3); right: var(--s3); top: var(--s4); animation: ag-note 8s infinite; }
+  @keyframes ag-note { 0%, 44% { opacity: 0; } 52%, 86% { opacity: 1; } 90%, 100% { opacity: 0; } }
+  .ag-note b { display: block; font-size: 14px; line-height: 24px; font-weight: 600; }
+  .ag-note span { display: block; font-size: 14px; line-height: 24px; color: var(--band-ink-2); }
+  .ag-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4); margin-top: var(--s8); }
+  .ag-list li { min-width: 0; }
+  .ag-list h3 { font-size: 20px; line-height: 32px; font-weight: 600; letter-spacing: -.01em; }
+  .ag-list p { margin-top: var(--s1); color: var(--ink-2); overflow-wrap: break-word; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s1); margin-top: var(--s6); }
+  .chips li { padding: 0 var(--s2); border-radius: var(--s2); background: var(--surface); font-size: 14px; line-height: 32px; font-weight: 500; color: var(--ink); }
+  .all { margin-top: var(--s5); text-align: center; }
+  .all a { display: inline-block; padding: var(--s1) 0; }
 
-  /* Features: top-ruled items, no cards */
-  .bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 48px 32px; }
-  .tile { border-top: 2px solid var(--ink); padding-top: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
-  .tile.t-half { grid-column: span 2; }
-  .tile h3 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; }
-  .tile p { margin: 0; font-size: 15px; line-height: 1.6; color: #3A3A3A; max-width: 100%; overflow-wrap: break-word; }
-  .hud-stack { display: grid; gap: 8px; width: 100%; max-width: 300px; margin-top: 6px; padding: 10px; background: var(--ink); border-radius: 8px; }
-  .hud-stack img { width: 100%; height: auto; }
-  .tile-shot { width: 100%; max-width: 300px; height: auto; padding: 10px; background: var(--ink); border-radius: 8px; margin-top: 6px; }
-  .mini-note { margin-top: 6px; width: 100%; max-width: 380px; padding: 12px 16px; border-radius: 8px; background: #000; color: var(--paper); }
-  .mini-note b { display: block; font-size: 14px; font-weight: 600; }
-  .mini-note span { font-size: 13px; color: var(--dim); }
-  .brow-pill { width: 120px; height: 44px; border-radius: 22px; background: #000; display: flex; align-items: center; justify-content: center; }
-  .nn-brow-loop { animation: nn-lift 3.2s ease-in-out infinite; transform-origin: 30% 70%; }
-  @keyframes nn-lift { 0%, 55%, 100% { transform: none; } 65%, 80% { transform: translateY(-2px) rotate(-6deg); } }
-  .langs { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 4px; font: 400 14px/1.5 var(--mono); color: var(--g4); }
-  @media (max-width: 1000px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 640px) { .bento { grid-template-columns: minmax(0, 1fr); } .tile.t-half { grid-column: auto; } }
-
-  /* Install: the black band */
-  section.band { background: var(--ink); color: var(--paper); margin-top: 96px; padding: 88px 0; }
-  .band a { color: var(--paper); }
-  .band a:hover { color: var(--dim); }
-  .band :focus-visible { outline-color: var(--paper); }
-  .band .section-head .kicker { color: var(--dim); }
-  .band .section-head p { color: #C8C8C4; }
-  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-bottom: 56px; }
-  .step { border-top: 1px solid #3A3A3A; padding-top: 18px; }
-  .step .n { font: 500 15px var(--mono); color: var(--amber); margin-bottom: 10px; }
-  .step h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
-  .step p { margin: 0; font-size: 15px; line-height: 1.6; color: #C8C8C4; }
-  .install { max-width: 760px; }
-  .tabs { display: flex; gap: 28px; border-bottom: 1px solid #3A3A3A; margin-bottom: 20px; }
-  .tabs button { min-height: 44px; padding: 8px 0; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--dim); font-size: 15px; font-weight: 600; cursor: pointer; transition: color .15s; }
-  .tabs button:hover { color: var(--paper); }
-  /* Transitions.dev — Tabs sliding. The underline travels between the tabs; without script the selected tab keeps its own border. */
-  .tabs { position: relative; }
-  .tabs-ink { position: absolute; left: 0; bottom: -1px; width: 0; height: 2px; background: var(--paper); pointer-events: none; transition: transform var(--tabs-dur) var(--tabs-ease), width var(--tabs-dur) var(--tabs-ease); }
-  .tabs.has-ink button[aria-selected="true"] { border-bottom-color: transparent; }
-  .tabs button[aria-selected="true"] { color: var(--paper); border-bottom-color: var(--paper); }
+  /* Install: the one black band on the page. */
+  section.band { margin-top: var(--s20); padding: var(--s15) 0; background: var(--band); color: #fff; }
+  .band a { color: #2997FF; }
+  .band :focus-visible { outline-color: #2997FF; }
+  .band .section-head .kicker, .band .section-head p { color: var(--band-ink-2); }
+  .install { max-width: 720px; margin: 0 auto; text-align: center; }
+  .tabs { position: relative; display: inline-flex; margin-bottom: var(--s4); padding: var(--s1); border-radius: var(--s4); background: var(--band-surface); }
+  .tabs button { position: relative; z-index: 1; white-space: nowrap; height: var(--s5); padding: 0 var(--s3); border: 0; border-radius: var(--s3); background: transparent; color: var(--band-ink-2); font-size: 14px; line-height: 24px; font-weight: 600; cursor: pointer; transition: color 160ms ease; }
+  .tabs button[aria-selected="true"] { color: #fff; background: var(--band-raised); }
+  .tabs.has-ink button[aria-selected="true"] { background: transparent; }
+  @media (hover: hover) { .tabs button:hover { color: #fff; } }
+  /* Without script the selected tab keeps its own fill. With it, the fill travels between the tabs. */
+  .tabs-ink { position: absolute; left: 0; top: var(--s1); bottom: var(--s1); width: 0; border-radius: var(--s3); background: var(--band-raised); pointer-events: none; transition: transform var(--tabs-dur) var(--ease-out), width var(--tabs-dur) var(--ease-out); }
   .panel { display: none; }
   .panel.active { display: block; }
-  .code { display: flex; align-items: flex-start; gap: 12px; padding: 14px 12px 14px 18px; border-radius: 8px; background: #232323; font-size: 14px; line-height: 1.75; }
-  .code pre { flex: 1 1 auto; min-width: 0; margin: 0; overflow-x: auto; color: var(--paper); padding-top: 3px; }
+  .code { display: flex; align-items: flex-start; gap: var(--s2); padding: var(--s1) var(--s1) var(--s1) var(--s3); border-radius: var(--s3); background: var(--band-surface); text-align: left; font-size: 14px; line-height: 24px; }
+  .code pre { flex: 1 1 auto; min-width: 0; padding: var(--s1) 0; overflow-x: auto; color: #fff; }
   .code .copy { order: 2; }
-  .install .btn.primary { background: var(--paper); color: var(--ink); border-color: var(--paper); }
-  .install .btn.primary:hover { background: #D9D9D4; color: var(--ink); }
-  .install .note { margin: 14px 0 0; font-size: 14.5px; line-height: 1.6; color: #C8C8C4; }
-  .install .note a { text-decoration: underline; }
-  .install .note code { font-size: 13px; padding: 1px 6px; border-radius: 4px; background: #232323; color: var(--paper); }
-  @media (max-width: 860px) { .steps { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
+  .band .copy { background: var(--band-raised); color: #fff; box-shadow: none; }
+  .install .btn.primary { background: #fff; color: #000; }
+  @media (hover: hover) { .install .btn.primary:hover { background: #E8E8ED; } }
+  .install .note { margin-top: var(--s2); font-size: 14px; line-height: 24px; color: var(--band-ink-2); }
+  .install .note code { padding: 0 var(--s1); border-radius: var(--s1); background: var(--band-surface); color: #fff; font-size: 12px; }
 
-  /* How it works */
-  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 56px; }
-  .plain { border-top: 2px solid var(--ink); padding-top: 18px; }
-  .plain h3 { margin: 0 0 14px; font-size: 20px; font-weight: 600; }
-  .plain p { margin: 0 0 12px; font-size: 15.5px; line-height: 1.65; color: var(--g3); }
-  .plain code { font-size: 13px; padding: 1px 6px; border-radius: 4px; background: var(--hover); }
-  .perm { display: grid; grid-template-columns: 1fr auto; margin-top: 20px; border-top: 1px solid var(--rule); font-size: 15px; }
-  .perm div { padding: 10px 0; border-bottom: 1px solid var(--rule); }
-  .perm div:nth-child(even) { padding-left: 20px; text-align: right; color: var(--g4); font: 400 13.5px/1.6 var(--mono); }
-  @media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
+  /* Privacy: two numbers and a promise. */
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4); max-width: 560px; margin: 0 auto; text-align: center; }
+  .stats b { display: block; font-weight: 700; font-size: 56px; line-height: 64px; letter-spacing: -.03em; }
+  .stats span { display: block; margin-top: var(--s1); font-size: 14px; line-height: 24px; color: var(--ink-2); }
+  .promise { max-width: 720px; margin: var(--s8) auto 0; text-align: center; color: var(--ink-2); }
 
   /* FAQ */
-  .faq { max-width: 820px; border-top: 1px solid var(--rule); }
-  .faq details { border-bottom: 1px solid var(--rule); }
-  .faq summary { list-style: none; cursor: pointer; min-height: 48px; padding: 18px 0; font-weight: 600; font-size: 17px; display: flex; justify-content: space-between; gap: 16px; }
+  .faq { max-width: 720px; margin: 0 auto; }
+  .faq details { box-shadow: 0 1px 0 var(--line); }
+  .faq summary { display: flex; justify-content: space-between; gap: var(--s2); padding: var(--s3) 0; list-style: none; cursor: pointer; font-weight: 600; font-size: 20px; line-height: 32px; letter-spacing: -.01em; }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: "+"; font: 400 22px/1 var(--mono); flex: none; transition: transform var(--acc-chevron) var(--acc-ease); }
+  .faq summary::after { content: "+"; flex: none; font-size: 32px; line-height: 32px; font-weight: 300; color: var(--ink-2); transition: transform 240ms var(--ease-out); }
   .faq details[open] summary::after { transform: rotate(45deg); }
-  /* Transitions.dev — Accordion expand. The answer grows and fades in, and shrinks the same way. Browsers without ::details-content just open it. */
+  /* The answer grows and fades in, and shrinks the same way. Browsers without ::details-content just open it. */
   @supports selector(::details-content) {
     .faq details { interpolate-size: allow-keywords; }
-    .faq details::details-content { block-size: 0; overflow: clip; opacity: 0; filter: blur(var(--blur-small)); transition: block-size var(--acc-collapse) var(--acc-ease), opacity var(--acc-collapse) var(--acc-ease), filter var(--acc-collapse) var(--acc-ease), content-visibility var(--acc-collapse) allow-discrete; }
-    .faq details[open]::details-content { block-size: auto; opacity: 1; filter: blur(0); transition: block-size var(--acc-expand) var(--acc-ease), opacity var(--acc-expand) var(--acc-ease), filter var(--acc-expand) var(--acc-ease), content-visibility var(--acc-expand) allow-discrete; }
+    .faq details::details-content { block-size: 0; overflow: clip; opacity: 0; transition: block-size var(--acc-collapse) var(--ease-out), opacity var(--acc-collapse) var(--ease-out), content-visibility var(--acc-collapse) allow-discrete; }
+    .faq details[open]::details-content { block-size: auto; opacity: 1; transition: block-size var(--acc-expand) var(--ease-out), opacity var(--acc-expand) var(--ease-out), content-visibility var(--acc-expand) allow-discrete; }
   }
-  .faq .a { padding: 0 40px 20px 0; font-size: 16px; line-height: 1.65; color: var(--g3); }
-  .faq .a code { font-size: 13px; padding: 1px 6px; border-radius: 4px; background: var(--hover); }
+  .faq .a { padding: 0 var(--s6) var(--s3) 0; color: var(--ink-2); }
+  .faq .a code { padding: 0 var(--s1); border-radius: var(--s1); background: var(--surface); font-size: 14px; }
 
   /* Closing */
-  .final { margin-top: 120px; border-top: 1px solid var(--rule); padding: 56px 0 48px; display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
-  .final img { width: 64px; height: 64px; margin-left: -6px; }
-  .final h2 { margin: 0; font-family: var(--head); font-weight: 800; font-size: clamp(32px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.035em; max-width: 16ch; text-wrap: balance; overflow-wrap: break-word; }
-  body[data-lang="ko"] .final h2, body[data-lang="ja"] .final h2, body[data-lang="zh"] .final h2 { line-height: 1.15; letter-spacing: -0.02em; }
-  footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; padding: 24px 0 56px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--g5); }
+  .final { display: flex; flex-direction: column; align-items: center; margin-top: var(--s20); padding-bottom: var(--s20); text-align: center; }
+  .final img { width: var(--s12); height: var(--s12); }
+  .final h2 { margin-top: var(--s3); max-width: 800px; font-weight: 700; font-size: 56px; line-height: 64px; letter-spacing: -.03em; }
+  body[data-lang="ko"] .final h2, body[data-lang="ja"] .final h2, body[data-lang="zh"] .final h2 { letter-spacing: -.02em; }
+  .final .cta { justify-content: center; margin-top: var(--s5); }
+  footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--s1) var(--s3); padding: var(--s3) 0 var(--s6); box-shadow: 0 -1px 0 var(--line); font-size: 14px; line-height: 24px; color: var(--ink-2); }
 
-  /* Transitions.dev — Texts reveal. Blocks below the fold rise a little as they come into view, once. The script adds .reveal-pre
-     only to blocks that start out of view, so without script (or without IntersectionObserver) everything is simply there. */
-  .reveal { transition: opacity var(--stagger-dur) var(--stagger-ease), transform var(--stagger-dur) var(--stagger-ease); }
+  /* Blocks below the fold rise a little as they come into view, once. The script adds .reveal-pre only to blocks that start
+     out of view, so without script (or without IntersectionObserver) everything is simply there. */
+  .reveal { transition: opacity var(--stagger-dur) var(--ease-out), transform var(--stagger-dur) var(--ease-out); }
   .reveal.reveal-pre { opacity: 0; transform: translateY(var(--stagger-distance)); }
   @media print { .reveal.reveal-pre { opacity: 1; transform: none; } }
 
   body:not([data-lang="en"]) .en, body:not([data-lang="ko"]) .ko, body:not([data-lang="ja"]) .ja, body:not([data-lang="zh"]) .zh,
   body:not([data-lang="es"]) .es, body:not([data-lang="de"]) .de, body:not([data-lang="fr"]) .fr { display: none !important; }
 
-  /* Reduced motion: a still, readable page. The notch rests open on the screenshot. */
+  @media (max-width: 1000px) {
+    .hero h1 { font-size: 64px; line-height: 72px; }
+    .section-head h2, .final h2 { font-size: 40px; line-height: 48px; }
+    section.block { padding-top: var(--s15); }
+    section.band { margin-top: var(--s15); padding: var(--s10) 0; }
+    .final { margin-top: var(--s15); padding-bottom: var(--s15); }
+  }
+  @media (max-width: 900px) { .nav-links { display: none; } }
+  @media (max-width: 720px) {
+    .nav-dl { display: none; }
+    .tabs button { padding: 0 var(--s2); }
+    .hero { padding: var(--s8) 0 var(--s6); }
+    .hero h1 { font-size: 48px; line-height: 56px; }
+    .hero .lead { font-size: 20px; line-height: 32px; }
+    .hero .cta { flex-direction: column; align-items: stretch; width: 100%; }
+    .brew { border-radius: var(--s3); }
+    .brew code { white-space: normal; overflow-wrap: anywhere; text-align: left; }
+    .section-head { margin-bottom: var(--s6); }
+    .section-head h2, .final h2 { font-size: 32px; line-height: 40px; }
+    .section-head p { font-size: 16px; line-height: 24px; }
+    .stats b { font-size: 40px; line-height: 48px; }
+    .ag-stage { --ah: 144px; border-radius: var(--s2); }
+    .ag-list { grid-template-columns: minmax(0, 1fr); gap: var(--s3); margin-top: var(--s5); }
+    .chips { justify-content: flex-start; }
+    .tour-list { flex-wrap: nowrap; justify-content: flex-start; margin: 0 calc(var(--s3) * -1) var(--s2); padding: var(--s1) var(--s3); overflow-x: auto; scrollbar-width: none; }
+    .tour-list::-webkit-scrollbar { display: none; }
+    .tour-screen { height: calc((100vw - var(--s6)) * .3 + var(--s3)); border-radius: var(--s2); }
+    .tour-screen img { width: calc(100% + var(--s3)); }
+    .faq summary { font-size: 16px; line-height: 24px; padding: var(--s2) 0; }
+    .faq summary::after { line-height: 24px; }
+    .faq .a { padding-right: 0; }
+  }
+
+  @media (max-width: 360px) { .tabs button { padding: 0 var(--s1); } }
+  @media (pointer: coarse) { .tour-btn, .copy, .tabs button, .lang-btn, .nav-dl { height: var(--s6); } .lang-menu button { min-height: var(--s6); } }
+
+  /* Reduced motion: a still, readable page. The notch rests open on the screenshot, the eyebrow raised with its notice. */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .nn-notch { top: 0; width: var(--nw); height: var(--nh); border-radius: 0 0 28px 28px; }
-    .nn-brow { display: none; }
+    .nn-notch { width: var(--nw); height: var(--nh); border-radius: 0 0 var(--s4) var(--s4); }
+    .nn-brow, .stage-band p { display: none; }
     .nn-shot { opacity: 1; }
-    /* Nothing moves or blurs; the content is just there. */
     .reveal.reveal-pre { opacity: 1 !important; transform: none !important; }
     .lang-menu { transform: none !important; }
-    .tour-screen img { filter: none !important; }
-    .faq details::details-content { filter: none !important; transition: none !important; }
-    .tabs-ink { transition: none !important; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    nav.top, .lang-menu { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .nn-bar { background: rgba(255, 255, 255, .72); -webkit-backdrop-filter: none; backdrop-filter: none; }
   }
 </style>
 </head>
@@ -374,6 +371,7 @@
       <a href="#faq">FAQ</a>
       <a href="https://github.com/namekun/Nunsseop">GitHub</a>
     </div>
+    <div class="nav-end">
     <div class="lang" id="lang">
       <button class="lang-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
@@ -390,19 +388,21 @@
         <li role="none"><button type="button" role="option" data-set="fr" lang="fr">Français</button></li>
       </ul>
     </div>
+    <a class="nav-dl" href="https://github.com/namekun/Nunsseop/releases/latest/download/Nunsseop.dmg"><span class="en">Download</span><span class="ko">다운로드</span><span class="ja">ダウンロード</span><span class="zh">下载</span><span class="es">Descargar</span><span class="de">Download</span><span class="fr">Télécharger</span></a>
+    </div>
   </div>
 </nav>
 
 <header class="hero" id="top">
   <div class="wrap">
     <p class="eyebrow"><a href="https://github.com/namekun/Nunsseop/releases/latest"><b>v0.38.0</b></a><span class="en">Free &amp; open source · macOS 14+</span><span class="ko">무료 오픈소스 · macOS 14 이상</span><span class="ja">無料・オープンソース · macOS 14 以上</span><span class="zh">免费开源 · macOS 14 及以上</span><span class="es">Gratis y de código abierto · macOS 14+</span><span class="de">Kostenlos &amp; Open Source · macOS 14+</span><span class="fr">Gratuit &amp; open source · macOS 14+</span></p>
-    <h1 class="en"><span class="nn-word">Your</span> <span class="nn-word" style="animation-delay:0.08s">notch,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">finally</span> <span class="nn-word" style="animation-delay:0.24s">useful.</span></span></h1>
-    <h1 class="ko"><span class="nn-word">노치,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">이제</span> <span class="nn-word" style="animation-delay:0.16s">쓸모</span> <span class="nn-word" style="animation-delay:0.24s">있게.</span></span></h1>
-    <h1 class="ja"><span class="nn-word">あなたのノッチが、</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">ついに役立つ。</span></span></h1>
-    <h1 class="zh"><span class="nn-word">刘海，</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.08s">终于有用了。</span></span></h1>
-    <h1 class="es"><span class="nn-word">Tu</span> <span class="nn-word" style="animation-delay:0.08s">notch,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">por</span> <span class="nn-word" style="animation-delay:0.24s">fin</span> <span class="nn-word" style="animation-delay:0.32s">útil.</span></span></h1>
-    <h1 class="de"><span class="nn-word">Deine</span> <span class="nn-word" style="animation-delay:0.08s">Notch,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">endlich</span> <span class="nn-word" style="animation-delay:0.24s">nützlich.</span></span></h1>
-    <h1 class="fr"><span class="nn-word">Votre</span> <span class="nn-word" style="animation-delay:0.08s">encoche,</span><br><span class="l2"><span class="nn-word" style="animation-delay:0.16s">enfin</span> <span class="nn-word" style="animation-delay:0.24s">utile.</span></span></h1>
+    <h1 class="en"><span class="nn-word">Your</span> <span class="nn-word" style="animation-delay:0.08s">notch,</span><br><span><span class="nn-word" style="animation-delay:0.16s">finally</span> <span class="nn-word" style="animation-delay:0.24s">useful.</span></span></h1>
+    <h1 class="ko"><span class="nn-word">노치,</span><br><span><span class="nn-word" style="animation-delay:0.08s">이제</span> <span class="nn-word" style="animation-delay:0.16s">쓸모</span> <span class="nn-word" style="animation-delay:0.24s">있게.</span></span></h1>
+    <h1 class="ja"><span class="nn-word">あなたのノッチが、</span><br><span><span class="nn-word" style="animation-delay:0.08s">ついに役立つ。</span></span></h1>
+    <h1 class="zh"><span class="nn-word">刘海，</span><br><span><span class="nn-word" style="animation-delay:0.08s">终于有用了。</span></span></h1>
+    <h1 class="es"><span class="nn-word">Tu</span> <span class="nn-word" style="animation-delay:0.08s">notch,</span><br><span><span class="nn-word" style="animation-delay:0.16s">por</span> <span class="nn-word" style="animation-delay:0.24s">fin</span> <span class="nn-word" style="animation-delay:0.32s">útil.</span></span></h1>
+    <h1 class="de"><span class="nn-word">Deine</span> <span class="nn-word" style="animation-delay:0.08s">Notch,</span><br><span><span class="nn-word" style="animation-delay:0.16s">endlich</span> <span class="nn-word" style="animation-delay:0.24s">nützlich.</span></span></h1>
+    <h1 class="fr"><span class="nn-word">Votre</span> <span class="nn-word" style="animation-delay:0.08s">encoche,</span><br><span><span class="nn-word" style="animation-delay:0.16s">enfin</span> <span class="nn-word" style="animation-delay:0.24s">utile.</span></span></h1>
     <p class="lead en">Music, files, your calendar and system HUDs live right where the camera sits. Hover to open. That's it.</p>
     <p class="lead ko">음악, 파일, 일정, 시스템 HUD가 카메라 바로 아래에 있습니다. 마우스를 올리면 열립니다. 그게 전부예요.</p>
     <p class="lead ja">音楽、ファイル、カレンダー、システム HUD が、カメラのあるその場所に。ホバーで開く。それだけです。</p>
@@ -415,47 +415,29 @@
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.4.8 2.3-1.3 3.1-2.5c1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"/></svg>
         <span class="en">Download for Mac</span><span class="ko">Mac용 다운로드</span><span class="ja">Mac 版をダウンロード</span><span class="zh">下载 Mac 版</span><span class="es">Descargar para Mac</span><span class="de">Für Mac laden</span><span class="fr">Télécharger pour Mac</span>
       </a>
-      <div class="brew-col">
       <div class="brew">
         <code>brew install --cask namekun/tap/nunsseop</code>
         <button class="copy" type="button" data-copy="brew install --cask namekun/tap/nunsseop"><span class="en">Copy</span><span class="ko">복사</span><span class="ja">コピー</span><span class="zh">复制</span><span class="es">Copiar</span><span class="de">Kopieren</span><span class="fr">Copier</span></button>
       </div>
-        <a class="trouble" href="#faq-open"><span class="en">Trouble opening it?</span><span class="ko">열리지 않나요?</span><span class="ja">開けませんか？</span><span class="zh">打不开？</span><span class="es">¿No se abre?</span><span class="de">Lässt sich nicht öffnen?</span><span class="fr">Impossible de l’ouvrir ?</span></a>
-      </div>
     </div>
+    <a class="trouble" href="#faq-open"><span class="en">Trouble opening it?</span><span class="ko">열리지 않나요?</span><span class="ja">開けませんか？</span><span class="zh">打不开？</span><span class="es">¿No se abre?</span><span class="de">Lässt sich nicht öffnen?</span><span class="fr">Impossible de l’ouvrir ?</span></a>
   </div>
 </header>
 
 <section class="stage-band" aria-label="The notch opening">
   <div class="nn-stage" tabindex="0" role="group" aria-label="Show the open notch">
-    <div class="nn-bar" aria-hidden="true"><div class="l"><b>Nunsseop</b><span class="en">File</span><span class="ko">파일</span><span class="ja">ファイル</span><span class="zh">文件</span><span class="es">Archivo</span><span class="de">Datei</span><span class="fr">Fichier</span><span class="en">Edit</span><span class="ko">편집</span><span class="ja">編集</span><span class="zh">编辑</span><span class="es">Editar</span><span class="de">Bearbeiten</span><span class="fr">Édition</span></div><div class="r"><span>100%</span><span>9:41</span></div></div>
+    <div class="nn-bar" aria-hidden="true"><div class="l"><b>Nunsseop</b><span class="en">File</span><span class="ko">파일</span><span class="ja">ファイル</span><span class="zh">文件</span><span class="es">Archivo</span><span class="de">Datei</span><span class="fr">Fichier</span></div><div class="r"><span>100%</span><span>9:41</span></div></div>
     <div class="nn-notch">
-      <svg class="nn-brow" viewBox="0 0 100 40" aria-hidden="true"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z" fill="#F4F4F1"/></svg>
-      <img class="nn-shot" src="images/home.png" alt="Expanded notch with now playing, calendar and weather" width="1478" height="392">
+      <svg class="nn-brow" viewBox="0 0 100 40" aria-hidden="true"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z" fill="#FFFFFF"/></svg>
+      <img class="nn-shot" src="images/home.png" alt="Expanded notch with now playing, calendar and weather" width="1308" height="392">
     </div>
   </div>
   <p><span class="en">A real screenshot. Point at the eyebrow and this is what opens.</span><span class="ko">실제 화면입니다. 눈썹에 마우스를 올리면 이렇게 열립니다.</span><span class="ja">実際のスクリーンショットです。眉にポインターを合わせると、こう開きます。</span><span class="zh">这是真实截图。把鼠标移到眉毛上，就会这样展开。</span><span class="es">Una captura real. Apunta a la ceja y esto es lo que se abre.</span><span class="de">Ein echter Screenshot. Zeig auf die Augenbraue, und das öffnet sich.</span><span class="fr">Une vraie capture d’écran. Pointez le sourcil et voici ce qui s’ouvre.</span></p>
 </section>
-<div class="wrap">
-  <div class="stats">
-      <div><b>13</b><span class="en">tabs to choose from</span><span class="ko">고를 수 있는 탭</span><span class="ja">選べるタブ</span><span class="zh">个可选标签</span><span class="es">pestañas para elegir</span><span class="de">Tabs zur Auswahl</span><span class="fr">onglets au choix</span></div>
-      <div><b>7</b><span class="en">languages</span><span class="ko">개 언어</span><span class="ja">言語</span><span class="zh">种语言</span><span class="es">idiomas</span><span class="de">Sprachen</span><span class="fr">langues</span></div>
-      <div><b>0</b><span class="en">accounts or trackers</span><span class="ko">계정·추적 없음</span><span class="ja">アカウントもトラッカーもなし</span><span class="zh">账户或追踪</span><span class="es">cuentas ni rastreadores</span><span class="de">Accounts oder Tracker</span><span class="fr">comptes ni traqueurs</span></div>
-      <div><b>1.6 MB</b><span class="en">download, native Swift</span><span class="ko">다운로드, 네이티브 앱</span><span class="ja">のダウンロード、ネイティブ Swift</span><span class="zh">下载，原生 Swift 打造</span><span class="es">de descarga, Swift nativo</span><span class="de">Download, natives Swift</span><span class="fr">téléchargement, natif en Swift</span></div>
-    </div>
-</div>
-
-<div class="works">
-  <div class="wrap">
-  <p class="en">Picks up whatever is playing</p><p class="ko">무엇을 재생하든 잡아냅니다</p><p class="ja">再生中のものを自動で検出</p><p class="zh">自动识别正在播放的内容</p><p class="es">Capta lo que sea que estés reproduciendo</p><p class="de">Erkennt, was auch immer gerade läuft</p><p class="fr">Détecte tout ce qui est en train de jouer</p>
-  <ul class="players"><li>Apple Music</li><li>Spotify</li><li>YouTube Music</li><li>Safari</li><li>Chrome</li><li>Arc</li><li>Dia</li><li>Aside</li><li>Firefox</li><li>Edge</li><li>Brave</li><li>Whale</li><li>SoundCloud</li><li>Melon</li><li>Podcasts</li><li>QuickTime</li></ul>
-  </div>
-</div>
-
 <main>
   <section class="block" id="tour">
     <div class="wrap">
-    <div class="tour" id="tourBox">
+    <div id="tourBox">
       <div class="section-head">
       <div class="kicker en">Take the tour</div><div class="kicker ko">둘러보기</div><div class="kicker ja">ツアーを見る</div><div class="kicker zh">开始导览</div><div class="kicker es">Haz el recorrido</div><div class="kicker de">Zur Tour</div><div class="kicker fr">Voir l’aperçu</div>
       <h2 class="en">One hover, a dozen tools.</h2><h2 class="ko">마우스 한 번에, 도구 열두 개.</h2><h2 class="ja">マウスを乗せるだけで、十数個のツール。</h2><h2 class="zh">悬停一次，十余种工具。</h2><h2 class="es">Un gesto, una docena de herramientas.</h2><h2 class="de">Ein Hover, ein Dutzend Werkzeuge.</h2><h2 class="fr">Un survol, une douzaine d’outils.</h2>
@@ -468,7 +450,7 @@
       <p class="fr">Ce sont de vraies captures d’écran. Choisissez un onglet pour les voir.</p>
     </div>
       <div class="tour-list" id="tourList" role="group"></div>
-      <figure class="tour-stage reveal">
+      <figure class="reveal">
         <div class="tour-screen" id="tourScreen"></div>
         <figcaption class="tour-copy"><h3 id="tourTitle"></h3><p id="tourText"></p></figcaption>
         <div class="sr-only" id="tourStatus" role="status" aria-live="polite"></div>
@@ -482,195 +464,42 @@
     <div class="section-head">
       <div class="kicker en">And quietly, in the background</div><div class="kicker ko">그리고 조용히, 뒤에서</div><div class="kicker ja">そして静かに、裏側で</div><div class="kicker zh">而且，在后台默默工作</div><div class="kicker es">Y en silencio, de fondo</div><div class="kicker de">Und still, im Hintergrund</div><div class="kicker fr">Et discrètement, en arrière-plan</div>
       <h2 class="en">It notices, so you don't have to.</h2><h2 class="ko">알아서 챙기니까, 신경 끄셔도 돼요.</h2><h2 class="ja">気づいてくれるから、気にしなくていい。</h2><h2 class="zh">它会留意一切，你不用操心。</h2><h2 class="es">Se da cuenta, para que tú no tengas que hacerlo.</h2><h2 class="de">Es behält den Überblick, damit du es nicht musst.</h2><h2 class="fr">Il s’en occupe, pour que vous n’ayez pas à y penser.</h2>
-      <p class="en">Built natively in Swift and SwiftUI. No Electron, no account, no tracking.</p>
-      <p class="ko">Swift와 SwiftUI로 만든 네이티브 앱. Electron도, 계정도, 추적도 없습니다.</p>
-      <p class="ja">Swift と SwiftUI で作られたネイティブアプリ。Electron も、アカウントも、トラッキングもありません。</p>
-      <p class="zh">原生 Swift 与 SwiftUI 打造，没有 Electron，没有账户，没有追踪。</p>
-      <p class="es">Creada de forma nativa en Swift y SwiftUI. Sin Electron, sin cuenta, sin rastreo.</p>
-      <p class="de">Nativ gebaut mit Swift und SwiftUI. Kein Electron, kein Account, kein Tracking.</p>
-      <p class="fr">Conçu nativement en Swift et SwiftUI. Pas d’Electron, pas de compte, pas de suivi.</p>
     </div>
 
-    <div class="bento">
-      <article class="tile t-half reveal">
-        <h3><span class="en">System HUDs, reimagined</span><span class="ko">새로워진 시스템 HUD</span><span class="ja">システム HUD を、再発明。</span><span class="zh">重新设计的系统 HUD</span><span class="es">Los HUD del sistema, reinventados</span><span class="de">System-HUDs, neu gedacht</span><span class="fr">Les HUD système, réinventés</span></h3>
-        <p class="en">Volume, brightness (even external displays over DDC), keyboard backlight, charging and AirPods battery, right in the notch.</p>
-        <p class="ko">볼륨, 밝기(DDC 외부 모니터 포함), 키보드 백라이트, 충전, AirPods 배터리까지 노치 안에서.</p>
-        <p class="ja">音量、明るさ（DDC 対応の外部ディスプレイも）、キーボードバックライト、充電、AirPods のバッテリーまで、ノッチの中に。</p>
-        <p class="zh">音量、亮度（包括通过 DDC 连接的外接显示器）、键盘背光、充电状态和 AirPods 电量，都在刘海里显示。</p>
-        <p class="es">Volumen, brillo (incluso en pantallas externas mediante DDC), retroiluminación del teclado, carga y batería de los AirPods, todo en el notch.</p>
-        <p class="de">Lautstärke, Helligkeit (auch externe Bildschirme über DDC), Tastaturbeleuchtung, Laden und AirPods-Akku – direkt in der Notch.</p>
-        <p class="fr">Volume, luminosité (même sur les écrans externes compatibles DDC), rétroéclairage du clavier, charge et batterie des AirPods, directement dans l’encoche.</p>
-        <div class="hud-stack">
-          <img src="images/hud-headphones.png" alt="Headphone battery HUD" width="405" height="66" loading="lazy">
-          <img src="images/hud-brightness.png" alt="Brightness HUD" width="405" height="42" loading="lazy">
-        </div>
-      </article>
-      <article class="tile t-half reveal">
-        <h3><span class="en">Agents &amp; terminals, in your notch</span><span class="ko">노치로 오는 에이전트·터미널 알림</span><span class="ja">エージェントとターミナルが、ノッチに。</span><span class="zh">代理与终端通知，直达刘海</span><span class="es">Agentes y terminales, en tu notch</span><span class="de">Agenten &amp; Terminals, in deiner Notch</span><span class="fr">Agents &amp; terminaux, dans votre encoche</span></h3>
-        <p class="en">Connect Claude Code, Codex, Gemini CLI, GitHub Copilot, Antigravity, Cursor, OpenCode, Hermes, Amp, omp, omo or pi with one click, after a preview of how its settings file will change. Agents in Muxy 2, cmux, herdr and Paseo, and bells from tmux and WezTerm, show up without a hook. Click a notice to jump to its terminal, pane or tab. Any local script can send one too. Claude Code's permission prompts and questions, and the approvals of Codex, OpenCode, Paseo, GitHub Copilot, Antigravity and Cursor, can be answered right there.</p>
-        <p class="ko">Claude Code, Codex, Gemini CLI, GitHub Copilot, Antigravity, Cursor, OpenCode, Hermes, Amp, omp, omo, pi는 설정 파일이 어떻게 바뀌는지 미리 본 뒤 클릭 한 번으로 연결되고, Muxy 2·<wbr>cmux·<wbr>herdr·<wbr>Paseo 안의 에이전트와 tmux·<wbr>WezTerm 벨은 훅 없이 뜹니다. 알림을 누르면 그 터미널, 창, 탭으로 바로 갑니다. 어떤 로컬 스크립트든 알림을 보낼 수 있어요. Claude Code의 권한 요청과 질문, Codex·<wbr>OpenCode·<wbr>Paseo·<wbr>GitHub Copilot·<wbr>Antigravity·<wbr>Cursor의 승인도 노치에서 바로 답할 수 있어요.</p>
-        <p class="ja">Claude Code、Codex、Gemini CLI、GitHub Copilot、Antigravity、Cursor、OpenCode、Hermes、Amp、omp、omo、pi は、設定ファイルがどう変わるかをプレビューで確認してからワンクリックで接続。Muxy 2・cmux・herdr・Paseo のエージェントや tmux・WezTerm のベルは、フックなしで表示されます。通知をクリックすると、そのターミナル・ペイン・タブへ移動します。ローカルのスクリプトからも送れます。Claude Code の権限の確認と質問、Codex・OpenCode・Paseo・GitHub Copilot・Antigravity・Cursor の承認もノッチから答えられます。</p>
-        <p class="zh">Claude Code、Codex、Gemini CLI、GitHub Copilot、Antigravity、Cursor、OpenCode、Hermes、Amp、omp、omo 和 pi 先预览设置文件将如何变化，再一键连接；Muxy 2、cmux、herdr、Paseo 中的代理以及 tmux、WezTerm 的响铃无需钩子就会显示。点击通知即可跳到对应的终端、窗格或标签页。任何本地脚本也能发送通知。Claude Code 的权限请求和提问，以及 Codex、OpenCode、Paseo、GitHub Copilot、Antigravity 和 Cursor 的审批，也能直接在刘海里回应。</p>
-        <p class="es">Conecta Claude Code, Codex, Gemini CLI, GitHub Copilot, Antigravity, Cursor, OpenCode, Hermes, Amp, omp, omo o pi con un clic, tras ver cómo cambiará su archivo de ajustes. Los agentes de Muxy 2, cmux, herdr y Paseo, y las campanas de tmux y WezTerm, aparecen sin ningún hook. Haz clic en un aviso para ir a su terminal, panel o pestaña. Cualquier script local también puede enviar uno. También puedes responder ahí a las solicitudes de permiso y preguntas de Claude Code, y a las aprobaciones de Codex, OpenCode, Paseo, GitHub Copilot, Antigravity y Cursor.</p>
-        <p class="de">Verbinde Claude Code, Codex, Gemini CLI, GitHub Copilot, Antigravity, Cursor, OpenCode, Hermes, Amp, omp, omo oder pi mit einem Klick, nachdem du dir vorab angesehen hast, wie sich ihre Einstellungsdatei ändert. Agenten in Muxy 2, cmux, herdr und Paseo sowie Bell-Signale aus tmux und WezTerm erscheinen ganz ohne Hook. Ein Klick auf einen Hinweis bringt dich zu seinem Terminal, Bereich oder Tab. Auch jedes lokale Skript kann einen senden. Auch Berechtigungsanfragen und Fragen von Claude Code sowie Freigaben von Codex, OpenCode, Paseo, GitHub Copilot, Antigravity und Cursor lassen sich dort beantworten.</p>
-        <p class="fr">Connectez Claude Code, Codex, Gemini CLI, GitHub Copilot, Antigravity, Cursor, OpenCode, Hermes, Amp, omp, omo ou pi en un clic, après un aperçu de la modification de leur fichier de réglages. Les agents de Muxy 2, cmux, herdr et Paseo, ainsi que les sonneries de tmux et WezTerm, s’affichent sans aucun hook. Cliquez sur une alerte pour retrouver son terminal, son panneau ou son onglet. N’importe quel script local peut aussi en envoyer une. Vous pouvez aussi y répondre aux demandes d’autorisation et aux questions de Claude Code, ainsi qu’aux approbations de Codex, OpenCode, Paseo, GitHub Copilot, Antigravity et Cursor.</p>
-        <div class="mini-note"><div><b>Claude Code</b><span class="en">Needs your permission to run a command</span><span class="ko">명령을 실행하려면 허락이 필요해요</span><span class="ja">コマンドの実行に許可が必要です</span><span class="zh">需要你的许可才能执行命令</span><span class="es">Necesita tu permiso para ejecutar un comando</span><span class="de">Braucht deine Erlaubnis, um einen Befehl auszuführen</span><span class="fr">A besoin de votre autorisation pour exécuter une commande</span></div></div>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Sneak peek &amp; lyrics</span><span class="ko">미리보기와 가사</span><span class="ja">スニークピークと歌詞</span><span class="zh">预览与歌词</span><span class="es">Vista previa y letras</span><span class="de">Vorschau &amp; Songtexte</span><span class="fr">Aperçu &amp; paroles</span></h3>
-        <p class="en">When the track changes the title slides out for a moment, and the line being sung can stay under the notch while you work.</p>
-        <p class="ko">곡이 바뀌면 제목이 잠깐 나왔다 사라지고, 원하면 지금 부르는 가사가 작업 중에도 노치 아래에 흐릅니다.</p>
-        <p class="ja">曲が変わると、タイトルが一瞬スライドして現れます。今流れている歌詞も、作業中ずっとノッチの下に表示できます。</p>
-        <p class="zh">曲目切换时标题会短暂滑出，正在演唱的歌词也可以留在刘海下方，陪你一起工作。</p>
-        <p class="es">Cuando cambia la canción, el título aparece un momento y, si quieres, la letra que se está cantando se queda bajo el notch mientras trabajas.</p>
-        <p class="de">Wenn sich der Titel ändert, gleitet er kurz heraus, und die aktuelle Textzeile kann während der Arbeit unter der Notch bleiben.</p>
-        <p class="fr">Quand le morceau change, le titre apparaît un instant, et la ligne chantée peut rester sous l’encoche pendant que vous travaillez.</p>
-        <img class="tile-shot" src="images/collapsed-music.png" alt="The closed notch with artwork and a playback indicator" width="544" height="64" loading="lazy">
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Calendar &amp; reminders</span><span class="ko">캘린더와 미리 알림</span><span class="ja">カレンダーとリマインダー</span><span class="zh">日历与提醒事项</span><span class="es">Calendario y recordatorios</span><span class="de">Kalender &amp; Erinnerungen</span><span class="fr">Calendrier &amp; rappels</span></h3>
-        <p class="en">This week, today's events and reminders to tick off. Five minutes before an event the notch gives you a heads-up, and one click joins Zoom, Meet, Teams and other calls.</p>
-        <p class="ko">이번 주, 오늘 일정, 완료할 미리 알림. 일정 5분 전에 노치가 알려 주고, Zoom·<wbr>Meet·<wbr>Teams 같은 화상 회의는 클릭 한 번으로 참가합니다.</p>
-        <p class="ja">今週の予定、今日の予定、完了にできるリマインダー。予定の5分前にノッチがお知らせし、Zoom・Meet・Teams などのビデオ会議にはワンクリックで参加できます。</p>
-        <p class="zh">本周安排、今日日程和可勾选的提醒事项。日程开始前 5 分钟刘海会提醒你，Zoom、Meet、Teams 等视频会议一键即可加入。</p>
-        <p class="es">Esta semana, los eventos de hoy y recordatorios para marcar. Cinco minutos antes de un evento el notch te avisa, y te unes a llamadas de Zoom, Meet, Teams y otras con un clic.</p>
-        <p class="de">Diese Woche, die heutigen Termine und Erinnerungen zum Abhaken. Fünf Minuten vor einem Termin meldet sich die Notch, und Zoom-, Meet-, Teams- und andere Calls trittst du mit einem Klick bei.</p>
-        <p class="fr">Votre semaine, les évènements du jour et des rappels à cocher. Cinq minutes avant un évènement, l’encoche vous prévient, et vous rejoignez Zoom, Meet, Teams et d’autres appels en un clic.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Camera &amp; mic indicator</span><span class="ko">카메라·마이크 표시</span><span class="ja">カメラ・マイクのインジケーター</span><span class="zh">相机与麦克风提示</span><span class="es">Indicador de cámara y micrófono</span><span class="de">Kamera- &amp; Mikrofonanzeige</span><span class="fr">Indicateur caméra &amp; micro</span></h3>
-        <p class="en">A dot on the notch whenever any app is using your camera or microphone, so nothing listens in unnoticed.</p>
-        <p class="ko">어떤 앱이든 카메라나 마이크를 쓰는 동안 노치에 표시가 뜹니다. 몰래 듣는 앱은 없어요.</p>
-        <p class="ja">どのアプリかがカメラやマイクを使っているとき、ノッチに点が表示されます。こっそり使われることはありません。</p>
-        <p class="zh">任何应用使用相机或麦克风时，刘海上都会出现一个小点，不会有应用偷偷窃听。</p>
-        <p class="es">Un punto en el notch cuando cualquier app usa tu cámara o micrófono, así nada te escucha sin que lo notes.</p>
-        <p class="de">Ein Punkt auf der Notch, sobald eine App deine Kamera oder dein Mikrofon nutzt, damit nichts unbemerkt mithört.</p>
-        <p class="fr">Un point sur l’encoche dès qu’une app utilise votre caméra ou votre microphone, pour qu’aucune écoute ne passe inaperçue.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Screen recording</span><span class="ko">화면 녹화</span><span class="ja">画面収録</span><span class="zh">屏幕录制</span><span class="es">Grabación de pantalla</span><span class="de">Bildschirmaufnahme</span><span class="fr">Enregistrement de l’écran</span></h3>
-        <p class="en">Start it from Tools; a red dot and timer stay on the notch, and the video lands on the shelf when you stop.</p>
-        <p class="ko">도구 탭에서 시작하면 노치에 빨간 점과 시간이 남고, 멈추면 영상이 선반에 들어갑니다.</p>
-        <p class="ja">ツールタブから開始すると、ノッチに赤い点と時間が表示され、停止すると動画がシェルフに届きます。</p>
-        <p class="zh">在“工具”中开始录制，刘海上会留下红点和计时，停止后视频会自动进入架子。</p>
-        <p class="es">Inícialo desde Herramientas; un punto rojo y un cronómetro se quedan en el notch, y el vídeo cae en el estante cuando lo detienes.</p>
-        <p class="de">Starte sie über Werkzeuge; ein roter Punkt und ein Timer bleiben auf der Notch, und das Video landet beim Stoppen in der Ablage.</p>
-        <p class="fr">Lancez-le depuis Outils ; un point rouge et un chronomètre restent sur l’encoche, et la vidéo atterrit sur l’étagère à l’arrêt.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Clipboard &amp; notes</span><span class="ko">클립보드와 메모</span><span class="ja">クリップボードとメモ</span><span class="zh">剪贴板与便笺</span><span class="es">Portapapeles y notas</span><span class="de">Zwischenablage &amp; Notizen</span><span class="fr">Presse-papiers &amp; notes</span></h3>
-        <p class="en">Search what you copied and copy it again in one click. Jot notes without opening another app. The entry under the pointer shows on the right, with its actions.</p>
-        <p class="ko">복사한 내용을 검색해 한 번에 다시 복사하고, 다른 앱 없이 바로 메모하세요. 포인터 아래의 항목은 오른쪽에 동작과 함께 표시됩니다.</p>
-        <p class="ja">コピーした内容を検索して、ワンクリックで再コピー。別のアプリを開かずにメモも書けます。ポインタの下の項目は、操作ボタンとともに右側に表示されます。</p>
-        <p class="zh">搜索你复制过的内容，一键再次复制；无需打开其他应用即可随手记笔记。指针下的条目会连同操作显示在右侧。</p>
-        <p class="es">Busca lo que copiaste y vuelve a copiarlo con un clic. Anota algo sin abrir otra app. La entrada bajo el puntero aparece a la derecha, con sus acciones.</p>
-        <p class="de">Durchsuche, was du kopiert hast, und kopiere es mit einem Klick erneut. Notiere dir etwas, ohne eine weitere App zu öffnen. Der Eintrag unter dem Zeiger erscheint rechts, mit seinen Aktionen.</p>
-        <p class="fr">Recherchez ce que vous avez copié et recopiez-le en un clic. Notez vos idées sans ouvrir une autre app. L’entrée sous le pointeur apparaît à droite, avec ses actions.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Weather &amp; downloads</span><span class="ko">날씨와 다운로드</span><span class="ja">天気とダウンロード</span><span class="zh">天气与下载</span><span class="es">Tiempo y descargas</span><span class="de">Wetter &amp; Downloads</span><span class="fr">Météo &amp; téléchargements</span></h3>
-        <p class="en">Today's weather at the bottom of Home, and a nudge when a download finishes. Screenshots drop onto the shelf by themselves.</p>
-        <p class="ko">오늘 날씨를 홈 맨 아래에, 다운로드가 끝나면 살짝 알려 줍니다. 스크린샷은 알아서 선반에 들어가요.</p>
-        <p class="ja">今日の天気をホームの一番下に表示し、ダウンロードが終わるとお知らせします。スクリーンショットは自動でシェルフに入ります。</p>
-        <p class="zh">主页最下面一行显示今日天气，下载完成时轻轻提示，截图会自动进入架子。</p>
-        <p class="es">El tiempo de hoy al pie de Inicio, y un aviso cuando termina una descarga. Las capturas de pantalla caen solas en el estante.</p>
-        <p class="de">Das heutige Wetter unten im Start-Tab und ein Hinweis, wenn ein Download fertig ist. Screenshots landen von selbst in der Ablage.</p>
-        <p class="fr">La météo du jour au bas d’Accueil, et un signal quand un téléchargement se termine. Les captures d’écran arrivent seules sur l’étagère.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Little heads-ups</span><span class="ko">작은 알림들</span><span class="ja">ちょっとした通知</span><span class="zh">小提醒</span><span class="es">Pequeños avisos</span><span class="de">Kleine Hinweise</span><span class="fr">Petites alertes</span></h3>
-        <p class="en">Low battery on the Mac, mouse or keyboard, fully charged, Caps Lock on. Glanceable, then gone.</p>
-        <p class="ko">Mac·마우스·키보드 배터리 부족, 충전 완료, Caps Lock 켜짐. 한눈에 보이고 금방 사라집니다.</p>
-        <p class="ja">Mac・マウス・キーボードのバッテリー残量低下、満充電、Caps Lock オン。一目でわかって、すぐ消えます。</p>
-        <p class="zh">Mac、鼠标或键盘电量不足、充满电、大写锁定开启——一眼看到，随即消失。</p>
-        <p class="es">Batería baja del Mac, el ratón o el teclado, carga completa, Bloq Mayús activado. Un vistazo y desaparece.</p>
-        <p class="de">Niedriger Akkustand bei Mac, Maus oder Tastatur, vollständig geladen, Feststelltaste an. Ein kurzer Blick, dann sind sie weg.</p>
-        <p class="fr">Batterie faible du Mac, de la souris ou du clavier, charge complète, verrouillage des majuscules activé. Un coup d’œil, puis ça disparaît.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Gestures &amp; shortcuts</span><span class="ko">제스처와 단축키</span><span class="ja">ジェスチャーとショートカット</span><span class="zh">手势与快捷键</span><span class="es">Gestos y atajos</span><span class="de">Gesten &amp; Kurzbefehle</span><span class="fr">Gestes &amp; raccourcis</span></h3>
-        <p class="en">Swipe down to open, up to close, sideways on Home to skip the track. Record shortcuts to go to the agent that waits, open the Agents tab, go to where the last notice came from, or open and close the notch.</p>
-        <p class="ko">아래로 쓸면 열기, 위로 쓸면 닫기, 홈 탭에서 옆으로 쓸면 다음 곡. 단축키를 기록하면 기다리는 에이전트로 가기, 에이전트 탭 열기, 마지막 알림이 온 곳으로 가기, 노치 열고 닫기도 키 하나로 됩니다.</p>
-        <p class="ja">下にスワイプで開く、上にスワイプで閉じる、ホームタブで横にスワイプすると曲をスキップ。ショートカットを記録すれば、待っているエージェントへの移動、エージェントタブを開く、最後の通知の送信元へ移動、ノッチの開閉もキー操作でできます。</p>
-        <p class="zh">向下轻扫打开，向上轻扫关闭，在主页左右轻扫切换曲目。录制快捷键后，前往等待中的代理、打开代理标签、前往最近一条通知的来源，以及打开或关闭刘海，也都能用快捷键完成。</p>
-        <p class="es">Desliza hacia abajo para abrir, hacia arriba para cerrar, y a los lados en Inicio para cambiar de pista. Graba atajos para ir al agente que espera, abrir la pestaña Agentes, ir al origen del último aviso y abrir o cerrar el notch.</p>
-        <p class="de">Nach unten wischen zum Öffnen, nach oben zum Schließen, seitlich auf Start, um den Titel zu wechseln. Nimm Kurzbefehle auf, um zum wartenden Agenten zu wechseln, den Agenten-Tab zu öffnen, zur Quelle der letzten Mitteilung zu springen oder die Notch zu öffnen und zu schließen.</p>
-        <p class="fr">Balayez vers le bas pour ouvrir, vers le haut pour fermer, sur le côté dans l’onglet Accueil pour changer de morceau. Enregistrez des raccourcis pour aller à l’agent qui attend, ouvrir l’onglet Agents, aller à la source de la dernière notification, ou ouvrir et fermer l’encoche.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Mirror</span><span class="ko">미러</span><span class="ja">ミラー</span><span class="zh">镜子</span><span class="es">Espejo</span><span class="de">Spiegel</span><span class="fr">Miroir</span></h3>
-        <p class="en">Check your hair before the call. The camera runs only while the tab is open.</p>
-        <p class="ko">통화 전에 머리 한 번 확인. 카메라는 탭이 열려 있을 때만 켜집니다.</p>
-        <p class="ja">通話前に身だしなみを確認。カメラはタブが開いている間だけ動きます。</p>
-        <p class="zh">通话前照一照镜子，相机只在该标签打开时运行。</p>
-        <p class="es">Revisa tu peinado antes de la llamada. La cámara solo funciona mientras la pestaña está abierta.</p>
-        <p class="de">Prüf dein Haar vor dem Call. Die Kamera läuft nur, solange der Tab geöffnet ist.</p>
-        <p class="fr">Vérifiez votre coiffure avant l’appel. La caméra ne fonctionne que lorsque l’onglet est ouvert.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Notifications tab</span><span class="ko">알림 탭</span><span class="ja">通知タブ</span><span class="zh">通知标签</span><span class="es">Pestaña Notificaciones</span><span class="de">Mitteilungen-Tab</span><span class="fr">Onglet Notifications</span></h3>
-        <p class="en">The last 30 notices from agents, terminals and your calendar, with a badge for unseen ones. Click one to go back where it came from. Off by default, kept in memory only.</p>
-        <p class="ko">에이전트, 터미널, 캘린더에서 온 최근 알림 30개와 안 본 개수 배지. 누르면 알림이 온 곳으로 돌아갑니다. 기본으로 꺼져 있고 메모리에만 둡니다.</p>
-        <p class="ja">エージェント、ターミナル、カレンダーからの最近の通知30件と、未読数のバッジ。クリックすると通知元に戻れます。初期状態はオフで、メモリ上にだけ保持します。</p>
-        <p class="zh">来自代理、终端和日历的最近 30 条通知，未读数量以角标显示。点击即可回到通知来源。默认关闭，只保存在内存中。</p>
-        <p class="es">Los últimos 30 avisos de agentes, terminales y tu calendario, con una insignia para los no vistos. Haz clic en uno para volver a su origen. Desactivada por defecto y guardada solo en memoria.</p>
-        <p class="de">Die letzten 30 Hinweise von Agenten, Terminals und deinem Kalender, mit einem Badge für ungesehene. Ein Klick führt zurück zur Quelle. Standardmäßig aus und nur im Arbeitsspeicher.</p>
-        <p class="fr">Les 30 dernières alertes des agents, des terminaux et de votre calendrier, avec un badge pour celles non vues. Cliquez sur l’une d’elles pour revenir à son origine. Désactivé par défaut, gardé en mémoire uniquement.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Agents at work</span><span class="ko">작업 중인 에이전트</span><span class="ja">作業中のエージェント</span><span class="zh">工作中的代理</span><span class="es">Agentes en marcha</span><span class="de">Aktive Agenten</span><span class="fr">Agents au travail</span></h3>
-        <p class="en">An item for the closed notch: a raised eyebrow with the count in yellow when coding agents wait for you, a low, level one with the count in green when they are working. It follows Claude Code, Codex, Gemini CLI, OpenCode, GitHub Copilot, Antigravity, Cursor, Hermes, Amp, omp, omo and pi once connected, and gjc, herdr, Muxy 2 and Paseo on their own. The eyebrow hops when an agent finishes a turn and droops when a Claude or Codex limit runs low. A session whose subagents or background commands are still running keeps counting as working for up to two hours.</p>
-        <p class="ko">닫힌 노치 항목입니다. 코딩 에이전트가 나를 기다리면 치켜든 눈썹과 노란 숫자로, 일하는 중이면 낮고 평평한 눈썹과 초록 숫자로 보여 줍니다. 연결해 둔 Claude Code·<wbr>Codex·<wbr>Gemini CLI·<wbr>OpenCode·<wbr>GitHub Copilot·<wbr>Antigravity·<wbr>Cursor·<wbr>Hermes·<wbr>Amp·<wbr>omp·<wbr>omo·<wbr>pi와, gjc·<wbr>herdr·<wbr>Muxy 2·<wbr>Paseo를 따라갑니다. 에이전트가 턴을 마치면 눈썹이 들썩이고, Claude·<wbr>Codex 한도가 얼마 안 남으면 축 처져요. 서브에이전트나 백그라운드 명령이 아직 돌고 있는 세션은 최대 두 시간까지 계속 작업 중으로 보여요.</p>
-        <p class="ja">折りたたみ時のノッチに置ける項目。コーディングエージェントが待っているときは上がった眉と黄色い数字、作業中は低く平らな眉と緑の数字で示します。接続済みの Claude Code・Codex・Gemini CLI・OpenCode・GitHub Copilot・Antigravity・Cursor・Hermes・Amp・omp・omo・pi と、gjc・herdr・Muxy 2・Paseo に対応しています。エージェントがターンを終えると眉が跳ね、Claude や Codex の上限が残りわずかになると眉が垂れます。サブエージェントやバックグラウンドのコマンドがまだ動いているセッションは、最長 2 時間、作業中のままです。</p>
-        <p class="zh">收起刘海的一个显示项：有编程代理在等你时显示扬起的眉毛和黄色数字，正在工作时显示压低放平的眉毛和绿色数字。支持已连接的 Claude Code、Codex、Gemini CLI、OpenCode、GitHub Copilot、Antigravity、Cursor、Hermes、Amp、omp、omo、pi，以及 gjc、herdr、Muxy 2 和 Paseo。代理结束一轮时眉毛会跳两下，Claude 或 Codex 额度快用完时眉毛会垂下。子代理或后台命令仍在运行的会话，最长两小时内会一直算作工作中。</p>
-        <p class="es">Un elemento para el notch plegado: una ceja alzada con el número en amarillo cuando hay agentes de código que te esperan, y una ceja baja y recta con el número en verde cuando trabajan. Sigue a Claude Code, Codex, Gemini CLI, OpenCode, GitHub Copilot, Antigravity, Cursor, Hermes, Amp, omp, omo y pi una vez conectados, y a gjc, herdr, Muxy 2 y Paseo por sí solos. La ceja da un saltito cuando un agente termina un turno y se afloja cuando un límite de Claude o Codex se agota. Una sesión con subagentes o comandos en segundo plano aún en marcha sigue contando como activa hasta dos horas.</p>
-        <p class="de">Ein Element für die eingeklappte Notch: eine hochgezogene Braue mit gelber Zahl, wenn Coding-Agenten auf dich warten, eine tiefe, gerade Braue mit grüner Zahl, wenn sie arbeiten. Es folgt Claude Code, Codex, Gemini CLI, OpenCode, GitHub Copilot, Antigravity, Cursor, Hermes, Amp, omp, omo und pi, sobald verbunden, sowie gjc, herdr, Muxy 2 und Paseo von allein. Die Braue hüpft, wenn ein Agent einen Zug beendet, und hängt durch, wenn ein Limit von Claude oder Codex knapp wird. Eine Sitzung, in der Subagenten oder Befehle im Hintergrund noch laufen, zählt bis zu zwei Stunden weiter als aktiv.</p>
-        <p class="fr">Un élément pour l’encoche repliée : un sourcil levé avec le nombre en jaune quand des agents de code vous attendent, un sourcil bas et droit avec le nombre en vert quand ils travaillent. Il suit Claude Code, Codex, Gemini CLI, OpenCode, GitHub Copilot, Antigravity, Cursor, Hermes, Amp, omp, omo et pi une fois connectés, et gjc, herdr, Muxy 2 et Paseo d’office. Le sourcil sautille quand un agent termine un tour et s’affaisse quand une limite de Claude ou Codex s’épuise. Une session dont les sous-agents ou les commandes en arrière-plan tournent encore compte comme au travail jusqu’à deux heures.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Agents tab</span><span class="ko">에이전트 탭</span><span class="ja">エージェントタブ</span><span class="zh">代理标签</span><span class="es">Pestaña Agentes</span><span class="de">Agenten-Tab</span><span class="fr">Onglet Agents</span></h3>
-        <p class="en">One line for each coding agent session at work or waiting for you: its state, name, folder, tool, model and how full its context is. Go to its terminal with a click, or message it right from the notch, and drop files on a row to type their paths in. That works in Ghostty (Claude Code sessions), Terminal, iTerm2, WezTerm, kitty, cmux, herdr, Muxy 2 and Orca, and for Paseo's agents that aren't working (messages only). Muxy 2 reaches a session's exact tab through a small bridge extension you load once. Sessions you used in the last 3 hours show dimmed as Idle, and when nothing is open, Recent lists up to 5 conversations from the last week to resume. Only the folder, model, token count, permission mode, session name and last prompt are read from the tools' own session files.</p>
-        <p class="ko">작업 중이거나 나를 기다리는 코딩 에이전트 세션이 한 줄에 하나씩, 상태, 이름, 폴더, 도구, 모델, 컨텍스트가 얼마나 찼는지와 함께 나옵니다. 누르면 그 터미널로 가고, 노치에서 바로 메시지를 보내거나 파일을 줄 위로 끌어다 놓아 경로를 입력할 수도 있어요. Ghostty(Claude Code 세션만), Terminal, iTerm2, WezTerm, kitty, cmux, herdr, Muxy 2, Orca에서 되고, Paseo는 일하는 중이 아닌 에이전트에 메시지만 됩니다. Muxy 2는 한 번 불러오는 작은 브리지 확장으로 세션의 정확한 탭까지 갑니다. 최근 3시간 안에 쓴 세션은 흐리게 「쉬는 중」으로 보이고, 열린 세션이 없을 때는 「최근」에 지난 일주일의 대화가 최대 5개 나와 이어서 열 수 있어요. 도구의 세션 파일에서 폴더, 모델, 토큰 수, 권한 모드, 세션 이름, 마지막 프롬프트를 읽습니다.</p>
-        <p class="ja">作業中、または入力を待っているコーディングエージェントのセッションを 1 件 1 行で一覧します。状態、名前、フォルダ、ツール、モデル、コンテキストの使用量が並びます。クリックでそのターミナルへ移動し、ノッチからそのままメッセージを送ったり、行にファイルをドロップしてパスを入力したりできます。Ghostty(Claude Code のセッションのみ)・Terminal・iTerm2・WezTerm・kitty・cmux・herdr・Muxy 2・Orca で使え、Paseo は作業中でないエージェントへのメッセージのみです。Muxy 2 は一度読み込む小さなブリッジ拡張機能で、セッションの正確なタブまで移動します。直近 3 時間に使ったセッションは薄く「待機中」と表示され、開いているセッションがないときは「最近」に過去 1 週間の会話が最大 5 件並び、再開できます。ツール自身のセッションファイルから読み取るのはフォルダ、モデル、トークン数、権限モード、セッション名、直近のプロンプトです。</p>
-        <p class="zh">每个正在工作或在等你的编程代理会话占一行：状态、名称、文件夹、工具、模型，以及上下文用了多少。点击即可前往它的终端，也可以直接在刘海里给它发消息，或把文件拖到某一行上输入路径。在 Ghostty（仅 Claude Code 会话）、Terminal、iTerm2、WezTerm、kitty、cmux、herdr、Muxy 2 和 Orca 中可用，Paseo 只能给不在工作的代理发消息。Muxy 2 通过只需加载一次的小型桥接扩展，前往会话的确切标签页。最近 3 小时内用过的会话会以暗淡的“空闲”显示；没有任何会话打开时，“最近”会列出最多 5 个过去一周的对话供你恢复。只从工具自己的会话文件中读取文件夹、模型、令牌数、权限模式、会话名称和最近一条提示。</p>
-        <p class="es">Una línea por cada sesión de un agente de código en marcha o a la espera de ti: su estado, nombre, carpeta, herramienta, modelo y cuánto contexto lleva. Haz clic para ir a su terminal, escríbele desde el notch o suelta archivos en una fila para escribir sus rutas. Funciona en Ghostty (solo sesiones de Claude Code), Terminal, iTerm2, WezTerm, kitty, cmux, herdr, Muxy 2 y Orca, y en Paseo (solo mensajes, a los agentes que no están trabajando). Muxy 2 llega a la pestaña exacta de una sesión con una pequeña extensión puente que cargas una vez. Las sesiones que usaste en las últimas 3 horas salen atenuadas como «Inactiva», y cuando no hay ninguna abierta, «Recientes» lista hasta 5 conversaciones de la última semana para reanudarlas. Solo se leen la carpeta, el modelo, los tokens, el modo de permisos, el nombre de la sesión y el último prompt de los archivos de sesión de las herramientas.</p>
-        <p class="de">Eine Zeile pro Coding-Agent-Sitzung, die läuft oder auf dich wartet: Zustand, Name, Ordner, Tool, Modell und wie voll der Kontext ist. Ein Klick führt zu ihrem Terminal, du kannst ihr direkt aus der Notch schreiben und Dateien auf eine Zeile ziehen, um ihre Pfade einzutippen. Das geht in Ghostty (nur Claude-Code-Sitzungen), Terminal, iTerm2, WezTerm, kitty, cmux, herdr, Muxy 2 und Orca, bei Paseo nur als Nachricht an Agenten, die nicht arbeiten. Muxy 2 erreicht den genauen Tab einer Sitzung über eine kleine Brücken-Erweiterung, die du einmal lädst. Sitzungen der letzten 3 Stunden erscheinen abgedunkelt als „Inaktiv“, und wenn nichts offen ist, listet „Zuletzt“ bis zu 5 Gespräche der letzten Woche zum Fortsetzen. Aus den Sitzungsdateien der Tools werden nur Ordner, Modell, Token-Zahl, Berechtigungsmodus, Sitzungsname und letzter Prompt gelesen.</p>
-        <p class="fr">Une ligne par session d’agent de code au travail ou en attente de vous : son état, son nom, son dossier, son outil, son modèle et le remplissage de son contexte. Un clic amène à son terminal, vous pouvez lui écrire depuis l’encoche et déposer des fichiers sur une ligne pour en taper les chemins. Cela marche dans Ghostty (sessions Claude Code seulement), Terminal, iTerm2, WezTerm, kitty, cmux, herdr, Muxy 2 et Orca, et pour Paseo (messages seulement, aux agents qui ne travaillent pas). Muxy 2 atteint l’onglet exact d’une session grâce à une petite extension passerelle à charger une fois. Les sessions des 3 dernières heures apparaissent estompées comme « Inactive », et quand rien n’est ouvert, « Récentes » liste jusqu’à 5 conversations de la dernière semaine à reprendre. Seuls le dossier, le modèle, le nombre de tokens, le mode de permissions, le nom de la session et le dernier prompt sont lus dans les fichiers de session des outils.</p>
-      </article>
-      <article class="tile reveal">
-        <h3><span class="en">Live Claude limits</span><span class="ko">Claude 실시간 한도</span><span class="ja">Claude の上限をリアルタイムに</span><span class="zh">实时 Claude 额度</span><span class="es">Límites de Claude en directo</span><span class="de">Claude-Limits live</span><span class="fr">Limites de Claude en direct</span></h3>
-        <p class="en">Say yes once in the AI tab and your 5-hour and weekly Claude limits come from Anthropic about once an hour, using the sign-in Claude Code keeps in the Keychain. Off until you opt in. Limit alerts need no opting in: the notch speaks up at 80% and 95% of a Claude or Codex limit, and again when a limit that got that far resets.</p>
-        <p class="ko">AI 탭에서 한 번 허락하면 Claude Code가 키체인에 둔 로그인 정보로 한 시간에 한 번쯤 Anthropic에서 5시간·주간 한도를 받아옵니다. 허락하기 전에는 꺼져 있어요. 한도 알림은 따로 허락하지 않아도 켜져 있어요. Claude·<wbr>Codex 한도가 80%, 95%를 넘으면, 그리고 그만큼 쓴 한도가 초기화되면 노치가 알려 줍니다.</p>
-        <p class="ja">AI タブで一度オンにすると、Claude Code がキーチェーンに保存しているサインイン情報を使い、1時間に1回ほど Anthropic から5時間・週間の上限を取得します。オンにするまではオフのままです。上限アラートは最初からオンです。Claude や Codex の上限が 80% と 95% を超えたとき、そこまで使った上限がリセットされたときにノッチが知らせます。</p>
-        <p class="zh">在 AI 标签中同意一次后，会使用 Claude Code 保存在钥匙串中的登录信息，大约每小时从 Anthropic 获取一次 5 小时和每周额度。在你同意之前保持关闭。额度提醒无需开启，默认就有：Claude 或 Codex 的额度超过 80% 和 95% 时，以及用到这个程度的额度重置时，刘海会提醒你。</p>
-        <p class="es">Acepta una vez en la pestaña Uso de IA y tus límites de Claude de 5 horas y semanales llegan de Anthropic más o menos cada hora, con la sesión que Claude Code guarda en el Llavero. Desactivado hasta que lo aceptes. Los avisos de límite vienen activados: la muesca avisa al 80 % y al 95 % de un límite de Claude o Codex, y cuando un límite que llegó a eso se restablece.</p>
-        <p class="de">Einmal im KI-Tab zustimmen, und deine 5-Stunden- und Wochenlimits von Claude kommen etwa stündlich von Anthropic, über die Anmeldung, die Claude Code im Schlüsselbund hält. Aus, bis du zustimmst. Limit-Hinweise sind von Anfang an an: Die Notch meldet sich bei 80 % und 95 % eines Limits von Claude oder Codex und wenn ein so weit genutztes Limit zurückgesetzt wird.</p>
-        <p class="fr">Acceptez une fois dans l’onglet IA, et vos limites Claude sur 5 heures et à la semaine arrivent d’Anthropic environ une fois par heure, grâce à la connexion que Claude Code garde dans le trousseau. Désactivé tant que vous n’avez pas accepté. Les alertes de limite sont actives d’emblée : l’encoche vous prévient à 80 % et 95 % d’une limite de Claude ou Codex, et quand une limite arrivée jusque-là est réinitialisée.</p>
-      </article>
-      <article class="tile t-half reveal">
-        <h3><span class="en">Make it yours</span><span class="ko">내게 맞게 구성</span><span class="ja">自分好みに設定</span><span class="zh">打造专属体验</span><span class="es">Hazlo tuyo</span><span class="de">Mach es zu deinem</span><span class="fr">Faites-le vôtre</span></h3>
-        <p class="en">Pick your tabs and drag them into order, whether the header shows the date, what the collapsed notch shows, and which pop-ups you get. Every tab fits in one row, and the current tab shows its name. During a call it shows the call app and how long you've been talking, and when idle each side of the collapsed notch can show Claude Code usage left, agents at work, battery, weather or the date. Anything you turn off stops running. On macOS 26 it wears Liquid Glass, tinted as dark as you like up to solid black, and it can hide while the lid is closed. It steps aside for Mission Control, and with more than one display it follows the pointer or stays on one screen.</p>
-        <p class="ko">탭을 고르고 끌어서 순서를 정하고, 헤더에 날짜를 보일지, 접힌 노치에 보일 것, 받을 알림을 직접 고르세요. 탭은 모두 한 줄에 들어가고 지금 탭은 이름이 함께 표시됩니다. 통화 중에는 통화 앱과 통화 시간이, 평소에는 접힌 노치 양쪽에 Claude Code 남은 양, 작업 중인 에이전트, 배터리, 날씨, 날짜를 띄워 둘 수 있어요. 꺼 둔 기능은 동작하지 않습니다. macOS 26에서는 Liquid Glass로 그려지고 농도를 완전한 검정까지 올릴 수 있으며, 덮개를 닫았을 때 숨길 수도 있어요. Mission Control이 열리면 비켜 주고, 화면이 여럿이면 포인터를 따라가거나 한 화면에 머뭅니다.</p>
-        <p class="ja">タブを選んでドラッグで並べ替え、ヘッダーに日付を表示するか、折りたたみ時のノッチに表示する内容、受け取る通知を自由に選べます。タブはすべて 1 行に収まり、現在のタブは名前も表示されます。通話中は通話アプリと通話時間を、待機中は折りたたみ時のノッチの両側に Claude Code の残り使用量、作業中のエージェント、バッテリー、天気、日付を表示できます。オフにした機能は動作しません。macOS 26 では Liquid Glass で描かれ（濃さは真っ黒まで調整できます）、蓋を閉じている間は隠すこともできます。Mission Control では身を引き、ディスプレイが複数あればポインタを追うか一つの画面にとどまります。</p>
-        <p class="zh">自由选择标签并拖动排序、顶部栏是否显示日期、收起刘海要显示的内容，以及想收到的提示。所有标签放在一行里，当前标签会显示名称。通话时会显示通话应用和时长；空闲时收起刘海两侧可以显示 Claude Code 剩余额度、工作中的代理、电量、天气或日期。关闭的功能完全不运行。在 macOS 26 上呈现 Liquid Glass 效果，浓度可一直调到纯黑，合上盖子时也可以隐藏。打开调度中心时会让开；有多台显示器时，它可以跟随指针，也可以停在同一块屏幕上。</p>
-        <p class="es">Elige tus pestañas, arrástralas para ordenarlas y decide si la cabecera muestra la fecha, qué muestra el notch plegado, y qué avisos recibes. Todas las pestañas caben en una fila y la actual muestra su nombre. Durante una llamada muestra la app de la llamada y cuánto tiempo lleváis hablando, y en reposo cada lado del notch plegado puede mostrar el Claude Code restante, los agentes en marcha, la batería, el tiempo o la fecha. Lo que desactives deja de funcionar. En macOS 26 luce Liquid Glass, con el tono que quieras hasta negro opaco, y puede ocultarse mientras la tapa está cerrada. Se aparta en Mission Control y, con varias pantallas, sigue al puntero o se queda en una.</p>
-        <p class="de">Wähle deine Tabs, ordne sie per Ziehen und lege fest, ob die Kopfzeile das Datum zeigt, was die eingeklappte Notch zeigt, und welche Hinweise du bekommst. Alle Tabs passen in eine Reihe, und der aktuelle zeigt seinen Namen. Während eines Anrufs zeigt sie die Anruf-App und wie lange du schon sprichst, und im Ruhezustand kann jede Seite der eingeklappten Notch die verbleibende Claude Code-Nutzung, aktive Agenten, den Akkustand, das Wetter oder das Datum zeigen. Alles, was du ausschaltest, läuft nicht mehr. Auf macOS 26 trägt sie Liquid Glass, getönt bis ganz deckend schwarz, und kann sich verstecken, während der Deckel geschlossen ist. Für Mission Control macht sie Platz, und mit mehreren Bildschirmen folgt sie dem Zeiger oder bleibt auf einem.</p>
-        <p class="fr">Choisissez vos onglets, réordonnez-les en les glissant, si l’en-tête affiche la date, ce qu’affiche l’encoche repliée, et les notifications que vous recevez. Tous les onglets tiennent sur une ligne, et l’onglet actuel affiche son nom. Pendant un appel, elle affiche l’app d’appel et sa durée, et au repos, chaque côté de l’encoche repliée peut afficher l’usage restant de Claude Code, les agents au travail, la batterie, la météo ou la date. Tout ce que vous désactivez s’arrête complètement. Sur macOS 26, elle adopte le Liquid Glass, teinté jusqu’au noir opaque, et peut se cacher quand le capot est fermé. Elle s’efface devant Mission Control et, avec plusieurs écrans, suit le pointeur ou reste sur un seul.</p>
-      </article>
-      <article class="tile t-half reveal">
-        <h3><span class="en">Speaks your language</span><span class="ko">7개 언어</span><span class="ja">あなたの言葉で話します</span><span class="zh">跟随你的语言</span><span class="es">Habla tu idioma</span><span class="de">Spricht deine Sprache</span><span class="fr">Parle votre langue</span></h3>
-        <div class="brow-pill" aria-hidden="true"><svg class="nn-brow-loop" width="56" height="22" viewBox="0 0 100 40"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z" fill="#F4F4F1"/></svg></div>
-        <p class="en">Follows your Mac's language. Screens without a notch get a small eyebrow pill in the menu bar that fades out when unused.</p>
-        <p class="ko">Mac 언어 설정을 따릅니다. 노치가 없는 화면에는 메뉴 막대 안에 눈썹 로고의 작은 알약으로 나타나고, 쓰지 않으면 사라져요.</p>
-        <p class="ja">Mac の言語設定に従います。ノッチのない画面では、メニューバーの中に眉のロゴの小さなピルが表示され、使わないときは消えます。</p>
-        <p class="zh">跟随 Mac 的系统语言。没有刘海的屏幕则会在菜单栏中显示一个带眉毛标志的小药丸，闲置时自动淡出。</p>
-        <p class="es">Sigue el idioma de tu Mac. En pantallas sin notch aparece una pequeña píldora con la ceja en la barra de menús, que se desvanece cuando no la usas.</p>
-        <p class="de">Folgt der Sprache deines Macs. Bildschirme ohne Notch bekommen eine kleine Augenbrauen-Pille in der Menüleiste, die ausblendet, wenn du sie nicht nutzt.</p>
-        <p class="fr">Suit la langue de votre Mac. Les écrans sans encoche affichent une petite pastille sourcil dans la barre des menus, qui s’efface quand vous ne l’utilisez pas.</p>
-        <div class="langs"><span>English</span><span>한국어</span><span>日本語</span><span>简体中文</span><span>Español</span><span>Deutsch</span><span>Français</span></div>
-      </article>
+    <div class="ag-stage reveal" id="agStage" role="img">
+      <div class="nn-bar" aria-hidden="true"><div class="l"><b>Nunsseop</b><span class="en">File</span><span class="ko">파일</span><span class="ja">ファイル</span><span class="zh">文件</span><span class="es">Archivo</span><span class="de">Datei</span><span class="fr">Fichier</span></div><div class="r"><span>100%</span><span>9:41</span></div></div>
+      <div class="ag-notch">
+        <div class="ag-bar"><svg class="ag-brow" viewBox="0 0 100 40" aria-hidden="true"><path d="M4 30 C18 16 44 9 68 11 C81 12 91 16 97 21 C89 19 79 18 68 19 C47 20 27 26 11 35 C7 37 2 34 4 30 Z"/></svg><span class="ag-count"><i>3</i><i>1</i></span></div>
+        <div class="ag-note"><b>Claude Code</b><span class="en">Needs your permission to run a command</span><span class="ko">명령을 실행하려면 허락이 필요해요</span><span class="ja">コマンドの実行に許可が必要です</span><span class="zh">需要你的许可才能执行命令</span><span class="es">Necesita tu permiso para ejecutar un comando</span><span class="de">Braucht deine Erlaubnis, um einen Befehl auszuführen</span><span class="fr">A besoin de votre autorisation pour exécuter une commande</span></div>
+      </div>
     </div>
+    <ul class="ag-list">
+      <li class="reveal"><h3><span class="en">Agents at work</span><span class="ko">작업 중인 에이전트</span><span class="ja">作業中のエージェント</span><span class="zh">工作中的代理</span><span class="es">Agentes en marcha</span><span class="de">Aktive Agenten</span><span class="fr">Agents au travail</span></h3>
+        <p class="en">An item for the closed notch: a raised eyebrow with the count in yellow when coding agents wait for you, a low, level one with the count in green when they are working.</p><p class="ko">닫힌 노치 항목입니다. 코딩 에이전트가 나를 기다리면 치켜든 눈썹과 노란 숫자로, 일하는 중이면 낮고 평평한 눈썹과 초록 숫자로 보여 줍니다.</p><p class="ja">折りたたみ時のノッチに置ける項目。コーディングエージェントが待っているときは上がった眉と黄色い数字、作業中は低く平らな眉と緑の数字で示します。</p><p class="zh">收起刘海的一个显示项：有编程代理在等你时显示扬起的眉毛和黄色数字，正在工作时显示压低放平的眉毛和绿色数字。</p><p class="es">Un elemento para el notch plegado: una ceja alzada con el número en amarillo cuando hay agentes de código que te esperan, y una ceja baja y recta con el número en verde cuando trabajan.</p><p class="de">Ein Element für die eingeklappte Notch: eine hochgezogene Braue mit gelber Zahl, wenn Coding-Agenten auf dich warten, eine tiefe, gerade Braue mit grüner Zahl, wenn sie arbeiten.</p><p class="fr">Un élément pour l’encoche repliée : un sourcil levé avec le nombre en jaune quand des agents de code vous attendent, un sourcil bas et droit avec le nombre en vert quand ils travaillent.</p>
+      </li>
+      <li class="reveal"><h3><span class="en">Agents &amp; terminals, in your notch</span><span class="ko">노치로 오는 에이전트⁠·터미널 알림</span><span class="ja">エージェントとターミナルが、ノッチに。</span><span class="zh">代理与终端通知，直达刘海</span><span class="es">Agentes y terminales, en tu notch</span><span class="de">Agenten &amp; Terminals, in deiner Notch</span><span class="fr">Agents &amp; terminaux, dans votre encoche</span></h3>
+        <p class="en">Connect your coding agent in one click, after a preview of how its settings file will change.</p><p class="ko">설정 파일이 어떻게 바뀌는지 미리 본 뒤 클릭 한 번으로 연결합니다.</p><p class="ja">設定ファイルがどう変わるかをプレビューで確認してから、ワンクリックで接続。</p><p class="zh">先预览设置文件将如何变化，再一键连接。</p><p class="es">Conecta tu agente con un clic, tras ver cómo cambiará su archivo de ajustes.</p><p class="de">Verbinde deinen Agenten mit einem Klick, nachdem du dir angesehen hast, wie sich seine Einstellungsdatei ändert.</p><p class="fr">Connectez votre agent en un clic, après un aperçu de la modification de son fichier de réglages.</p>
+      </li>
+      <li class="reveal"><h3><span class="en">Agents tab</span><span class="ko">에이전트 탭</span><span class="ja">エージェントタブ</span><span class="zh">代理标签</span><span class="es">Pestaña Agentes</span><span class="de">Agenten-Tab</span><span class="fr">Onglet Agents</span></h3>
+        <p class="en">One line for each coding agent session at work or waiting for you: its state, name, folder, tool, model and how full its context is.</p><p class="ko">작업 중이거나 나를 기다리는 코딩 에이전트 세션이 한 줄에 하나씩, 상태, 이름, 폴더, 도구, 모델, 컨텍스트가 얼마나 찼는지와 함께 나옵니다.</p><p class="ja">作業中、または入力を待っているコーディングエージェントのセッションを 1 件 1 行で一覧します。状態、名前、フォルダ、ツール、モデル、コンテキストの使用量が並びます。</p><p class="zh">每个正在工作或在等你的编程代理会话占一行：状态、名称、文件夹、工具、模型，以及上下文用了多少。</p><p class="es">Una línea por cada sesión de un agente de código en marcha o a la espera de ti: su estado, nombre, carpeta, herramienta, modelo y cuánto contexto lleva.</p><p class="de">Eine Zeile pro Coding-Agent-Sitzung, die läuft oder auf dich wartet: Zustand, Name, Ordner, Tool, Modell und wie voll der Kontext ist.</p><p class="fr">Une ligne par session d’agent de code au travail ou en attente de vous : son état, son nom, son dossier, son outil, son modèle et le remplissage de son contexte.</p>
+      </li>
+    </ul>
+    <div class="reveal"><ul class="chips"><li>Claude Code</li><li>Codex</li><li>Gemini CLI</li><li>GitHub Copilot</li><li>Antigravity</li><li>Cursor</li><li>OpenCode</li><li>Hermes</li><li>Amp</li><li>omp</li><li>omo</li><li>pi</li></ul></div>
+    <p class="all"><a href="https://github.com/namekun/Nunsseop"><span class="en">See every feature</span><span class="ko">모든 기능 보기</span><span class="ja">すべての機能を見る</span><span class="zh">查看全部功能</span><span class="es">Ver todas las funciones</span><span class="de">Alle Funktionen ansehen</span><span class="fr">Voir toutes les fonctionnalités</span><span aria-hidden="true"> ›</span></a></p>
+    </div>
+  </section>
+
+<section class="block" id="how">
+    <div class="wrap">
+    <div class="section-head">
+      <div class="kicker en">Privacy</div><div class="kicker ko">프라이버시</div><div class="kicker ja">プライバシー</div><div class="kicker zh">隐私</div><div class="kicker es">Privacidad</div><div class="kicker de">Datenschutz</div><div class="kicker fr">Confidentialité</div>
+      <h2 class="en">Private by design.</h2><h2 class="ko">처음부터 프라이버시를 지키게.</h2><h2 class="ja">プライバシーを、最初から。</h2><h2 class="zh">从设计上保护隐私。</h2><h2 class="es">Privada desde el diseño.</h2><h2 class="de">Privat von Grund auf.</h2><h2 class="fr">Privé par conception.</h2>
+    </div>
+    <div class="stats reveal">
+      <div><b>0</b><span class="en">accounts or trackers</span><span class="ko">계정·추적</span><span class="ja">アカウント・トラッカー</span><span class="zh">账户或追踪</span><span class="es">cuentas ni rastreadores</span><span class="de">Accounts oder Tracker</span><span class="fr">comptes ni traqueurs</span></div>
+      <div><b>5 MB</b><span class="en">download, native Swift</span><span class="ko">다운로드, 네이티브 앱</span><span class="ja">のダウンロード、ネイティブ Swift</span><span class="zh">下载，原生 Swift 打造</span><span class="es">de descarga, Swift nativo</span><span class="de">Download, natives Swift</span><span class="fr">téléchargement, natif en Swift</span></div>
+    </div>
+    <div class="promise reveal"><p class="en">No personal data is collected or sent. Network use is limited to a daily release check, lyrics from LRCLIB, weather from Open-Meteo for the city you choose, and fallback artwork — each can be turned off. AI usage is read from files Claude Code and Codex already keep on your Mac, unless you opt in to live Claude limits from Anthropic.</p><p class="ko">개인 정보는 수집하거나 전송하지 않습니다. 네트워크는 하루 한 번 새 버전 확인, LRCLIB 가사, 지정한 도시의 Open-Meteo 날씨, 대체 경로의 앨범아트에만 쓰며 모두 끌 수 있습니다. AI 사용량은 Claude Code와 Codex가 이 Mac에 이미 남기는 파일에서 읽고, Anthropic에서 Claude 실시간 한도를 받아오는 건 직접 켰을 때만입니다.</p><p class="ja">個人情報は収集も送信もしません。ネットワーク通信は、1日1回の新バージョン確認、LRCLIB からの歌詞、指定した都市の Open-Meteo の天気、代替アートワークの取得に限られ、いずれもオフにできます。AI 使用量は、Claude Code と Codex がこの Mac に保存しているファイルから読み取ります。Anthropic から Claude の上限を取得するのは、自分でオンにしたときだけです。</p><p class="zh">不会收集或发送任何个人数据。网络访问仅限于每日版本检查、来自 LRCLIB 的歌词、你所选城市在 Open-Meteo 上的天气，以及备用封面——每一项都可以关闭。AI 用量则直接读取 Claude Code 和 Codex 已经保存在你 Mac 上的文件；只有你主动开启后，才会向 Anthropic 获取实时的 Claude 额度。</p><p class="es">No se recopilan ni se envían datos personales. El uso de red se limita a una comprobación diaria de nuevas versiones, las letras de LRCLIB, el tiempo de Open-Meteo para la ciudad que elijas y una carátula alternativa; todo se puede desactivar. El uso de IA se lee de los archivos que Claude Code y Codex ya guardan en tu Mac, salvo que actives los límites de Claude en directo desde Anthropic.</p><p class="de">Es werden keine persönlichen Daten gesammelt oder gesendet. Netzwerkzugriffe beschränken sich auf eine tägliche Versionsprüfung, Songtexte von LRCLIB, Wetter von Open-Meteo für die gewählte Stadt und Ersatz-Cover – jedes davon lässt sich abschalten. Die KI-Nutzung wird aus Dateien gelesen, die Claude Code und Codex bereits auf deinem Mac führen, es sei denn, du schaltest Live-Limits für Claude von Anthropic ein.</p><p class="fr">Aucune donnée personnelle n’est collectée ni envoyée. L’usage du réseau se limite à une vérification quotidienne des nouvelles versions, aux paroles via LRCLIB, à la météo via Open-Meteo pour la ville choisie, et aux pochettes de secours — chacun peut être désactivé. L’usage de l’IA est lu dans les fichiers que Claude Code et Codex conservent déjà sur votre Mac, sauf si vous activez les limites de Claude en direct depuis Anthropic.</p></div>
     </div>
   </section>
 
@@ -680,11 +509,6 @@
       <div class="kicker en">Install</div><div class="kicker ko">설치</div><div class="kicker ja">インストール</div><div class="kicker zh">安装</div><div class="kicker es">Instalación</div><div class="kicker de">Installieren</div><div class="kicker fr">Installation</div>
       <h2 class="en">Up and running in a minute.</h2><h2 class="ko">1분이면 충분합니다.</h2><h2 class="ja">1分で使い始められます。</h2><h2 class="zh">一分钟就能用起来。</h2><h2 class="es">Listo en un minuto.</h2><h2 class="de">In einer Minute startklar.</h2><h2 class="fr">Opérationnel en une minute.</h2>
       <p class="en">macOS 14 Sonoma or later, on an Apple silicon Mac.</p><p class="ko">macOS 14 Sonoma 이상, Apple 실리콘 Mac.</p><p class="ja">macOS 14 Sonoma 以降、Apple シリコン搭載の Mac で。</p><p class="zh">macOS 14 Sonoma 或更高版本，搭载 Apple 芯片的 Mac。</p><p class="es">macOS 14 Sonoma o posterior, en un Mac con Apple silicon.</p><p class="de">macOS 14 Sonoma oder neuer, auf einem Mac mit Apple Silicon.</p><p class="fr">macOS 14 Sonoma ou version ultérieure, sur un Mac Apple silicon.</p>
-    </div>
-    <div class="steps">
-      <div class="step"><div class="n">1</div><h3><span class="en">Install</span><span class="ko">설치</span><span class="ja">インストール</span><span class="zh">安装</span><span class="es">Instalación</span><span class="de">Installieren</span><span class="fr">Installation</span></h3><p class="en">Download the DMG and drag it to Applications, or use one Homebrew line. It lives in the notch, not the Dock.</p><p class="ko">DMG를 받아 응용 프로그램으로 끌어다 놓거나 Homebrew 한 줄이면 됩니다. Dock이 아니라 노치에 삽니다.</p><p class="ja">DMG をダウンロードしてアプリケーションにドラッグするか、Homebrew のコマンド1行だけ。Dock ではなくノッチに常駐します。</p><p class="zh">下载 DMG 拖到“应用程序”中，或者一行 Homebrew 命令即可。它常驻在刘海里，不在 Dock 中。</p><p class="es">Descarga el DMG y arrástralo a Aplicaciones, o usa una línea de Homebrew. Vive en el notch, no en el Dock.</p><p class="de">Lade das DMG und zieh die App in „Programme“, oder nimm eine Zeile mit Homebrew. Sie lebt in der Notch, nicht im Dock.</p><p class="fr">Téléchargez le DMG et glissez-le dans Applications, ou utilisez une ligne Homebrew. Il vit dans l’encoche, pas dans le Dock.</p></div>
-      <div class="step"><div class="n">2</div><h3><span class="en">Hover the notch</span><span class="ko">노치에 마우스 올리기</span><span class="ja">ノッチにマウスを乗せる</span><span class="zh">把鼠标移到刘海上</span><span class="es">Pasa el cursor por el notch</span><span class="de">Maus über die Notch</span><span class="fr">Survolez l’encoche</span></h3><p class="en">It opens. Move away and it tucks itself back. Play some music and watch it come alive. On a fresh install, a short tour opens it for you.</p><p class="ko">열립니다. 마우스를 떼면 다시 접혀요. 음악을 틀면 살아 움직입니다. 처음 설치하면 짧은 안내가 저절로 열려요.</p><p class="ja">開きます。マウスを離すとまた閉じます。音楽を再生すると動き出します。初回インストール時は、短いスタートガイドが自動で開きます。</p><p class="zh">它会打开；移开鼠标又会自动收起。播放点音乐，看它变得生动起来。刚安装时，它会自己展开，带你看一遍简短的新手引导。</p><p class="es">Se abre. Aparta el cursor y se repliega. Pon música y mira cómo cobra vida. En una instalación nueva, una guía breve la abre por ti.</p><p class="de">Sie öffnet sich. Geh weg, und sie zieht sich wieder ein. Spiel etwas Musik und sieh zu, wie sie lebendig wird. Bei einer frischen Installation öffnet sie eine kurze Tour von selbst.</p><p class="fr">Elle s’ouvre. Éloignez-vous et elle se replie. Lancez de la musique et regardez-la s’animer. Sur une installation neuve, une courte présentation l’ouvre pour vous.</p></div>
-      <div class="step"><div class="n">3</div><h3><span class="en">Make it yours</span><span class="ko">내 맞게 고르기</span><span class="ja">自分好みに設定</span><span class="zh">打造专属体验</span><span class="es">Hazlo tuyo</span><span class="de">Mach es zu deinem</span><span class="fr">Configurez-la à votre façon</span></h3><p class="en">Right-click the notch and open Settings to choose tabs, pop-ups and size.</p><p class="ko">노치를 우클릭해 설정을 열고 탭, 알림, 크기를 고르세요.</p><p class="ja">ノッチを右クリックして設定を開き、タブ、通知、サイズを選んでください。</p><p class="zh">右键点击刘海打开设置，选择标签、提示和尺寸。</p><p class="es">Haz clic derecho en el notch y abre Ajustes para elegir pestañas, avisos y tamaño.</p><p class="de">Klicke mit der rechten Maustaste auf die Notch und öffne die Einstellungen, um Tabs, Hinweise und Größe zu wählen.</p><p class="fr">Clic droit sur l’encoche puis ouvrez Réglages pour choisir les onglets, les notifications et la taille.</p></div>
     </div>
     <div class="install">
       <div class="tabs" role="tablist">
@@ -738,64 +562,6 @@ open build/Nunsseop.app</pre></div>
         <p class="note es">Necesita las herramientas de línea de comandos de Xcode (Swift 5.10 o superior).</p>
         <p class="note de">Benötigt die Xcode-Kommandozeilen-Tools (Swift 5.10+).</p>
         <p class="note fr">Nécessite les outils en ligne de commande Xcode (Swift 5.10+).</p>
-      </div>
-    </div>
-    </div>
-  </section>
-
-<section class="block" id="how">
-    <div class="wrap">
-    <div class="section-head">
-      <div class="kicker en">Under the hood</div><div class="kicker ko">작동 방식</div><div class="kicker ja">内部の仕組み</div><div class="kicker zh">幕后原理</div><div class="kicker es">Por dentro</div><div class="kicker de">Unter der Haube</div><div class="kicker fr">Sous le capot</div>
-      <h2 class="en">Private by design.</h2><h2 class="ko">처음부터 프라이버시를 지키게.</h2><h2 class="ja">プライバシーを、最初から。</h2><h2 class="zh">从设计上保护隐私。</h2><h2 class="es">Privada desde el diseño.</h2><h2 class="de">Privat von Grund auf.</h2><h2 class="fr">Privé par conception.</h2>
-    </div>
-    <div class="two">
-      <div class="plain reveal">
-        <h3><span class="en">How now playing works</span><span class="ko">재생 정보를 읽는 방법</span><span class="ja">再生情報の取得方法</span><span class="zh">“正在播放”的实现方式</span><span class="es">Cómo funciona la reproducción</span><span class="de">So funktioniert die Titelerkennung</span><span class="fr">Comment la lecture en cours est détectée</span></h3>
-        <p class="en">Since macOS 15.4, the private MediaRemote framework only answers apps signed by Apple. Nunsseop runs a tiny helper inside the system's <code>/usr/bin/perl</code> to read what's playing and send play, pause, skip and seek.</p>
-        <p class="ko">macOS 15.4부터 비공개 MediaRemote 프레임워크는 Apple이 서명한 앱에만 응답합니다. Nunsseop은 시스템의 <code>/usr/bin/perl</code> 안에서 작은 헬퍼를 실행해 재생 정보를 읽고 재생·일시정지·건너뛰기·위치 이동을 보냅니다.</p>
-        <p class="ja">macOS 15.4 以降、非公開の MediaRemote フレームワークは Apple が署名したアプリにしか応答しません。Nunsseop はシステムの <code>/usr/bin/perl</code> 内で小さなヘルパーを実行し、再生情報を読み取って再生・一時停止・スキップ・シークを送信します。</p>
-        <p class="zh">从 macOS 15.4 开始，私有的 MediaRemote 框架只响应 Apple 签名的应用。Nunsseop 在系统的 <code>/usr/bin/perl</code> 中运行一个小型辅助程序来读取播放信息，并发送播放、暂停、切换和跳转指令。</p>
-        <p class="es">Desde macOS 15.4, el framework privado MediaRemote solo responde a apps firmadas por Apple. Nunsseop ejecuta un pequeño ayudante dentro del <code>/usr/bin/perl</code> del sistema para leer lo que se está reproduciendo y enviar reproducir, pausar, saltar y avanzar.</p>
-        <p class="de">Seit macOS 15.4 antwortet das private MediaRemote-Framework nur noch Apps, die von Apple signiert sind. Nunsseop führt dafür einen winzigen Helfer im systemeigenen <code>/usr/bin/perl</code> aus, um zu lesen, was läuft, und um Abspielen, Pause, Überspringen und Spulen zu senden.</p>
-        <p class="fr">Depuis macOS 15.4, le framework privé MediaRemote ne répond qu’aux apps signées par Apple. Nunsseop exécute un petit assistant au sein du <code>/usr/bin/perl</code> du système pour lire ce qui joue et envoyer lecture, pause, saut et déplacement.</p>
-        <p class="en">If a future macOS update blocks it, Nunsseop falls back to AppleScript for Music and Spotify and to reading media tabs in browsers.</p>
-        <p class="ko">이후 macOS 업데이트로 막히면 Music·<wbr>Spotify는 AppleScript로, 브라우저는 미디어 탭 읽기로 자동 전환됩니다.</p>
-        <p class="ja">将来の macOS アップデートでこれが使えなくなった場合、Nunsseop は Music と Spotify に AppleScript で、ブラウザにはメディアタブの読み取りで対応します。</p>
-        <p class="zh">如果未来的 macOS 更新阻止了这种方式，Nunsseop 会改用 AppleScript 控制 Music 和 Spotify，并读取浏览器的媒体标签页。</p>
-        <p class="es">Si una futura actualización de macOS lo bloquea, Nunsseop recurre a AppleScript para Music y Spotify, y a leer las pestañas de medios en los navegadores.</p>
-        <p class="de">Falls ein zukünftiges macOS-Update dies blockiert, weicht Nunsseop für Music und Spotify auf AppleScript aus und liest bei Browsern die Medien-Tabs.</p>
-        <p class="fr">Si une future mise à jour de macOS bloque cela, Nunsseop se replie sur AppleScript pour Music et Spotify, et sur la lecture des onglets média dans les navigateurs.</p>
-        <p class="en">No personal data is collected or sent. Network use is limited to a daily release check, lyrics from LRCLIB, weather from Open-Meteo for the city you choose, and fallback artwork — each can be turned off. AI usage is read from files Claude Code and Codex already keep on your Mac, unless you opt in to live Claude limits from Anthropic.</p>
-        <p class="ko">개인 정보는 수집하거나 전송하지 않습니다. 네트워크는 하루 한 번 새 버전 확인, LRCLIB 가사, 지정한 도시의 Open-Meteo 날씨, 대체 경로의 앨범아트에만 쓰며 모두 끌 수 있습니다. AI 사용량은 Claude Code와 Codex가 이 Mac에 이미 남기는 파일에서 읽고, Anthropic에서 Claude 실시간 한도를 받아오는 건 직접 켰을 때만입니다.</p>
-        <p class="ja">個人情報は収集も送信もしません。ネットワーク通信は、1日1回の新バージョン確認、LRCLIB からの歌詞、指定した都市の Open-Meteo の天気、代替アートワークの取得に限られ、いずれもオフにできます。AI 使用量は、Claude Code と Codex がこの Mac に保存しているファイルから読み取ります。Anthropic から Claude の上限を取得するのは、自分でオンにしたときだけです。</p>
-        <p class="zh">不会收集或发送任何个人数据。网络访问仅限于每日版本检查、来自 LRCLIB 的歌词、你所选城市在 Open-Meteo 上的天气，以及备用封面——每一项都可以关闭。AI 用量则直接读取 Claude Code 和 Codex 已经保存在你 Mac 上的文件；只有你主动开启后，才会向 Anthropic 获取实时的 Claude 额度。</p>
-        <p class="es">No se recopilan ni se envían datos personales. El uso de red se limita a una comprobación diaria de nuevas versiones, las letras de LRCLIB, el tiempo de Open-Meteo para la ciudad que elijas y una carátula alternativa; todo se puede desactivar. El uso de IA se lee de los archivos que Claude Code y Codex ya guardan en tu Mac, salvo que actives los límites de Claude en directo desde Anthropic.</p>
-        <p class="de">Es werden keine persönlichen Daten gesammelt oder gesendet. Netzwerkzugriffe beschränken sich auf eine tägliche Versionsprüfung, Songtexte von LRCLIB, Wetter von Open-Meteo für die gewählte Stadt und Ersatz-Cover – jedes davon lässt sich abschalten. Die KI-Nutzung wird aus Dateien gelesen, die Claude Code und Codex bereits auf deinem Mac führen, es sei denn, du schaltest Live-Limits für Claude von Anthropic ein.</p>
-        <p class="fr">Aucune donnée personnelle n’est collectée ni envoyée. L’usage du réseau se limite à une vérification quotidienne des nouvelles versions, aux paroles via LRCLIB, à la météo via Open-Meteo pour la ville choisie, et aux pochettes de secours — chacun peut être désactivé. L’usage de l’IA est lu dans les fichiers que Claude Code et Codex conservent déjà sur votre Mac, sauf si vous activez les limites de Claude en direct depuis Anthropic.</p>
-      </div>
-      <div class="plain reveal">
-        <h3><span class="en">Permissions, only when you ask</span><span class="ko">권한은 필요할 때만</span><span class="ja">権限は、必要なときだけ</span><span class="zh">权限，只在你需要时请求</span><span class="es">Permisos, solo cuando los necesites</span><span class="de">Berechtigungen, nur wenn nötig</span><span class="fr">Des autorisations, seulement à la demande</span></h3>
-        <p class="en">Most permissions are requested the first time you use the feature that needs them. The exception is the folder watched for screenshots (the Desktop by default, or the folder set for screenshots) and Downloads: macOS may ask about them when Nunsseop first starts.</p>
-        <p class="ko">권한은 대부분 그 기능을 처음 쓸 때 요청합니다. 예외는 스크린샷(기본은 데스크탑, 또는 스크린샷 폴더로 정한 곳)과 다운로드를 지켜보는 폴더로, Nunsseop이 처음 시작할 때 macOS가 물을 수 있습니다.</p>
-        <p class="ja">ほとんどの権限は、その機能を初めて使うときに要求されます。例外は、スクリーンショット(標準ではデスクトップ、または設定したスクリーンショットのフォルダ)とダウンロードを監視するフォルダで、Nunsseop の初回起動時に macOS が尋ねることがあります。</p>
-        <p class="zh">大多数权限只在你第一次使用相关功能时才会请求。例外是用来监视截图（默认是桌面，或你为截图设定的文件夹）和下载的文件夹，macOS 可能会在 Nunsseop 第一次启动时询问。</p>
-        <p class="es">La mayoría de los permisos se solicitan la primera vez que usas la función que los necesita. La excepción son la carpeta donde se vigilan las capturas (por defecto el Escritorio, o la que fijes para ellas) y Descargas: macOS puede preguntar por ellas la primera vez que Nunsseop se inicia.</p>
-        <p class="de">Die meisten Berechtigungen werden beim ersten Mal angefragt, wenn du die Funktion nutzt, die sie braucht. Ausnahme sind der Ordner, in dem Screenshots beobachtet werden (standardmäßig der Schreibtisch, sonst der eingestellte Screenshot-Ordner), und Downloads: danach kann macOS beim ersten Start von Nunsseop fragen.</p>
-        <p class="fr">La plupart des autorisations sont demandées la première fois que vous utilisez la fonction qui en a besoin. L’exception : le dossier surveillé pour les captures d’écran (par défaut le Bureau, ou celui réglé pour elles) et Téléchargements ; macOS peut les demander au premier démarrage de Nunsseop.</p>
-        <div class="perm">
-          <div><span class="en">Calendar</span><span class="ko">캘린더</span><span class="ja">カレンダー</span><span class="zh">日历</span><span class="es">Calendario</span><span class="de">Kalender</span><span class="fr">Calendrier</span></div><div><span class="en">Calendars</span><span class="ko">캘린더</span><span class="ja">カレンダー</span><span class="zh">日历</span><span class="es">Calendarios</span><span class="de">Kalender</span><span class="fr">Calendriers</span></div>
-          <div><span class="en">Reminders</span><span class="ko">미리 알림</span><span class="ja">リマインダー</span><span class="zh">提醒事项</span><span class="es">Recordatorios</span><span class="de">Erinnerungen</span><span class="fr">Rappels</span></div><div><span class="en">Reminders</span><span class="ko">미리 알림</span><span class="ja">リマインダー</span><span class="zh">提醒事项</span><span class="es">Recordatorios</span><span class="de">Erinnerungen</span><span class="fr">Rappels</span></div>
-          <div><span class="en">Mirror</span><span class="ko">미러</span><span class="ja">ミラー</span><span class="zh">镜子</span><span class="es">Espejo</span><span class="de">Spiegel</span><span class="fr">Miroir</span></div><div><span class="en">Camera</span><span class="ko">카메라</span><span class="ja">カメラ</span><span class="zh">相机</span><span class="es">Cámara</span><span class="de">Kamera</span><span class="fr">Caméra</span></div>
-          <div><span class="en">Replacing system HUDs</span><span class="ko">시스템 HUD 대체</span><span class="ja">システム HUD の置き換え</span><span class="zh">替换系统 HUD</span><span class="es">Sustituir los HUD del sistema</span><span class="de">Ersetzt System-HUDs</span><span class="fr">Remplacement des HUD système</span></div><div><span class="en">Accessibility</span><span class="ko">손쉬운 사용</span><span class="ja">アクセシビリティ</span><span class="zh">辅助功能</span><span class="es">Accesibilidad</span><span class="de">Bedienungshilfen</span><span class="fr">Accessibilité</span></div>
-          <div><span class="en">Screen recording</span><span class="ko">화면 녹화</span><span class="ja">画面収録</span><span class="zh">屏幕录制</span><span class="es">Grabación de pantalla</span><span class="de">Bildschirmaufnahme</span><span class="fr">Enregistrement de l’écran</span></div><div><span class="en">Screen Recording</span><span class="ko">화면 기록</span><span class="ja">画面収録</span><span class="zh">屏幕录制</span><span class="es">Grabación de pantalla</span><span class="de">Bildschirmaufnahme</span><span class="fr">Enregistrement de l’écran</span></div>
-          <div><span class="en">Recording with sound</span><span class="ko">소리와 함께 녹화</span><span class="ja">音声付きで録画</span><span class="zh">带声音录制</span><span class="es">Grabación con sonido</span><span class="de">Aufnahme mit Ton</span><span class="fr">Enregistrement avec le son</span></div><div><span class="en">Microphone</span><span class="ko">마이크</span><span class="ja">マイク</span><span class="zh">麦克风</span><span class="es">Micrófono</span><span class="de">Mikrofon</span><span class="fr">Microphone</span></div>
-          <div><span class="en">Screenshots and downloads</span><span class="ko">스크린샷과 다운로드</span><span class="ja">スクリーンショットとダウンロード</span><span class="zh">截图与下载</span><span class="es">Capturas y descargas</span><span class="de">Screenshots und Downloads</span><span class="fr">Captures d’écran et téléchargements</span></div><div><span class="en">Desktop and Downloads folders</span><span class="ko">데스크탑·다운로드 폴더</span><span class="ja">デスクトップとダウンロードのフォルダ</span><span class="zh">桌面和下载文件夹</span><span class="es">Carpetas Escritorio y Descargas</span><span class="de">Ordner Schreibtisch und Downloads</span><span class="fr">Dossiers Bureau et Téléchargements</span></div>
-          <div><span class="en">Per-app volume</span><span class="ko">앱별 볼륨</span><span class="ja">アプリごとの音量</span><span class="zh">单个应用音量</span><span class="es">Volumen por app</span><span class="de">Lautstärke pro App</span><span class="fr">Volume par app</span></div><div><span class="en">System audio recording</span><span class="ko">시스템 오디오 녹음</span><span class="ja">システムオーディオの録音</span><span class="zh">系统音频录制</span><span class="es">Grabación del audio del sistema</span><span class="de">Systemaudio-Aufnahme</span><span class="fr">Enregistrement de l’audio du système</span></div>
-          <div><span class="en">Zoom and FaceTime call buttons</span><span class="ko">Zoom·FaceTime 통화 버튼</span><span class="ja">Zoom・FaceTime の通話ボタン</span><span class="zh">Zoom 与 FaceTime 通话按钮</span><span class="es">Botones de llamada de Zoom y FaceTime</span><span class="de">Zoom- und FaceTime-Anruftasten</span><span class="fr">Boutons d’appel Zoom et FaceTime</span></div><div><span class="en">Accessibility</span><span class="ko">손쉬운 사용</span><span class="ja">アクセシビリティ</span><span class="zh">辅助功能</span><span class="es">Accesibilidad</span><span class="de">Bedienungshilfen</span><span class="fr">Accessibilité</span></div>
-          <div><span class="en">Messaging and resuming agent sessions</span><span class="ko">에이전트 세션에 메시지·이어 열기</span><span class="ja">エージェントセッションへのメッセージと再開</span><span class="zh">给代理会话发消息与恢复对话</span><span class="es">Mensajes y reanudación de sesiones de agentes</span><span class="de">Nachrichten an und Fortsetzen von Agenten-Sitzungen</span><span class="fr">Messages et reprise des sessions d’agents</span></div><div><span class="en">Automation (Terminal, iTerm2, Ghostty)</span><span class="ko">자동화(Terminal, iTerm2, Ghostty)</span><span class="ja">オートメーション(Terminal、iTerm2、Ghostty)</span><span class="zh">自动化（Terminal、iTerm2、Ghostty）</span><span class="es">Automatización (Terminal, iTerm2, Ghostty)</span><span class="de">Automation (Terminal, iTerm2, Ghostty)</span><span class="fr">Automatisation (Terminal, iTerm2, Ghostty)</span></div>
-          <div><span class="en">Launch at login</span><span class="ko">로그인 시 실행</span><span class="ja">ログイン時に起動</span><span class="zh">登录时启动</span><span class="es">Abrir al iniciar sesión</span><span class="de">Bei der Anmeldung starten</span><span class="fr">Lancer à l’ouverture de session</span></div><div><span class="en">Login Items</span><span class="ko">로그인 항목</span><span class="ja">ログイン項目</span><span class="zh">登录项</span><span class="es">Ítems de inicio</span><span class="de">Anmeldeobjekte</span><span class="fr">Éléments de connexion</span></div>
-        </div>
       </div>
     </div>
     </div>
@@ -894,6 +660,7 @@ open build/Nunsseop.app</pre></div>
   </div>
   </div>
 
+</main>
   <div class="wrap">
   <footer>
     <span class="en">Nunsseop · MIT License · Made for MacBooks with a notch (and the ones without).</span>
@@ -901,13 +668,21 @@ open build/Nunsseop.app</pre></div>
     <span><a href="https://github.com/namekun/Nunsseop">GitHub</a> · <a href="https://github.com/namekun/Nunsseop/releases">Releases</a> · <a href="https://github.com/namekun/homebrew-tap">Homebrew</a></span>
   </footer>
   </div>
-</main>
 
 <script>
 (function () {
   var LANGS = ['en', 'ko', 'ja', 'zh', 'es', 'de', 'fr'];
   var COPIED = { en: 'Copied', ko: '복사됨', ja: 'コピーしました', zh: '已复制', es: 'Copiado', de: 'Kopiert', fr: 'Copié' };
   var COPY_FAILED = { en: 'Copy failed', ko: '복사 실패', ja: 'コピーできませんでした', zh: '复制失败', es: 'No se pudo copiar', de: 'Kopieren fehlgeschlagen', fr: 'Échec de la copie' };
+  var SCENE_LABEL = {
+    en: 'The closed notch: a low green eyebrow while an agent works, then a raised yellow one and a notice when it needs you',
+    ko: '닫힌 노치: 에이전트가 일하는 동안은 낮은 초록 눈썹, 나를 기다리면 치켜든 노란 눈썹과 알림',
+    ja: '閉じたノッチ：エージェントの作業中は低い緑の眉、待っているときは上がった黄色の眉と通知',
+    zh: '收起的刘海：代理工作时是压低的绿色眉毛，等你时是扬起的黄色眉毛和通知',
+    es: 'El notch plegado: una ceja baja y verde mientras un agente trabaja, y una ceja alzada y amarilla con un aviso cuando te necesita',
+    de: 'Die eingeklappte Notch: eine tiefe grüne Braue, während ein Agent arbeitet, dann eine hochgezogene gelbe Braue und ein Hinweis, wenn er dich braucht',
+    fr: 'L’encoche repliée : un sourcil bas et vert quand un agent travaille, puis un sourcil levé et jaune avec une alerte quand il a besoin de vous'
+  };
   var langBox = document.getElementById('lang');
   var langBtn = langBox.querySelector('.lang-btn');
   var langOptions = langBox.querySelectorAll('[role="option"]');
@@ -949,6 +724,7 @@ open build/Nunsseop.app</pre></div>
   function setLang(lang) {
     document.body.setAttribute('data-lang', lang);
     document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+    document.getElementById('agStage').setAttribute('aria-label', SCENE_LABEL[lang]);
     langOptions.forEach(function (o) {
       var on = o.dataset.set === lang;
       o.setAttribute('aria-selected', String(on));
@@ -1084,14 +860,14 @@ open build/Nunsseop.app</pre></div>
   });
 
   var tourData = [
-    { w: 100, img: 'home.png', en: ['Home', 'What’s playing from any app or browser, with artwork, controls and a seekable bar, next to your week and today’s events. The weather is a row at the bottom.'], ko: ['홈', '어떤 앱이나 브라우저에서 재생하든 앨범아트, 컨트롤, 진행바가 나오고, 옆에는 이번 주와 오늘 일정이 보입니다. 날씨는 맨 아래 줄에 나옵니다.'], ja: ['ホーム', 'どのアプリやブラウザで再生していても、アートワーク・操作ボタン・シークバーを表示。すぐ横には今週と今日の予定も。天気は一番下の行に表示されます。'], zh: ['主页', '任何应用或浏览器正在播放的内容，附带封面、控制按钮和可拖动的进度条，旁边还有本周安排和今日日程。天气显示在最下面一行。'], es: ['Inicio', 'Lo que suena en cualquier app o navegador, con carátula, controles y una barra de progreso, junto a tu semana y los eventos de hoy. El tiempo va en una fila al pie.'], de: ['Start', 'Was in jeder App oder jedem Browser läuft, mit Cover, Steuerung und einer Fortschrittsleiste, daneben deine Woche und die heutigen Termine. Das Wetter steht als Zeile ganz unten.'], fr: ['Accueil', 'Ce qui joue depuis n’importe quelle app ou navigateur, avec pochette, commandes et une barre de progression, à côté de votre semaine et des évènements du jour. La météo tient sur une ligne en bas.'] },
-    { w: 100, img: 'tab-ai.png', en: ['AI usage', 'Claude Code and Codex limits with reset times, plus Claude Code’s recent token use. No login needed; live Claude limits from Anthropic are opt-in. A limit turns orange with a "!" from 70%. Once a week, a recap card shows what your agents did last week; reopen it from here.'], ko: ['AI 사용량', 'Claude Code와 Codex의 한도와 초기화 시각, Claude Code의 최근 토큰 사용량. 로그인은 필요 없고, Anthropic에서 Claude 실시간 한도를 받아오는 건 선택입니다. 한도가 70%에 이르면 주황색과 "!"로 바뀝니다. 한 주에 한 번 지난주 에이전트 작업을 요약한 카드가 나오고, 여기서 다시 열 수 있어요.'], ja: ['AI 使用量', 'Claude Code と Codex の使用上限と初期化時刻、そして Claude Code の最近のトークン使用量。ログインは不要。Anthropic からリアルタイムで Claude の上限を取得するのは任意です。上限が 70% に達すると、オレンジ色と「!」で知らせます。週に一度、先週のエージェントの作業をまとめたカードが表示され、ここからいつでも開き直せます。'], zh: ['AI 用量', 'Claude Code 和 Codex 的额度与重置时间，以及 Claude Code 最近的令牌使用量。不需要登录；从 Anthropic 获取实时 Claude 额度是可选的。额度达到 70% 时会变成橙色，并带上“!”。每周会出现一张卡片，回顾代理上周的工作，也可以从这里重新打开。'], es: ['Uso de IA', 'Los límites de Claude Code y Codex con sus horas de reinicio, más el uso reciente de tokens de Claude Code. Sin iniciar sesión; los límites de Claude en directo desde Anthropic son opcionales. Un límite se vuelve naranja con un «!» a partir del 70 %. Una vez por semana, una tarjeta resume lo que hicieron tus agentes la semana pasada; puedes volver a abrirla desde aquí.'], de: ['KI-Nutzung', 'Claude Code- und Codex-Limits mit Zurücksetzungszeiten, plus Claude Codes zuletzt genutzte Tokens. Kein Login nötig; Live-Limits für Claude von Anthropic sind optional. Ein Limit wird ab 70 % orange und bekommt ein „!“. Einmal pro Woche fasst eine Karte zusammen, was deine Agenten letzte Woche getan haben; hier kannst du sie erneut öffnen.'], fr: ['Usage de l’IA', 'Les limites de Claude Code et Codex avec leurs horaires de réinitialisation, plus l’usage récent des tokens de Claude Code. Pas de connexion requise ; les limites de Claude en direct depuis Anthropic sont optionnelles. Une limite passe à l’orange avec un « ! » à partir de 70 %. Une fois par semaine, une carte résume ce que vos agents ont fait la semaine passée ; vous pouvez la rouvrir d’ici.'] },
-    { w: 100, img: 'tab-search.png', en: ['Search', 'A launcher that can stand in for Spotlight: apps, files, commands, settings, clipboard, emoji and sums. <kbd>⇧⌘Space</kbd> by default, or record your own, even <kbd>⌘Space</kbd>. The result under the pointer shows on the right, with its action.'], ko: ['검색', 'Spotlight 대신 쓸 수 있는 검색. 앱, 파일, 명령, 설정, 클립보드, 이모지, 계산까지. 기본 단축키는 <kbd>⇧⌘Space</kbd>이고, <kbd>⌘Space</kbd>를 포함해 원하는 키로 바꿀 수 있습니다. 포인터 아래의 결과는 오른쪽에 동작과 함께 표시됩니다.'], ja: ['検索', 'Spotlight の代わりになるランチャー。アプリ、ファイル、コマンド、設定、クリップボード、絵文字、計算まで。デフォルトは <kbd>⇧⌘Space</kbd>、<kbd>⌘Space</kbd> を含め好きなショートカットに変更できます。ポインタの下の結果は、操作ボタンとともに右側に表示されます。'], zh: ['搜索', '一款可以代替 Spotlight 的启动器：应用、文件、命令、设置、剪贴板、表情符号和计算结果，默认快捷键是 <kbd>⇧⌘Space</kbd>，也可以自行录制，包括 <kbd>⌘Space</kbd>。指针下的结果会连同操作显示在右侧。'], es: ['Buscar', 'Un lanzador que puede sustituir a Spotlight: apps, archivos, comandos, ajustes, portapapeles, emoji y sumas. <kbd>⇧⌘Space</kbd> por defecto, o graba el tuyo, incluso <kbd>⌘Space</kbd>. El resultado bajo el puntero aparece a la derecha, con su acción.'], de: ['Suche', 'Ein Launcher, der Spotlight ersetzen kann: Apps, Dateien, Befehle, Einstellungen, Zwischenablage, Emoji und Rechenergebnisse. Standardmäßig <kbd>⇧⌘Space</kbd>, oder nimm deinen eigenen Kurzbefehl auf, auch <kbd>⌘Space</kbd>. Das Ergebnis unter dem Zeiger erscheint rechts, mit seiner Aktion.'], fr: ['Rechercher', 'Un lanceur capable de remplacer Spotlight : apps, fichiers, commandes, réglages, presse-papiers, emoji et calculs. <kbd>⇧⌘Space</kbd> par défaut, ou enregistrez le vôtre, même <kbd>⌘Space</kbd>. Le résultat sous le pointeur apparaît à droite, avec son action.'] },
-    { w: 100, img: 'shelf.png', en: ['Shelf', 'Drop files on the notch and drag them out later. Drop them on the right side to send them by AirDrop straight away. The file under the pointer shows on the right, with its actions.'], ko: ['선반', '파일을 노치에 놓아 두고 나중에 끌어내세요. 오른쪽에 놓으면 AirDrop으로 바로 보내집니다. 포인터 아래의 파일은 오른쪽에 동작과 함께 표시됩니다.'], ja: ['シェルフ', 'ファイルをノッチにドロップしておけば、あとで取り出せます。右側にドロップすれば、そのまま AirDrop で送信されます。ポインタの下のファイルは、操作ボタンとともに右側に表示されます。'], zh: ['架子', '把文件拖到刘海上先存着，以后再拖出来用。拖到右侧即可立即通过隔空投送发送。指针下的文件会连同操作显示在右侧。'], es: ['Estante', 'Suelta archivos en el notch y arrástralos fuera más tarde. Suéltalos en el lado derecho para enviarlos al instante por AirDrop. El archivo bajo el puntero aparece a la derecha, con sus acciones.'], de: ['Ablage', 'Lege Dateien auf der Notch ab und zieh sie später wieder heraus. Lege sie rechts ab, um sie sofort per AirDrop zu senden. Die Datei unter dem Zeiger erscheint rechts, mit ihren Aktionen.'], fr: ['Étagère', 'Déposez des fichiers sur l’encoche et ressortez-les plus tard. Déposez-les sur la droite pour les envoyer immédiatement par AirDrop. Le fichier sous le pointeur apparaît à droite, avec ses actions.'] },
-    { w: 100, img: 'tab-timer.png', en: ['Timer', 'Countdown, Pomodoro and stopwatch in large figures, with a bar that empties as time runs out. Scroll or type to set any length, and the time left stays on the collapsed notch.'], ko: ['타이머', '카운트다운, 뽀모도로, 스톱워치를 큰 숫자로 보여 주고, 시간이 줄어들수록 막대가 비워집니다. 스크롤하거나 직접 입력해 원하는 길이로 맞추고, 접힌 노치에도 남은 시간이 그대로 보입니다.'], ja: ['タイマー', 'カウントダウン、ポモドーロ、ストップウォッチを大きな数字で表示し、時間が減るほどバーが空いていきます。スクロールまたは入力で好きな長さに設定でき、残り時間は折りたたんだノッチにも表示されます。'], zh: ['计时器', '倒计时、番茄钟和秒表以大号数字显示，进度条随时间流逝逐渐清空。滚动或输入即可设置任意时长，剩余时间还会留在收起的刘海上。'], es: ['Temporizador', 'Cuenta atrás, Pomodoro y cronómetro en cifras grandes, con una barra que se vacía a medida que pasa el tiempo. Desplázate o escribe para fijar cualquier duración, y el tiempo restante se queda en el notch plegado.'], de: ['Timer', 'Countdown, Pomodoro und Stoppuhr in großen Ziffern, mit einem Balken, der sich leert, während die Zeit abläuft. Scrollen oder eingeben, um jede Länge einzustellen, und die Restzeit bleibt auf der eingeklappten Notch sichtbar.'], fr: ['Minuteur', 'Compte à rebours, Pomodoro et chronomètre en grands chiffres, avec une barre qui se vide à mesure que le temps s’écoule. Faites défiler ou saisissez une durée, et le temps restant reste visible sur l’encoche repliée.'] },
-    { w: 100, img: 'tab-tools.png', en: ['Tools', 'Switch speakers, mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from the screen and copy text out of any part of it.'], ko: ['도구', '스피커 전환, 마이크 음소거, 잠자기 방지, 화면 녹화, 드라이브 꺼내기, 화면에서 색 찍기와 글자 복사.'], ja: ['ツール', 'スピーカーの切り替え、マイクのミュート、スリープ防止、画面収録、ドライブの取り出し、画面から色を取得、画面上のテキストをコピー。'], zh: ['工具', '切换输出设备、静音麦克风、保持 Mac 唤醒、录制屏幕、推出磁盘、从屏幕上取色，以及从屏幕任意位置复制文字。'], es: ['Herramientas', 'Cambia de altavoces, silencia el micrófono, mantén el Mac despierto, graba la pantalla, expulsa discos, toma un color de la pantalla y copia texto de cualquier parte de ella.'], de: ['Werkzeuge', 'Lautsprecher wechseln, Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe vom Bildschirm aufnehmen und Text aus jedem Bereich davon kopieren.'], fr: ['Outils', 'Changez de haut-parleurs, coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur à l’écran et copiez du texte depuis n’importe quelle zone.'] },
-    { w: 100, img: 'tab-system.png', en: ['System', 'CPU, memory, disk, network and this Mac’s battery as panels with large figures and thin bars, plus your mouse and keyboard batteries.'], ko: ['시스템', 'CPU, 메모리, 디스크, 네트워크, 이 Mac의 배터리를 큰 숫자와 가는 막대의 패널로 한눈에. 마우스와 키보드 배터리도 함께.'], ja: ['システム', 'CPU、メモリ、ディスク、ネットワーク、この Mac のバッテリーを、大きな数字と細いバーのパネルで一目で。マウスとキーボードのバッテリーも。'], zh: ['系统', '一目了然的 CPU、内存、磁盘、网络和这台 Mac 的电量，以大号数字和细条面板呈现，还有鼠标和键盘的电量。'], es: ['Sistema', 'CPU, memoria, disco, red y la batería de este Mac en paneles con cifras grandes y barras finas, además de la batería del ratón y el teclado.'], de: ['System', 'CPU, Speicher, Festplatte, Netzwerk und der Akku dieses Macs als Panels mit großen Zahlen und dünnen Balken, plus Akkustand von Maus und Tastatur.'], fr: ['Système', 'CPU, mémoire, disque, réseau et batterie de ce Mac en panneaux avec de grands chiffres et des barres fines, plus les batteries de votre souris et clavier.'] },
-    { w: 100, img: 'tab-emoji.png', en: ['Emoji', 'Categories in a list on the left, with your recent picks first. Every emoji is searchable by name. Click to copy.'], ko: ['이모지', '왼쪽 목록에 카테고리가 있고, 최근에 쓴 것이 먼저 나옵니다. 모든 이모지를 이름으로 검색할 수 있어요. 클릭하면 복사됩니다.'], ja: ['絵文字', '左の一覧にカテゴリが並び、最近使ったものが先頭に表示されます。すべての絵文字を名前で検索できます。クリックでコピー。'], zh: ['表情符号', '左侧是分类列表，最近用过的会优先显示。所有表情符号都能按名称搜索，点击即可复制。'], es: ['Emoji', 'Categorías en una lista a la izquierda, con los que has usado últimamente primero. Todos los emoji se buscan por nombre. Haz clic para copiar.'], de: ['Emoji', 'Kategorien in einer Liste links, zuletzt verwendete zuerst. Jedes Emoji ist nach Namen durchsuchbar. Klicken, um zu kopieren.'], fr: ['Emoji', 'Les catégories dans une liste à gauche, avec vos choix récents en premier. Tous les emoji sont recherchables par nom. Cliquez pour copier.'] }
+    { img: 'home.png', en: ['Home', 'What’s playing from any app or browser, with artwork, controls and a seekable bar, next to your week and today’s events. The weather is a row at the bottom.'], ko: ['홈', '어떤 앱이나 브라우저에서 재생하든 앨범아트, 컨트롤, 진행바가 나오고, 옆에는 이번 주와 오늘 일정이 보입니다. 날씨는 맨 아래 줄에 나옵니다.'], ja: ['ホーム', 'どのアプリやブラウザで再生していても、アートワーク・操作ボタン・シークバーを表示。すぐ横には今週と今日の予定も。天気は一番下の行に表示されます。'], zh: ['主页', '任何应用或浏览器正在播放的内容，附带封面、控制按钮和可拖动的进度条，旁边还有本周安排和今日日程。天气显示在最下面一行。'], es: ['Inicio', 'Lo que suena en cualquier app o navegador, con carátula, controles y una barra de progreso, junto a tu semana y los eventos de hoy. El tiempo va en una fila al pie.'], de: ['Start', 'Was in jeder App oder jedem Browser läuft, mit Cover, Steuerung und einer Fortschrittsleiste, daneben deine Woche und die heutigen Termine. Das Wetter steht als Zeile ganz unten.'], fr: ['Accueil', 'Ce qui joue depuis n’importe quelle app ou navigateur, avec pochette, commandes et une barre de progression, à côté de votre semaine et des évènements du jour. La météo tient sur une ligne en bas.'] },
+    { img: 'tab-ai.png', en: ['AI usage', 'Claude Code and Codex limits with reset times, plus Claude Code’s recent token use. No login needed; live Claude limits from Anthropic are opt-in. A limit turns orange with a "!" from 70%. Once a week, a recap card shows what your agents did last week; reopen it from here.'], ko: ['AI 사용량', 'Claude Code와 Codex의 한도와 초기화 시각, Claude Code의 최근 토큰 사용량. 로그인은 필요 없고, Anthropic에서 Claude 실시간 한도를 받아오는 건 선택입니다. 한도가 70%에 이르면 주황색과 "!"로 바뀝니다. 한 주에 한 번 지난주 에이전트 작업을 요약한 카드가 나오고, 여기서 다시 열 수 있어요.'], ja: ['AI 使用量', 'Claude Code と Codex の使用上限と初期化時刻、そして Claude Code の最近のトークン使用量。ログインは不要。Anthropic からリアルタイムで Claude の上限を取得するのは任意です。上限が 70% に達すると、オレンジ色と「!」で知らせます。週に一度、先週のエージェントの作業をまとめたカードが表示され、ここからいつでも開き直せます。'], zh: ['AI 用量', 'Claude Code 和 Codex 的额度与重置时间，以及 Claude Code 最近的令牌使用量。不需要登录；从 Anthropic 获取实时 Claude 额度是可选的。额度达到 70% 时会变成橙色，并带上“!”。每周会出现一张卡片，回顾代理上周的工作，也可以从这里重新打开。'], es: ['Uso de IA', 'Los límites de Claude Code y Codex con sus horas de reinicio, más el uso reciente de tokens de Claude Code. Sin iniciar sesión; los límites de Claude en directo desde Anthropic son opcionales. Un límite se vuelve naranja con un «!» a partir del 70 %. Una vez por semana, una tarjeta resume lo que hicieron tus agentes la semana pasada; puedes volver a abrirla desde aquí.'], de: ['KI-Nutzung', 'Claude Code- und Codex-Limits mit Zurücksetzungszeiten, plus Claude Codes zuletzt genutzte Tokens. Kein Login nötig; Live-Limits für Claude von Anthropic sind optional. Ein Limit wird ab 70 % orange und bekommt ein „!“. Einmal pro Woche fasst eine Karte zusammen, was deine Agenten letzte Woche getan haben; hier kannst du sie erneut öffnen.'], fr: ['Usage de l’IA', 'Les limites de Claude Code et Codex avec leurs horaires de réinitialisation, plus l’usage récent des tokens de Claude Code. Pas de connexion requise ; les limites de Claude en direct depuis Anthropic sont optionnelles. Une limite passe à l’orange avec un « ! » à partir de 70 %. Une fois par semaine, une carte résume ce que vos agents ont fait la semaine passée ; vous pouvez la rouvrir d’ici.'] },
+    { img: 'tab-search.png', en: ['Search', 'A launcher that can stand in for Spotlight: apps, files, commands, settings, clipboard, emoji and sums. <kbd>⇧⌘Space</kbd> by default, or record your own, even <kbd>⌘Space</kbd>. The result under the pointer shows on the right, with its action.'], ko: ['검색', 'Spotlight 대신 쓸 수 있는 검색. 앱, 파일, 명령, 설정, 클립보드, 이모지, 계산까지. 기본 단축키는 <kbd>⇧⌘Space</kbd>이고, <kbd>⌘Space</kbd>를 포함해 원하는 키로 바꿀 수 있습니다. 포인터 아래의 결과는 오른쪽에 동작과 함께 표시됩니다.'], ja: ['検索', 'Spotlight の代わりになるランチャー。アプリ、ファイル、コマンド、設定、クリップボード、絵文字、計算まで。デフォルトは <kbd>⇧⌘Space</kbd>、<kbd>⌘Space</kbd> を含め好きなショートカットに変更できます。ポインタの下の結果は、操作ボタンとともに右側に表示されます。'], zh: ['搜索', '一款可以代替 Spotlight 的启动器：应用、文件、命令、设置、剪贴板、表情符号和计算结果，默认快捷键是 <kbd>⇧⌘Space</kbd>，也可以自行录制，包括 <kbd>⌘Space</kbd>。指针下的结果会连同操作显示在右侧。'], es: ['Buscar', 'Un lanzador que puede sustituir a Spotlight: apps, archivos, comandos, ajustes, portapapeles, emoji y sumas. <kbd>⇧⌘Space</kbd> por defecto, o graba el tuyo, incluso <kbd>⌘Space</kbd>. El resultado bajo el puntero aparece a la derecha, con su acción.'], de: ['Suche', 'Ein Launcher, der Spotlight ersetzen kann: Apps, Dateien, Befehle, Einstellungen, Zwischenablage, Emoji und Rechenergebnisse. Standardmäßig <kbd>⇧⌘Space</kbd>, oder nimm deinen eigenen Kurzbefehl auf, auch <kbd>⌘Space</kbd>. Das Ergebnis unter dem Zeiger erscheint rechts, mit seiner Aktion.'], fr: ['Rechercher', 'Un lanceur capable de remplacer Spotlight : apps, fichiers, commandes, réglages, presse-papiers, emoji et calculs. <kbd>⇧⌘Space</kbd> par défaut, ou enregistrez le vôtre, même <kbd>⌘Space</kbd>. Le résultat sous le pointeur apparaît à droite, avec son action.'] },
+    { img: 'shelf.png', en: ['Shelf', 'Drop files on the notch and drag them out later. Drop them on the right side to send them by AirDrop straight away. The file under the pointer shows on the right, with its actions.'], ko: ['선반', '파일을 노치에 놓아 두고 나중에 끌어내세요. 오른쪽에 놓으면 AirDrop으로 바로 보내집니다. 포인터 아래의 파일은 오른쪽에 동작과 함께 표시됩니다.'], ja: ['シェルフ', 'ファイルをノッチにドロップしておけば、あとで取り出せます。右側にドロップすれば、そのまま AirDrop で送信されます。ポインタの下のファイルは、操作ボタンとともに右側に表示されます。'], zh: ['架子', '把文件拖到刘海上先存着，以后再拖出来用。拖到右侧即可立即通过隔空投送发送。指针下的文件会连同操作显示在右侧。'], es: ['Estante', 'Suelta archivos en el notch y arrástralos fuera más tarde. Suéltalos en el lado derecho para enviarlos al instante por AirDrop. El archivo bajo el puntero aparece a la derecha, con sus acciones.'], de: ['Ablage', 'Lege Dateien auf der Notch ab und zieh sie später wieder heraus. Lege sie rechts ab, um sie sofort per AirDrop zu senden. Die Datei unter dem Zeiger erscheint rechts, mit ihren Aktionen.'], fr: ['Étagère', 'Déposez des fichiers sur l’encoche et ressortez-les plus tard. Déposez-les sur la droite pour les envoyer immédiatement par AirDrop. Le fichier sous le pointeur apparaît à droite, avec ses actions.'] },
+    { img: 'tab-timer.png', en: ['Timer', 'Countdown, Pomodoro and stopwatch in large figures, with a bar that empties as time runs out. Scroll or type to set any length, and the time left stays on the collapsed notch.'], ko: ['타이머', '카운트다운, 뽀모도로, 스톱워치를 큰 숫자로 보여 주고, 시간이 줄어들수록 막대가 비워집니다. 스크롤하거나 직접 입력해 원하는 길이로 맞추고, 접힌 노치에도 남은 시간이 그대로 보입니다.'], ja: ['タイマー', 'カウントダウン、ポモドーロ、ストップウォッチを大きな数字で表示し、時間が減るほどバーが空いていきます。スクロールまたは入力で好きな長さに設定でき、残り時間は折りたたんだノッチにも表示されます。'], zh: ['计时器', '倒计时、番茄钟和秒表以大号数字显示，进度条随时间流逝逐渐清空。滚动或输入即可设置任意时长，剩余时间还会留在收起的刘海上。'], es: ['Temporizador', 'Cuenta atrás, Pomodoro y cronómetro en cifras grandes, con una barra que se vacía a medida que pasa el tiempo. Desplázate o escribe para fijar cualquier duración, y el tiempo restante se queda en el notch plegado.'], de: ['Timer', 'Countdown, Pomodoro und Stoppuhr in großen Ziffern, mit einem Balken, der sich leert, während die Zeit abläuft. Scrollen oder eingeben, um jede Länge einzustellen, und die Restzeit bleibt auf der eingeklappten Notch sichtbar.'], fr: ['Minuteur', 'Compte à rebours, Pomodoro et chronomètre en grands chiffres, avec une barre qui se vide à mesure que le temps s’écoule. Faites défiler ou saisissez une durée, et le temps restant reste visible sur l’encoche repliée.'] },
+    { img: 'tab-tools.png', en: ['Tools', 'Switch speakers, mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from the screen and copy text out of any part of it.'], ko: ['도구', '스피커 전환, 마이크 음소거, 잠자기 방지, 화면 녹화, 드라이브 꺼내기, 화면에서 색 찍기와 글자 복사.'], ja: ['ツール', 'スピーカーの切り替え、マイクのミュート、スリープ防止、画面収録、ドライブの取り出し、画面から色を取得、画面上のテキストをコピー。'], zh: ['工具', '切换输出设备、静音麦克风、保持 Mac 唤醒、录制屏幕、推出磁盘、从屏幕上取色，以及从屏幕任意位置复制文字。'], es: ['Herramientas', 'Cambia de altavoces, silencia el micrófono, mantén el Mac despierto, graba la pantalla, expulsa discos, toma un color de la pantalla y copia texto de cualquier parte de ella.'], de: ['Werkzeuge', 'Lautsprecher wechseln, Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe vom Bildschirm aufnehmen und Text aus jedem Bereich davon kopieren.'], fr: ['Outils', 'Changez de haut-parleurs, coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur à l’écran et copiez du texte depuis n’importe quelle zone.'] },
+    { img: 'tab-system.png', en: ['System', 'CPU, memory, disk, network and this Mac’s battery as panels with large figures and thin bars, plus your mouse and keyboard batteries.'], ko: ['시스템', 'CPU, 메모리, 디스크, 네트워크, 이 Mac의 배터리를 큰 숫자와 가는 막대의 패널로 한눈에. 마우스와 키보드 배터리도 함께.'], ja: ['システム', 'CPU、メモリ、ディスク、ネットワーク、この Mac のバッテリーを、大きな数字と細いバーのパネルで一目で。マウスとキーボードのバッテリーも。'], zh: ['系统', '一目了然的 CPU、内存、磁盘、网络和这台 Mac 的电量，以大号数字和细条面板呈现，还有鼠标和键盘的电量。'], es: ['Sistema', 'CPU, memoria, disco, red y la batería de este Mac en paneles con cifras grandes y barras finas, además de la batería del ratón y el teclado.'], de: ['System', 'CPU, Speicher, Festplatte, Netzwerk und der Akku dieses Macs als Panels mit großen Zahlen und dünnen Balken, plus Akkustand von Maus und Tastatur.'], fr: ['Système', 'CPU, mémoire, disque, réseau et batterie de ce Mac en panneaux avec de grands chiffres et des barres fines, plus les batteries de votre souris et clavier.'] },
+    { img: 'tab-emoji.png', en: ['Emoji', 'Categories in a list on the left, with your recent picks first. Every emoji is searchable by name. Click to copy.'], ko: ['이모지', '왼쪽 목록에 카테고리가 있고, 최근에 쓴 것이 먼저 나옵니다. 모든 이모지를 이름으로 검색할 수 있어요. 클릭하면 복사됩니다.'], ja: ['絵文字', '左の一覧にカテゴリが並び、最近使ったものが先頭に表示されます。すべての絵文字を名前で検索できます。クリックでコピー。'], zh: ['表情符号', '左侧是分类列表，最近用过的会优先显示。所有表情符号都能按名称搜索，点击即可复制。'], es: ['Emoji', 'Categorías en una lista a la izquierda, con los que has usado últimamente primero. Todos los emoji se buscan por nombre. Haz clic para copiar.'], de: ['Emoji', 'Kategorien in einer Liste links, zuletzt verwendete zuerst. Jedes Emoji ist nach Namen durchsuchbar. Klicken, um zu kopieren.'], fr: ['Emoji', 'Les catégories dans une liste à gauche, avec vos choix récents en premier. Tous les emoji sont recherchables par nom. Cliquez pour copier.'] }
   ];
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1102,11 +878,11 @@ open build/Nunsseop.app</pre></div>
   tourData.forEach(function (d, i) {
     var b = document.createElement('button');
     b.className = 'tour-btn'; b.type = 'button';
-    b.innerHTML = '<span class="num">' + (i < 9 ? '0' : '') + (i + 1) + '</span><span class="lbl">' +
-      LANGS.map(function (l) { return '<span class="' + l + '">' + d[l][0] + '</span>'; }).join('') + '</span><span class="mark" aria-hidden="true"></span>';
+    b.innerHTML = '<span class="lbl">' +
+      LANGS.map(function (l) { return '<span class="' + l + '">' + d[l][0] + '</span>'; }).join('') + '</span>';
     b.addEventListener('click', function () { held = true; clearInterval(timer); show(i); tStatus.textContent = tTitle.textContent; });
     list.appendChild(b);
-    var img = new Image(); img.src = 'images/' + d.img; img.alt = d.en[0]; img.style.width = d.w + '%'; img.loading = i ? 'lazy' : 'eager';
+    var img = new Image(); img.src = 'images/' + d.img; img.alt = d.en[0]; img.loading = i ? 'lazy' : 'eager';
     screen.appendChild(img);
   });
   function show(i) {
@@ -1116,7 +892,7 @@ open build/Nunsseop.app</pre></div>
     list.querySelectorAll('.tour-btn').forEach(function (b, j) { b.setAttribute('aria-pressed', String(j === i)); });
     screen.querySelectorAll('img').forEach(function (im, j) { im.classList.toggle('on', j === i); });
     var active = list.children[i];
-    if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: active.offsetLeft - 20, behavior: reduce ? 'auto' : 'smooth' });
+    if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: active.offsetLeft - 24, behavior: reduce ? 'auto' : 'smooth' });
     tTitle.textContent = tourData[i][lang][0]; tText.innerHTML = tourData[i][lang][1];
     // Transitions.dev — Text states swap: the caption changes at once and its two lines arrive one after the other.
     if (changed) { swapIn(tTitle); swapIn(tText, { delay: cssMs('--duration-stagger', 60), fill: 'backwards' }); }
@@ -1129,8 +905,21 @@ open build/Nunsseop.app</pre></div>
   ['mouseenter', 'focusin'].forEach(function (e) { tourBox.addEventListener(e, function () { hover = true; }); });
   ['mouseleave', 'focusout'].forEach(function (e) { tourBox.addEventListener(e, function () { hover = false; }); });
   if (!reduce) timer = setInterval(function () { if (!held && !hover && onscreen && !document.hidden) show((current + 1) % tourData.length); }, 4000);
-  langListeners.push(function () { show(current); });
+  // The caption holds the height of its longest text, so the page below it stays put as the tabs change.
+  var tourCopy = tTitle.parentNode;
+  function holdCopy() {
+    var lang = document.body.dataset.lang, title = tTitle.textContent, text = tText.innerHTML, most = 0;
+    tourCopy.style.minHeight = '';
+    tourData.forEach(function (d) { tTitle.textContent = d[lang][0]; tText.innerHTML = d[lang][1]; most = Math.max(most, tourCopy.offsetHeight); });
+    tTitle.textContent = title; tText.innerHTML = text;
+    tourCopy.style.minHeight = most + 'px';
+  }
+  langListeners.push(function () { show(current); holdCopy(); });
   show(0);
+  holdCopy();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(holdCopy);
+  if (window.ResizeObserver) new ResizeObserver(holdCopy).observe(tourBox);
+  else window.addEventListener('resize', holdCopy);
 
   // Hero stage: pointer or keyboard focus holds the notch open on the screenshot; letting go lets the loop resume.
   var stage = document.querySelector('.nn-stage');
@@ -1140,7 +929,7 @@ open build/Nunsseop.app</pre></div>
   var still = reduce || window.matchMedia('(hover: none), (max-width: 600px)').matches;
   if (!still) {
     var notch = stage.querySelector('.nn-notch');
-    var frozen = [[notch, ['top', 'width', 'height', 'borderRadius']], [stage.querySelector('.nn-shot'), ['opacity']], [stage.querySelector('.nn-brow'), ['opacity', 'transform']]];
+    var frozen = [[notch, ['width', 'height', 'borderRadius']], [stage.querySelector('.nn-shot'), ['opacity']], [stage.querySelector('.nn-brow'), ['opacity', 'transform']]];
     var live = false, isOpen = false, kbd = false, pointerIn = false, openT = 0, closeT = 0, resumeT = 0;
     // Leave the loop where it is: pin its current values, switch to transitions, then let them run from there.
     var goLive = function () {
@@ -1194,6 +983,8 @@ open build/Nunsseop.app</pre></div>
       if (e.pointerType !== 'touch') return;
       if (!isOpen && within(e.clientX, e.clientY)) arrive(); else leave();
     });
+  } else {
+    stage.removeAttribute('tabindex');
   }
 
   // Transitions.dev — Texts reveal: blocks that start below the fold rise in once as they come into view. Blocks already in view are never hidden,
