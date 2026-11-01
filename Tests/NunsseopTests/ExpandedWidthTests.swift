@@ -35,15 +35,34 @@ struct ExpandedWidthTests {
     private let statuses: [CGFloat] = [64, 130]
     private let labels: [CGFloat] = [0, 96]
 
-    @Test func aNotchedHeaderKeepsEveryTabLeftOfTheCamera() {
+    @Test func aNotchedHeaderAlwaysHasRoomForThreeTabsAndTheStatusIcons() {
         for notch in [44, 200, 384] as [CGFloat] {
-            for width in [540, 620, 699, 1200] as [CGFloat] {
-                let layout = HeaderBar.layout(width: width, status: 64, hasNotch: true, notchWidth: notch)
-                #expect(layout.camera == notch + 8)
-                #expect(layout.strip == layout.side)
-                #expect(2 * layout.strip + layout.camera + 12 == width - 2 * NotchViewModel.headerInset)
+            for count in 1...14 {
+                for status in statuses {
+                    for label in labels {
+                        let width = NotchViewModel.fittingWidth(tabCount: count, status: status, label: label, notchWidth: notch)
+                        let layout = HeaderBar.layout(width: width, status: status, hasNotch: true, notchWidth: notch)
+                        let where_ = "count \(count), status \(status), label \(label), notch \(notch)"
+                        #expect(layout.side >= status, Comment(rawValue: where_))
+                        #expect(layout.strip + 0.001 >= NotchViewModel.stripWidth(min(count, 3)) + label, Comment(rawValue: where_))
+                    }
+                }
             }
         }
+    }
+
+    @Test func aNotchedPanelDoesNotGrowToFitEveryTab() {
+        let three = NotchViewModel.fittingWidth(tabCount: 3, status: 64, label: 96, notchWidth: 200)
+        #expect(NotchViewModel.fittingWidth(tabCount: 14, status: 64, label: 96, notchWidth: 200) == three)
+        // 3 × 28 − 2, 2 of frame and 96 of title is 180 a side, the camera's 200 + 8, the 12 between, and 64 of inset.
+        #expect(three == 644)
+        #expect(NotchViewModel.widened(699, fitting: three, limit: 1200) == 699)
+    }
+
+    @Test func aWideNotchOnANarrowPanelStillShowsSettingsAndQuit() {
+        let fitting = NotchViewModel.fittingWidth(tabCount: 14, status: 64, label: 96, notchWidth: 384)
+        let width = NotchViewModel.widened(540, fitting: fitting, limit: 1200)
+        #expect(HeaderBar.layout(width: width, status: 64, hasNotch: true, notchWidth: 384).side >= 64)
     }
 
     @Test func aHeaderWithoutANotchHasRoomForEveryTabAtTheFittingWidth() {
@@ -66,7 +85,7 @@ struct ExpandedWidthTests {
     }
 
     @Test func theFittingWidthStaysInsideThePanelForEveryTabCountOnTheCommonDisplays() {
-        // A 14" MacBook Pro's notch, with every tab.
+        // Every tab, with no notch to scroll beside.
         var g = NotchGeometry()
         g.screenFrame = NSRect(x: 0, y: 0, width: 1512, height: 982)
         // The unclamped fitting width itself has to fit; clamping it to the limit would hide an overflow.

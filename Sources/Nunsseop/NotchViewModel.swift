@@ -499,16 +499,21 @@ final class NotchViewModel: ObservableObject {
         return min(widest, tabTitleCap) + 22
     }
 
-    /// The width that shows every tab without scrolling. On notched displays the tabs scroll left of the camera, at the width set
-    /// in Settings: fitting them there would take twice the row, for the empty side right of the camera.
     private var widthFittingTabs: CGFloat {
-        guard !geometry.hasNotch else { return 0 }
         let tabs = settings.visibleTabs
-        return Self.fittingWidth(tabCount: tabs.count, status: Self.headerStatusWidth, label: Self.tabLabelWidth(tabs))
+        return Self.fittingWidth(tabCount: tabs.count, status: Self.headerStatusWidth, label: Self.tabLabelWidth(tabs),
+                                 notchWidth: geometry.hasNotch ? geometry.collapsedSize.width : nil)
     }
 
-    nonisolated static func fittingWidth(tabCount count: Int, status: CGFloat, label: CGFloat = 0) -> CGFloat {
-        stripWidth(count) + label + 12 + status + 2 * headerInset
+    /// How many tabs a notched header always has room for before it scrolls.
+    nonisolated static let notchedTabs = 3
+
+    /// The width the header needs. Without a notch, every tab in one row. With one, the tabs scroll left of the camera, so it takes only
+    /// room for `notchedTabs` of them there and the status icons right of it: fitting them all would take twice the row.
+    nonisolated static func fittingWidth(tabCount count: Int, status: CGFloat, label: CGFloat = 0, notchWidth: CGFloat? = nil) -> CGFloat {
+        guard let notchWidth else { return stripWidth(count) + label + 12 + status + 2 * headerInset }
+        let side = max(stripWidth(min(count, notchedTabs)) + label + 2, status)
+        return 2 * side + notchWidth + 8 + 12 + 2 * headerInset
     }
 
     /// The meeting name the sneak peek shows instead of the track while a call starts.
