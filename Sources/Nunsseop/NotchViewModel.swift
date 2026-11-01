@@ -656,7 +656,8 @@ final class NotchViewModel: ObservableObject {
     /// and what the left side showed moves to the right of the camera. Left as is when the menus reach the right side too.
     var hidesLeftEar: Bool {
         // The inline peek is centred on the line, so it can't make room for the menus by growing right only.
-        if sneakPeekInline { return false }
+        // Beside an island the shape already grows right only.
+        if sneakPeekInline || geometry.islandWidth != nil { return false }
         let notch = geometry.collapsedSize.width
         let width = collapsedSize.width
         guard width > notch else { return false }
@@ -743,8 +744,10 @@ final class NotchViewModel: ObservableObject {
     /// How far right the collapsed shape moves: so its left edge stays at the camera's when the left ear is hidden, or
     /// so the camera area stays over the camera when fitted sides grow the two by different amounts.
     var collapsedShift: CGFloat {
-        Self.collapsedShift(fitted: fittedSides, hidesLeftEar: hidesLeftEar,
-                            width: collapsedSize.width, notch: geometry.collapsedSize.width)
+        // Beside an island there is no camera to keep over, and `restShift` already keeps the left edge in place.
+        guard geometry.islandWidth == nil else { return 0 }
+        return Self.collapsedShift(fitted: fittedSides, hidesLeftEar: hidesLeftEar,
+                                   width: collapsedSize.width, notch: geometry.collapsedSize.width)
     }
 
     nonisolated static func collapsedShift(fitted: (left: CGFloat, right: CGFloat)?, hidesLeftEar: Bool,
@@ -771,7 +774,7 @@ final class NotchViewModel: ObservableObject {
     }
 
     static func collapsedRect(geometry: NotchGeometry, size: CGSize, shift: CGFloat) -> NSRect {
-        var rect = geometry.shapeRect(size: size).offsetBy(dx: shift + geometry.restShift, dy: 0)
+        var rect = geometry.shapeRect(size: size).offsetBy(dx: shift + geometry.restShift(width: size.width), dy: 0)
         // The gap above a floating eyebrow still counts, so flicking the pointer to the screen edge finds it.
         rect.size.height += geometry.topInset
         // The bare eyebrow is small, so the pointer may be a little off to the side.

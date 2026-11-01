@@ -263,13 +263,25 @@ struct DynamicIslandTests {
     @MainActor @Test func theEyebrowRestsBesideTheIslandAndOpensInTheMiddle() {
         var geometry = NotchGeometry()
         geometry.screenFrame = screen
-        #expect(geometry.restShift == 0)
+        #expect(geometry.restShift(width: 300) == 0)
         geometry.islandWidth = 200
         // Half the island, the gap, half the eyebrow.
-        #expect(geometry.restShift == 100 + 8 + NotchGeometry.browWidth / 2)
+        #expect(geometry.restShift(width: NotchGeometry.browWidth) == 100 + 8 + NotchGeometry.browWidth / 2)
         let rect = NotchViewModel.collapsedRect(geometry: geometry, size: geometry.collapsedSize, shift: 0)
         #expect(rect.minX >= screen.midX + 100, "the eyebrow's target must clear the island")
         #expect(geometry.shapeRect(size: CGSize(width: 600, height: 200), inset: 0).midX == screen.midX)
+    }
+
+    @MainActor @Test func aShapeThatGrowsStaysClearOfTheIsland() {
+        var geometry = NotchGeometry()
+        geometry.screenFrame = screen
+        geometry.islandWidth = 200
+        // A HUD with two ears, the inline sneak peek, the approval card.
+        for width in [120.0, 248, 266, 380, 500] {
+            let rect = NotchViewModel.collapsedRect(geometry: geometry, size: CGSize(width: width, height: 28), shift: 0)
+            #expect(rect.minX == screen.midX + 100 + 8, "\(width)")
+            #expect(rect.maxX <= geometry.panelFrame.maxX, "\(width)")
+        }
     }
 
     @Test func theReportHoldsWhatAFirstLookAtANewMacNeeds() {

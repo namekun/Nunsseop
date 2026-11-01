@@ -79,8 +79,8 @@ struct NotchGeometry: Equatable {
         return (100...400).contains(gap) ? gap : estimatedIslandWidth
     }
 
-    /// How far right of the middle the collapsed shape rests.
-    var restShift: CGFloat { islandWidth.map { $0 / 2 + 8 + collapsedSize.width / 2 } ?? 0 }
+    /// How far right of the middle a collapsed shape of this width rests: its left edge stays beside the island however wide it grows.
+    func restShift(width: CGFloat) -> CGFloat { islandWidth.map { $0 / 2 + 8 + width / 2 } ?? 0 }
 
     /// Used only when no screen is attached at launch; the next screen change relayouts.
     init() {
