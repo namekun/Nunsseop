@@ -231,3 +231,61 @@ struct MissionControlTests {
         #expect(NotchPanel.behavior.contains(.fullScreenAuxiliary))
     }
 }
+
+struct DynamicIslandTests {
+    private let screen = NSRect(x: 0, y: 0, width: 1512, height: 982)
+
+    @Test func onlyThePROLEDModelsCountAsHavingAnIsland() {
+        for model in ["Mac17,10", "Mac17,11", "Mac17,12", "Mac17,13"] {
+            #expect(NotchGeometry.hasDynamicIsland(model: model), "\(model)")
+        }
+        // The same year's notched MacBook Pros, a model id that starts alike, and a Mac we can't read.
+        for model in ["Mac17,6", "Mac17,7", "Mac17,8", "Mac17,9", "Mac18,1", "Mac17,1", "Mac15,6", ""] {
+            #expect(!NotchGeometry.hasDynamicIsland(model: model), "\(model)")
+        }
+    }
+
+    @Test func anIslandIsNeverTreatedAsACameraHousing() {
+        let shape = NotchGeometry.collapsedSize(frame: screen, visibleFrame: screen, safeTop: 32, leftAuxWidth: 570, rightAuxWidth: 570,
+                                                fakeNotchWidth: 0, island: 200)
+        #expect(!shape.hasNotch)
+        #expect(shape.size.width == NotchGeometry.browWidth)
+    }
+
+    @Test func theIslandIsAsWideAsTheGapItReportsAndOtherwiseAnEstimate() {
+        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 32, leftAuxWidth: 620, rightAuxWidth: 620) == 272)
+        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 0, leftAuxWidth: nil, rightAuxWidth: nil) == NotchGeometry.estimatedIslandWidth)
+        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 32, leftAuxWidth: 620, rightAuxWidth: nil) == NotchGeometry.estimatedIslandWidth)
+        // A gap too wide or too narrow to be an island says nothing about it.
+        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 32, leftAuxWidth: 756, rightAuxWidth: 756) == NotchGeometry.estimatedIslandWidth)
+    }
+
+    @MainActor @Test func theEyebrowRestsBesideTheIslandAndOpensInTheMiddle() {
+        var geometry = NotchGeometry()
+        geometry.screenFrame = screen
+        #expect(geometry.restShift == 0)
+        geometry.islandWidth = 200
+        // Half the island, the gap, half the eyebrow.
+        #expect(geometry.restShift == 100 + 8 + NotchGeometry.browWidth / 2)
+        let rect = NotchViewModel.collapsedRect(geometry: geometry, size: geometry.collapsedSize, shift: 0)
+        #expect(rect.minX >= screen.midX + 100, "the eyebrow's target must clear the island")
+        #expect(geometry.shapeRect(size: CGSize(width: 600, height: 200), inset: 0).midX == screen.midX)
+    }
+
+    @Test func theReportHoldsWhatAFirstLookAtANewMacNeeds() {
+        let report = NotchGeometry.screenReport(
+            model: "Mac17,13", system: "27.1.0",
+            screens: [.init(name: "Built-in Display", isBuiltin: true, frame: screen, visibleFrame: NSRect(x: 0, y: 0, width: 1512, height: 950),
+                            scale: 2, safeTop: 32, leftAuxWidth: 620, rightAuxWidth: nil)])
+        #expect(report.contains("model: Mac17,13"))
+        #expect(report.contains("macOS: 27.1.0"))
+        #expect(report.contains("dynamic island: yes"))
+        #expect(report.contains("Built-in Display (built-in)"))
+        #expect(report.contains("frame: 0 0 1512 982"))
+        #expect(report.contains("visible: 0 0 1512 950"))
+        #expect(report.contains("safe area top: 32"))
+        #expect(report.contains("left of camera: 620"))
+        #expect(report.contains("right of camera: none"))
+        #expect(report.contains("scale: 2"))
+    }
+}

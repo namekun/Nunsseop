@@ -771,7 +771,7 @@ final class NotchViewModel: ObservableObject {
     }
 
     static func collapsedRect(geometry: NotchGeometry, size: CGSize, shift: CGFloat) -> NSRect {
-        var rect = geometry.shapeRect(size: size).offsetBy(dx: shift, dy: 0)
+        var rect = geometry.shapeRect(size: size).offsetBy(dx: shift + geometry.restShift, dy: 0)
         // The gap above a floating eyebrow still counts, so flicking the pointer to the screen edge finds it.
         rect.size.height += geometry.topInset
         // The bare eyebrow is small, so the pointer may be a little off to the side.
