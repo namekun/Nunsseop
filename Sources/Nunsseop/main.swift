@@ -8,6 +8,13 @@ if CommandLine.arguments.dropFirst().first == "--print-update-team" {
     exit(0)
 }
 
+// For someone with a Mac we don't have: what this one says about its screens.
+if CommandLine.arguments.dropFirst().first == "--print-screen-info" {
+    _ = NSApplication.shared
+    print(NotchGeometry.screenReport())
+    exit(0)
+}
+
 let app = NSApplication.shared
 let delegate = AppDelegate()
 app.delegate = delegate

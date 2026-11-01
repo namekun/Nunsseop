@@ -192,7 +192,7 @@ struct NotchView: View {
                 isAirDropTargeted: $isAirDropTargeted,
                 airDropRect: airDropRect(in: size)
             ))
-            .offset(x: shift)
+            .offset(x: shift + (model.isExpanded ? 0 : model.geometry.restShift(width: size.width)))
             // Fading out waits for the brow to lower first, like an eye closing; coming back shows at once.
             // Scoped to the opacity, so the shape resizing when a HUD or live activity ends isn't held back too.
             .animation(model.browFaded ? .easeIn(duration: 0.3).delay(0.28) : .easeOut(duration: 0.2)) {

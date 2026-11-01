@@ -5,6 +5,8 @@ struct NotchGeometry: Equatable {
     var screenFrame: NSRect
     var collapsedSize: CGSize
     var hasNotch: Bool
+    /// On a display with a Dynamic Island, its width. The system draws there, so the eyebrow rests beside it.
+    var islandWidth: CGFloat?
 
     /// Without a camera housing the eyebrow floats this far below the top edge and stays inside the menu bar.
     var topInset: CGFloat { hasNotch ? 0 : 3 }
@@ -62,6 +64,24 @@ struct NotchGeometry: Equatable {
     /// Width of the collapsed eyebrow on a display without a camera housing.
     static let browWidth: CGFloat = 44
 
+    /// The PROLED MacBook Pros, from AppleDB ahead of their release: Apple's own list doesn't have them yet. An id that turns
+    /// out wrong leaves that Mac treated like any other with a notch.
+    static let dynamicIslandModels: Set<String> = ["Mac17,10", "Mac17,11", "Mac17,12", "Mac17,13"]
+    static func hasDynamicIsland(model: String) -> Bool { dynamicIslandModels.contains(model) }
+
+    /// Used until a Mac with an island has been measured.
+    static let estimatedIslandWidth: CGFloat = 200
+
+    /// The gap between the menu bar's halves when that gap looks like an island, otherwise the estimate.
+    static func islandWidth(frame: NSRect, safeTop: CGFloat, leftAuxWidth: CGFloat?, rightAuxWidth: CGFloat?) -> CGFloat {
+        guard safeTop > 0, let leftAuxWidth, let rightAuxWidth else { return estimatedIslandWidth }
+        let gap = frame.width - leftAuxWidth - rightAuxWidth
+        return (100...400).contains(gap) ? gap : estimatedIslandWidth
+    }
+
+    /// How far right of the middle a collapsed shape of this width rests: its left edge stays beside the island however wide it grows.
+    func restShift(width: CGFloat) -> CGFloat { islandWidth.map { $0 / 2 + 8 + width / 2 } ?? 0 }
+
     /// Used only when no screen is attached at launch; the next screen change relayouts.
     init() {
         screenFrame = NSRect(x: 0, y: 0, width: 1440, height: 900)
@@ -78,21 +98,82 @@ struct NotchGeometry: Equatable {
         return 0
     }()
 
+    /// Debug builds can pretend any display has an island with `--fake-island`.
+    private static let fakesIsland: Bool = {
+        #if DEBUG
+        return CommandLine.arguments.contains("--fake-island")
+        #else
+        return false
+        #endif
+    }()
+
+    /// This Mac's model identifier, such as "Mac15,6".
+    static let modelIdentifier: String = {
+        var size = 0
+        guard sysctlbyname("hw.model", nil, &size, nil, 0) == 0, size > 0 else { return "" }
+        var bytes = [CChar](repeating: 0, count: size)
+        guard sysctlbyname("hw.model", &bytes, &size, nil, 0) == 0 else { return "" }
+        return String(cString: bytes)
+    }()
+
+    private static func isBuiltin(_ screen: NSScreen) -> Bool {
+        (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID).map { CGDisplayIsBuiltin($0) != 0 } ?? false
+    }
+
     init(screen: NSScreen) {
         screenFrame = screen.frame
+        let safeTop = screen.safeAreaInsets.top
+        let left = screen.auxiliaryTopLeftArea?.width, right = screen.auxiliaryTopRightArea?.width
+        if Self.fakesIsland || (Self.isBuiltin(screen) && Self.hasDynamicIsland(model: Self.modelIdentifier)) {
+            islandWidth = Self.islandWidth(frame: screen.frame, safeTop: safeTop, leftAuxWidth: left, rightAuxWidth: right)
+        }
         (collapsedSize, hasNotch) = Self.collapsedSize(
-            frame: screen.frame, visibleFrame: screen.visibleFrame, safeTop: screen.safeAreaInsets.top,
-            leftAuxWidth: screen.auxiliaryTopLeftArea?.width, rightAuxWidth: screen.auxiliaryTopRightArea?.width,
-            fakeNotchWidth: Self.fakeNotchWidth)
+            frame: screen.frame, visibleFrame: screen.visibleFrame, safeTop: safeTop, leftAuxWidth: left, rightAuxWidth: right,
+            fakeNotchWidth: Self.fakeNotchWidth, island: islandWidth)
+    }
+
+    /// What `--print-screen-info` prints, for someone with a Mac we don't have to send us.
+    struct ScreenFacts {
+        var name: String
+        var isBuiltin: Bool
+        var frame: NSRect
+        var visibleFrame: NSRect
+        var scale: CGFloat
+        var safeTop: CGFloat
+        var leftAuxWidth: CGFloat?
+        var rightAuxWidth: CGFloat?
+    }
+
+    static func screenReport(model: String, system: String, screens: [ScreenFacts]) -> String {
+        let number = { (value: CGFloat) in value == value.rounded() ? String(Int(value)) : String(format: "%.1f", value) }
+        let box = { (rect: NSRect) in [rect.minX, rect.minY, rect.width, rect.height].map(number).joined(separator: " ") }
+        var lines = ["model: \(model)", "macOS: \(system)", "dynamic island: \(hasDynamicIsland(model: model) ? "yes" : "no")"]
+        for screen in screens {
+            lines += ["\(screen.name)\(screen.isBuiltin ? " (built-in)" : "")", "  frame: \(box(screen.frame))", "  visible: \(box(screen.visibleFrame))",
+                      "  scale: \(number(screen.scale))", "  safe area top: \(number(screen.safeTop))",
+                      "  left of camera: \(screen.leftAuxWidth.map(number) ?? "none")",
+                      "  right of camera: \(screen.rightAuxWidth.map(number) ?? "none")"]
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    static func screenReport() -> String {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        return screenReport(model: modelIdentifier, system: "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)",
+                            screens: NSScreen.screens.map { screen in
+            ScreenFacts(name: screen.localizedName, isBuiltin: isBuiltin(screen), frame: screen.frame, visibleFrame: screen.visibleFrame,
+                        scale: screen.backingScaleFactor, safeTop: screen.safeAreaInsets.top,
+                        leftAuxWidth: screen.auxiliaryTopLeftArea?.width, rightAuxWidth: screen.auxiliaryTopRightArea?.width)
+        })
     }
 
     /// The closed shape's size for a display, and whether it has a camera housing.
     static func collapsedSize(frame: NSRect, visibleFrame: NSRect, safeTop: CGFloat, leftAuxWidth: CGFloat?,
-                              rightAuxWidth: CGFloat?, fakeNotchWidth: CGFloat) -> (size: CGSize, hasNotch: Bool) {
-        if safeTop > 0, let leftAuxWidth, let rightAuxWidth {
+                              rightAuxWidth: CGFloat?, fakeNotchWidth: CGFloat, island: CGFloat? = nil) -> (size: CGSize, hasNotch: Bool) {
+        if island == nil, safeTop > 0, let leftAuxWidth, let rightAuxWidth {
             // The shape's top corners flare outward, so widen it to keep the body as wide as the housing.
             return (CGSize(width: frame.width - leftAuxWidth - rightAuxWidth + 12, height: safeTop), true)
-        } else if fakeNotchWidth > 0 {
+        } else if island == nil, fakeNotchWidth > 0 {
             return (CGSize(width: fakeNotchWidth, height: 32), true)
         } else {
             let menuBarHeight = frame.maxY - visibleFrame.maxY
