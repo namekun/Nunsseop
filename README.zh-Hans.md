@@ -120,6 +120,12 @@ brew install --cask namekun/tap/nunsseop
 </details>
 
 <details>
+<summary><b>在带灵动岛的 MacBook Pro 上能用吗？</b></summary>
+
+应该可以，但我们还没有真机可以测试。灵动岛由系统绘制，所以眉毛会停在它旁边而不是盖在上面，把指针移上去后和平时一样打开。如果你有这台 Mac，请运行 `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info`，并把输出通过 [Issue](https://github.com/namekun/Nunsseop/issues) 发给我们，我们会据此调整。
+</details>
+
+<details>
 <summary><b>播放音乐时什么都没有显示。</b></summary>
 
 Nunsseop 显示的是 macOS 列为“正在播放”的内容，所以播放器必须出现在控制中心里。大多数应用和浏览器都可以。备用方案请参阅[“正在播放”的工作原理](#正在播放的工作原理)。

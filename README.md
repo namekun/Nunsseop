@@ -120,6 +120,12 @@ Since 0.37.0 the app is signed and notarized by Apple and opens like any other. 
 </details>
 
 <details>
+<summary><b>Does it work on a MacBook Pro with the Dynamic Island?</b></summary>
+
+It should, but we haven't had one to try yet. The system draws in the Dynamic Island, so the eyebrow rests beside it instead of over it, and hovering it opens Nunsseop as usual. If you have one, run `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` and [open an issue](https://github.com/namekun/Nunsseop/issues) with what it prints; that's how we'll get it right.
+</details>
+
+<details>
 <summary><b>Nothing shows up when I play music.</b></summary>
 
 Nunsseop shows whatever macOS lists as Now Playing, so the player has to appear in Control Center. Most apps and browsers do. See [how now playing works](#how-now-playing-works) for the fallback.
