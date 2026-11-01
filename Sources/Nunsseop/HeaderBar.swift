@@ -12,20 +12,17 @@ struct HeaderBar: View {
         self.height = height
     }
 
-    /// Room for the tab strip: left of the camera on notched displays, otherwise up to the status icons.
-    /// `left` is how many tabs sit left of the camera when the tabs are split around it; nil keeps them in one row.
+    /// Room for the tab strip: left of the camera on notched displays, otherwise up to the status icons. Tabs that don't fit scroll.
     /// `label` is the room the current tab's title takes beyond an icon (see `NotchViewModel.tabLabelWidth`), kept for every tab so
     /// that choosing another does not move anything.
-    nonisolated static func layout(width: CGFloat, status: CGFloat, label: CGFloat, tabCount: Int, hasNotch: Bool, notchWidth: CGFloat)
-        -> (strip: CGFloat, camera: CGFloat, side: CGFloat, left: Int?) {
+    nonisolated static func layout(width: CGFloat, status: CGFloat, hasNotch: Bool, notchWidth: CGFloat)
+        -> (strip: CGFloat, camera: CGFloat, side: CGFloat) {
         let content = width - 2 * NotchViewModel.headerInset
         // Without a notch: the gaps after the strip and between the two spacers.
-        guard hasNotch else { return (content - status - 12, 0, content, nil) }
+        guard hasNotch else { return (content - status - 12, 0, content) }
         let camera = notchWidth + 8
         let side = (content - camera - 12) / 2
-        // Split only when both halves fit; otherwise every tab scrolls in one row on the left.
-        let split = NotchViewModel.tabSplit(count: tabCount, status: status, label: label)
-        return (side, camera, side, split.side <= side + 0.5 ? split.left : nil)
+        return (side, camera, side)
     }
 
     var body: some View {
@@ -54,25 +51,15 @@ struct HeaderRow: View {
 
     var body: some View {
         let label = NotchViewModel.tabLabelWidth(tabs)
-        let layout = HeaderBar.layout(width: width, status: NotchViewModel.headerStatusWidth, label: label, tabCount: tabs.count,
-                                      hasNotch: hasNotch, notchWidth: notchWidth)
+        let layout = HeaderBar.layout(width: width, status: NotchViewModel.headerStatusWidth, hasNotch: hasNotch, notchWidth: notchWidth)
         let needed = NotchViewModel.stripWidth(tabs.count) + label
         HStack(spacing: 6) {
             if hasNotch {
-                let left = layout.left.map { Array(tabs.prefix($0)) } ?? tabs
-                let right = layout.left.map { Array(tabs.dropFirst($0)) } ?? []
-                tabStrip(left, width: layout.strip, label: label, overflowing: layout.left == nil && needed > layout.strip)
+                tabStrip(tabs, width: layout.strip, label: label, overflowing: needed > layout.strip)
                     .frame(width: layout.strip, alignment: .leading)
                 Color.clear.frame(width: layout.camera)
                 HStack(spacing: 6) {
-                    if right.isEmpty {
-                        Spacer(minLength: 0)
-                    } else {
-                        let width = NotchViewModel.stripWidth(right.count) + label + 2
-                        tabStrip(right, width: width, label: label, overflowing: false)
-                            .frame(width: width)
-                            .frame(minWidth: width, maxWidth: .infinity, alignment: .leading)
-                    }
+                    Spacer(minLength: 0)
                     status
                 }
                 .frame(width: layout.side)
