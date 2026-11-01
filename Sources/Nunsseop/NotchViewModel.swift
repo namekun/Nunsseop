@@ -499,36 +499,16 @@ final class NotchViewModel: ObservableObject {
         return min(widest, tabTitleCap) + 22
     }
 
-    /// On notched displays the tabs sit on both sides of the camera: the first `left` on the left, the rest on the right
-    /// ahead of the status icons. Picks the split that keeps the wider side narrowest; `side` is that side's width.
-    /// A tab strip's frame is 2 points wider than its buttons, and a side that holds tabs has room for the current tab's `label`.
-    nonisolated static func tabSplit(count: Int, status: CGFloat, label: CGFloat = 0) -> (left: Int, side: CGFloat) {
-        var best = (left: count, side: CGFloat.infinity)
-        // From the left so a tie keeps more tabs on the left.
-        for left in stride(from: count, through: 0, by: -1) {
-            let right = count - left
-            let side = max(left > 0 ? stripWidth(left) + 2 + label : 0, right > 0 ? stripWidth(right) + 2 + label + status : status)
-            if side < best.side { best = (left, side) }
-        }
-        return best
-    }
-
-    /// The width that shows every tab without scrolling: split around the camera on notched displays, otherwise in one row.
+    /// The width that shows every tab without scrolling. On notched displays the tabs scroll left of the camera, at the width set
+    /// in Settings: fitting them there would take twice the row, for the empty side right of the camera.
     private var widthFittingTabs: CGFloat {
+        guard !geometry.hasNotch else { return 0 }
         let tabs = settings.visibleTabs
-        return Self.fittingWidth(tabCount: tabs.count, status: Self.headerStatusWidth, label: Self.tabLabelWidth(tabs),
-                                 hasNotch: geometry.hasNotch, notchWidth: geometry.collapsedSize.width)
+        return Self.fittingWidth(tabCount: tabs.count, status: Self.headerStatusWidth, label: Self.tabLabelWidth(tabs))
     }
 
-    nonisolated static func fittingWidth(tabCount count: Int, status: CGFloat, label: CGFloat = 0, hasNotch: Bool, notchWidth: CGFloat) -> CGFloat {
-        let content: CGFloat
-        if hasNotch {
-            let side = tabSplit(count: count, status: status, label: label).side
-            content = 2 * side + notchWidth + 8 + 12
-        } else {
-            content = stripWidth(count) + label + 12 + status
-        }
-        return content + 2 * headerInset
+    nonisolated static func fittingWidth(tabCount count: Int, status: CGFloat, label: CGFloat = 0) -> CGFloat {
+        stripWidth(count) + label + 12 + status + 2 * headerInset
     }
 
     /// The meeting name the sneak peek shows instead of the track while a call starts.
