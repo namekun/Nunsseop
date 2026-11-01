@@ -120,6 +120,12 @@ Dock にアイコンは出ません。Nunsseop はノッチの中にいます。
 </details>
 
 <details>
+<summary><b>Dynamic Island のある MacBook Pro でも動きますか？</b></summary>
+
+動くはずですが、実機ではまだ試せていません。Dynamic Island はシステムが描く場所なので、眉はその上ではなく横に置かれ、ポインターを合わせるといつもどおり開きます。お持ちの方は `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` を実行し、結果を [Issue](https://github.com/namekun/Nunsseop/issues) で送ってください。その値をもとに調整します。
+</details>
+
+<details>
 <summary><b>音楽を再生しても何も表示されません。</b></summary>
 
 Nunsseop は、macOS が「再生中」として認識している内容を表示します。そのため、プレーヤーがコントロールセンターに表示される必要があります。ほとんどのアプリとブラウザは表示されます。代替手段については、[再生中情報の取得方法](#再生中情報の取得方法)をご覧ください。

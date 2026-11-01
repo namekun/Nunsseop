@@ -120,6 +120,12 @@ Desde la 0.37.0 la app está firmada y notarizada por Apple y se abre como cualq
 </details>
 
 <details>
+<summary><b>¿Funciona en un MacBook Pro con Dynamic Island?</b></summary>
+
+Debería, pero aún no hemos podido probarlo en uno. La Dynamic Island la dibuja el sistema, así que la ceja se queda a su lado y no encima, y al pasar el cursor Nunsseop se abre como siempre. Si tienes uno, ejecuta `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` y [abre una incidencia](https://github.com/namekun/Nunsseop/issues) con lo que muestre; así podremos ajustarlo bien.
+</details>
+
+<details>
 <summary><b>No aparece nada cuando reproduzco música.</b></summary>
 
 Nunsseop muestra lo que macOS indique como En reproducción, así que el reproductor tiene que aparecer en el Centro de control. La mayoría de las apps y los navegadores lo hacen. Consulta [cómo funciona En reproducción](#cómo-funciona-en-reproducción) para ver la alternativa.

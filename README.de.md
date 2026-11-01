@@ -120,6 +120,12 @@ Seit 0.37.0 ist die App von Apple signiert und notarisiert und öffnet sich wie 
 </details>
 
 <details>
+<summary><b>Läuft es auf einem MacBook Pro mit Dynamic Island?</b></summary>
+
+Das sollte es, aber wir konnten es noch nicht auf einem echten Gerät testen. Die Dynamic Island zeichnet das System, deshalb sitzt die Braue daneben statt darüber, und beim Darüberfahren öffnet sich Nunsseop wie gewohnt. Wenn du so einen Mac hast, führe `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` aus und [eröffne ein Issue](https://github.com/namekun/Nunsseop/issues) mit der Ausgabe. Damit können wir es richtig anpassen.
+</details>
+
+<details>
 <summary><b>Beim Abspielen von Musik erscheint nichts.</b></summary>
 
 Nunsseop zeigt, was macOS als „Aktuelle Wiedergabe“ führt, daher muss der Player im Kontrollzentrum auftauchen. Die meisten Apps und Browser tun das. Zur Ausweichlösung siehe [So funktioniert die Anzeige der aktuellen Wiedergabe](#so-funktioniert-die-anzeige-der-aktuellen-wiedergabe).

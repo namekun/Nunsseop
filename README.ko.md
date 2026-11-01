@@ -120,6 +120,12 @@ Dock 아이콘은 없습니다. Nunsseop은 노치에 삽니다.
 </details>
 
 <details>
+<summary><b>다이내믹 아일랜드가 있는 MacBook Pro에서도 되나요?</b></summary>
+
+될 것으로 보지만 아직 실제 기기로 시험해 보지 못했습니다. 다이내믹 아일랜드는 시스템이 그리는 자리라서, 눈썹은 그 위가 아니라 옆에 자리 잡고 마우스를 올리면 평소처럼 열립니다. 해당 기기가 있다면 `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info`를 실행해 [이슈](https://github.com/namekun/Nunsseop/issues)로 결과를 보내 주세요. 그 값으로 제대로 맞추겠습니다.
+</details>
+
+<details>
 <summary><b>음악을 틀어도 아무것도 안 나와요.</b></summary>
 
 Nunsseop은 macOS가 '지금 재생 중'으로 아는 것을 보여 줍니다. 제어 센터에 재생 정보가 뜨는 앱이어야 하는데, 대부분의 앱과 브라우저가 그렇습니다. 막혔을 때의 대체 경로는 [재생 정보를 읽는 방법](#재생-정보를-읽는-방법)을 보세요.

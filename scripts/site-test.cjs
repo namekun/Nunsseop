@@ -113,7 +113,8 @@ const pickLang = async (page, lang) => {
   // Links leave the page only for known places.
   const hrefs = await page.$$eval('a[href]', as => as.map(a => a.getAttribute('href')).filter(h => !h.startsWith('#')));
   const okLinks = new Set(['https://brew.sh', 'https://github.com/namekun/Nunsseop', 'https://github.com/namekun/Nunsseop/releases',
-    'https://github.com/namekun/Nunsseop/releases/latest', 'https://github.com/namekun/homebrew-tap', 'https://github.com/namekun/Nunsseop/releases/latest/download/Nunsseop.dmg']);
+    'https://github.com/namekun/Nunsseop/releases/latest', 'https://github.com/namekun/homebrew-tap', 'https://github.com/namekun/Nunsseop/releases/latest/download/Nunsseop.dmg',
+    'https://github.com/namekun/Nunsseop/issues']);
   check(hrefs.every(h => okLinks.has(h)), 'unexpected links: ' + [...new Set(hrefs.filter(h => !okLinks.has(h)))].join(', '));
   for (const h of okLinks) check(hrefs.includes(h), 'link no longer on the page: ' + h);
 

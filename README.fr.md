@@ -120,6 +120,12 @@ Depuis la 0.37.0, l’app est signée et notarisée par Apple et s’ouvre comme
 </details>
 
 <details>
+<summary><b>Est-ce que ça marche sur un MacBook Pro avec Dynamic Island ?</b></summary>
+
+Ça devrait, mais nous n’avons pas encore pu l’essayer sur un vrai appareil. La Dynamic Island est dessinée par le système : le sourcil se place à côté et non par-dessus, et le survol ouvre Nunsseop comme d’habitude. Si vous en avez un, lancez `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` et [ouvrez une issue](https://github.com/namekun/Nunsseop/issues) avec ce qui s’affiche ; c’est ce qui nous permettra de bien l’ajuster.
+</details>
+
+<details>
 <summary><b>Rien ne s’affiche quand je lance de la musique.</b></summary>
 
 Nunsseop affiche ce que macOS déclare comme lecture en cours : le lecteur doit donc apparaître dans le Centre de contrôle. C’est le cas de la plupart des apps et des navigateurs. Voir [le fonctionnement de la lecture en cours](#fonctionnement-de-la-lecture-en-cours) pour la solution de repli.
