@@ -216,9 +216,9 @@
   .ag-stage { --aw: min(416px, calc(100vw - 96px)); --ah: 120px; --ear: 72px; position: relative; max-width: 960px; height: 200px; margin: 0 auto; overflow: hidden; border: 8px solid #000; border-radius: var(--s3); background: var(--wall); box-shadow: 0 32px 64px -32px rgba(16, 40, 80, .4); }
   .ag-notch { position: absolute; left: calc(50% - var(--aw) / 2); top: 0; width: var(--aw); height: var(--ah); overflow: hidden; border-radius: 0 0 var(--s3) var(--s3); background: #000; color: #fff; z-index: 2; animation: ag-notch 8s infinite; }
   @keyframes ag-notch {
-    0%, 40% { left: calc(50% - var(--cw) / 2); width: calc(var(--cw) + var(--ear)); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); animation-timing-function: cubic-bezier(.34, 1.25, .5, 1); }
+    0%, 40% { left: calc(50% - var(--cw) / 2 - var(--ear)); width: calc(var(--cw) + 2 * var(--ear)); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); animation-timing-function: cubic-bezier(.34, 1.25, .5, 1); }
     48%, 90% { left: calc(50% - var(--aw) / 2); width: var(--aw); height: var(--ah); border-radius: 0 0 var(--s3) var(--s3); animation-timing-function: cubic-bezier(.3, 0, .2, 1); }
-    96%, 100% { left: calc(50% - var(--cw) / 2); width: calc(var(--cw) + var(--ear)); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); }
+    96%, 100% { left: calc(50% - var(--cw) / 2 - var(--ear)); width: calc(var(--cw) + 2 * var(--ear)); height: var(--ch); border-radius: 0 0 var(--s2) var(--s2); }
   }
   /* Beside the camera, as an item in the closed notch: the stroke with the count right after it. */
   .ag-bar { position: absolute; right: 0; top: 0; display: flex; align-items: center; height: var(--ch); padding: 0 var(--s2); }
@@ -330,7 +330,8 @@
     .stats b { font-size: 40px; line-height: 48px; }
     .ag-stage { --ah: 144px; border-radius: var(--s2); }
     .ag-list { grid-template-columns: minmax(0, 1fr); gap: var(--s3); margin-top: var(--s5); }
-    .chips { justify-content: flex-start; }
+    .ag-list { text-align: center; }
+    footer { flex-direction: column; align-items: center; text-align: center; }
     .tour-list { flex-wrap: nowrap; justify-content: flex-start; margin: 0 calc(var(--s3) * -1) var(--s2); padding: var(--s1) var(--s3); overflow-x: auto; scrollbar-width: none; }
     .tour-list::-webkit-scrollbar { display: none; }
     .tour-screen { height: calc((100vw - var(--s6)) * .3 + var(--s3)); border-radius: var(--s2); }
