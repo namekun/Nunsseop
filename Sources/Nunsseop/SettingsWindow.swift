@@ -46,7 +46,7 @@ final class SettingsWindowController {
 
 private enum SettingsPane: String, CaseIterable, Identifiable {
     // The raw values are what @AppStorage("settingsPane") has stored since the tabs had these names.
-    case general, layout, alerts, services
+    case general, layout, alerts, alarms, services
 
     var id: String { rawValue }
 
@@ -55,6 +55,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         case .general: "General"
         case .layout: "Notch"
         case .alerts: "Alerts"
+        case .alarms: "알람"
         case .services: "Services"
         }
     }
@@ -64,12 +65,13 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         case .general: "gearshape"
         case .layout: "rectangle.topthird.inset.filled"
         case .alerts: "bell.badge"
+        case .alarms: "alarm"
         case .services: "puzzlepiece.extension"
         }
     }
 }
 
-/// The four panes in a sidebar and the chosen one beside it, laid out like macOS System Settings.
+/// The panes in a sidebar and the chosen one beside it, laid out like macOS System Settings.
 struct SettingsView: View {
     static let size = CGSize(width: 720, height: 600)
     private static let sidebarWidth: CGFloat = 200
@@ -95,6 +97,7 @@ struct SettingsView: View {
                 case .general: GeneralPane(settings: settings)
                 case .layout: LayoutPane(settings: settings)
                 case .alerts: AlertsPane(settings: settings)
+                case .alarms: AlarmsPane()
                 case .services: ServicesPane(settings: settings)
                 }
             }
