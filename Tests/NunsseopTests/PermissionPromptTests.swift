@@ -652,7 +652,11 @@ struct PermissionPromptParseTests {
         let deny: [String: Any] = ["type": "addRules", "behavior": "deny", "rules": [["toolName": "Bash"]]]
         let empty: [String: Any] = ["type": "addRules", "behavior": "allow", "rules": []]
         let only = try #require(parse("Bash", ["command": "ls"], suggestions: [PermissionTestServer.setMode, deny, empty]))
-        #expect(only.prompt.grant == nil && only.suggestion == nil)
+        // None of those is offered; the rule of that one command is, as for a prompt with no suggestion.
+        #expect(only.prompt.grant?.rules == ["Bash(ls)"])
+        #expect(only.suggestion?["type"] as? String == "addRules" && only.suggestion?["behavior"] as? String == "allow")
+        let other = try #require(parse("Bash", ["command": "ls *"], suggestions: [PermissionTestServer.setMode, deny, empty]))
+        #expect(other.prompt.grant == nil && other.suggestion == nil)
 
         let both = try #require(parse("Bash", ["command": "ls"], suggestions: [PermissionTestServer.setMode, PermissionTestServer.addRules]))
         #expect(both.prompt.grant?.rules == ["Bash(npm run *)"])
@@ -963,5 +967,47 @@ struct PermissionSessionTests {
             let parsed = try #require(PermissionPrompt.parse(try JSONSerialization.data(withJSONObject: json)))
             #expect(parsed.prompt.session == nil, "\(value)")
         }
+    }
+}
+
+struct ExactCommandRuleTests {
+    private func grant(_ command: String, tool: String = "Bash", suggestions: [[String: Any]]? = nil) -> PermissionPrompt.Grant? {
+        let input: [String: Any] = tool == "Bash" ? ["command": command] : ["file_path": "/Users/me/proj/a.swift", "old_string": "a", "new_string": "b"]
+        return PermissionPrompt.parse(PermissionTestServer.hookInput(tool: tool, input: input, suggestions: suggestions))?.prompt.grant
+    }
+
+    @Test func aPlainCommandWithNoSuggestionCanBeAlwaysAllowedAsItIs() throws {
+        let grant = try #require(grant("swift test --filter HeaderBar"))
+        #expect(grant.rules == ["Bash(swift test --filter HeaderBar)"])
+        #expect(grant.place == .localSettings)
+    }
+
+    @Test func claudeCodesOwnSuggestionStillWins() throws {
+        let grant = try #require(grant("npm run build", suggestions: [PermissionTestServer.addRules]))
+        #expect(grant.rules != ["Bash(npm run build)"])
+    }
+
+    @Test func anythingARuleWouldReadWiderOrNeverMatchIsNotOffered() {
+        // A * is a wildcard in a rule; compound commands match part by part; substitutions, redirects and leading assignments
+        // change what runs or keep the rule from matching.
+        for command in ["rm -rf build/*", "ls *.txt", "make && make install", "a || b", "a; b", "cat x | wc -l", "sleep 1 &",
+                        "echo $(whoami)", "echo `id`", "echo $HOME", "ls > out.txt", "sort < in.txt", "FOO=1 make", "(cd a; ls)",
+                        "echo {a,b}", "ls ?.txt", "ls ~", "echo a\\ b", "echo hi # x", "", " ls", "ls ", "ls\nrm x", "echo é",
+                        String(repeating: "a", count: 201)] {
+            #expect(grant(command) == nil, Comment(rawValue: command))
+        }
+    }
+
+    @Test func onlyBashGetsOne() {
+        #expect(grant("", tool: "Edit") == nil)
+    }
+
+    @Test func alwaysAllowSendsThatOneRule() throws {
+        let parsed = try #require(PermissionPrompt.parse(PermissionTestServer.hookInput(input: ["command": "swift build"])))
+        let data = try #require(PermissionWire.decision(.always, suggestion: parsed.suggestion))
+        let text = String(decoding: data, as: UTF8.self)
+        #expect(text.contains(#""ruleContent":"swift build""#))
+        #expect(text.contains(#""destination":"localSettings""#))
+        #expect(text.contains(#""behavior":"allow""#))
     }
 }

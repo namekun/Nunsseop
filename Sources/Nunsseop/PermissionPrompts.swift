@@ -907,7 +907,8 @@ struct PermissionPrompt: Identifiable, Equatable {
         guard shown <= detailLimit, shownTitle.unicodeScalars.count <= titleLimit else { return nil }
         // Codex takes neither updated permissions nor input from a hook, and OpenCode's plugin gets only allow or deny, so neither is
         // ever offered "Always allow".
-        let suggestion = codex || openCode ? nil : addRulesSuggestion(in: json["permission_suggestions"])
+        let suggestion = codex || openCode ? nil
+            : addRulesSuggestion(in: json["permission_suggestions"]) ?? (dialect == nil && tag == nil ? exactRuleSuggestion(tool: tool, input: input) : nil)
         let grant = suggestion.flatMap(grant(from:))
         let prompt = PermissionPrompt(id: UUID(), title: shownTitle, symbol: described.symbol, detail: detail, flags: flags,
                                       secondary: secondary, folder: folder, grant: grant, codex: codex, tag: tag ?? dialect?.tag ?? (openCode ? "OpenCode" : nil))
@@ -1093,6 +1094,20 @@ struct PermissionPrompt: Identifiable, Equatable {
             entry["type"] as? String == "addRules" && entry["behavior"] as? String == "allow"
                 && !((entry["rules"] as? [Any]) ?? []).isEmpty
         }
+    }
+
+    /// "Always allow" for a Bash command Claude Code suggests no rule for: a rule of that exact command, saved where Claude Code's own
+    /// "don't ask again" goes. Only for a plain one-line command, since Claude Code reads a `*` in a rule as a wildcard (it would allow
+    /// more than was asked), matches a compound command part by part (the rule would never apply), and doesn't match past most
+    /// leading assignments. Anything the shell expands, redirects or substitutes is left out too, so the rule says what runs.
+    static func exactRuleSuggestion(tool: String, input: [String: Any]) -> [String: Any]? {
+        guard tool == "Bash", let command = input["command"] as? String, (1...200).contains(command.count),
+              !command.hasPrefix(" "), !command.hasSuffix(" "),
+              command.unicodeScalars.allSatisfy({ (0x21...0x7E).contains($0.value) || $0 == " " }),
+              command.rangeOfCharacter(from: CharacterSet(charactersIn: "*?&|;<>()`$\\!{}[]~#")) == nil,
+              !(command.split(separator: " ").first?.contains("=") ?? true) else { return nil }
+        return ["type": "addRules", "behavior": "allow", "destination": "localSettings",
+                "rules": [["toolName": "Bash", "ruleContent": command]]]
     }
 
     /// Every rule as Claude Code writes it, or nil when any part of the suggestion can't be shown as it is: a rule with a scalar

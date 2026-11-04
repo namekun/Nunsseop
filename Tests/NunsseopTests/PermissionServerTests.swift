@@ -61,7 +61,8 @@ struct PermissionServerTests {
     @Test func aPromptWithoutARuleCannotBeAnsweredAlways() async throws {
         let server = try await PermissionTestServer()
         let client = try RawClient(port: server.port)
-        client.send(server.request(body: PermissionTestServer.hookInput(suggestions: [PermissionTestServer.setMode])))
+        // A command with a wildcard gets no rule of its own, and a mode change is never offered.
+        client.send(server.request(body: PermissionTestServer.hookInput(input: ["command": "ls *.txt"], suggestions: [PermissionTestServer.setMode])))
         await eventually { server.events.prompts.count == 1 }
         let prompt = try #require(server.events.prompts.first)
         #expect(prompt.grant == nil)
