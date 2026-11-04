@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+import SwiftUI
 @testable import Nunsseop
 
 @MainActor
@@ -98,8 +99,7 @@ struct HUDSlotTests {
     }
 
     @Test func everySymbolBesideNoticeTextFitsTheSymbolSlot() throws {
-        let symbols = ["bolt.fill", "headphones", "battery.0percent", "battery.25percent", "battery.50percent",
-                       "battery.75percent", "battery.100percent", "battery.100percent.bolt", "calendar", "video.fill",
+        let symbols = ["bolt.fill", "headphones", "calendar", "video.fill",
                        "mic.fill", "sparkles", "timer", "camera.viewfinder", "checkmark.circle.fill",
                        "tray.and.arrow.down.fill", "capslock.fill", "record.circle", "arrow.down.circle"]
         for name in symbols {
@@ -108,9 +108,11 @@ struct HUDSlotTests {
     }
 
     @Test func theLevelSymbolsOverhangTheSlotByAtMostAPointIntoTheSidePadding() throws {
-        // speaker.wave.3.fill is 21 wide against the 20 slot; the 18 of padding beside it absorbs that.
+        // speaker.wave.3.fill is 21 wide against the 20 slot; the 18 of padding beside it absorbs that. The batteries are 20 on a
+        // 1x display and 21 on a Retina one, all of it side bearing (see HUDLineRenderTests).
         let symbols = ["speaker.slash.fill", "speaker.wave.1.fill", "speaker.wave.2.fill", "speaker.wave.3.fill",
-                       "sun.min.fill", "sun.max.fill", "light.min", "light.max"]
+                       "sun.min.fill", "sun.max.fill", "light.min", "light.max", "battery.0percent", "battery.25percent",
+                       "battery.50percent", "battery.75percent", "battery.100percent", "battery.100percent.bolt"]
         for name in symbols {
             #expect(try symbolWidth(name) <= HUDContent.lineSymbolWidth + 1, "\(name)")
         }
@@ -120,5 +122,42 @@ struct HUDSlotTests {
         let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .semibold)
         let width = ceil(("100%" as NSString).size(withAttributes: [.font: font]).width)
         #expect(width <= HUDContent.compactValueWidth(for: .power(PowerState(percent: 100, isCharging: false, onAC: true)))!)
+    }
+}
+
+/// What the one-line power HUD draws, measured in pixels: the battery's ink stays in its slot whatever the display's scale.
+@MainActor
+struct HUDLineRenderTests {
+    /// The columns, in points from the row's left edge, where anything light is drawn, merged into runs.
+    private func inkRuns(_ event: HUDEvent) -> [ClosedRange<CGFloat>] {
+        let view = HUDContent(event: event, height: 32, earWidth: 100, singleLine: true)
+            .frame(width: 100, height: 32, alignment: .leading)
+            .background(Color.black)
+        let rep = EarRender.pixels(view, width: 100, height: 32)
+        var runs: [ClosedRange<CGFloat>] = []
+        for x in 0..<rep.pixelsWide {
+            let lit = (0..<rep.pixelsHigh).contains { y in
+                guard let c = rep.colorAt(x: x, y: y) else { return false }
+                return c.redComponent + c.greenComponent + c.blueComponent > 0.6
+            }
+            guard lit else { continue }
+            let left = CGFloat(x) / 2, right = CGFloat(x + 1) / 2
+            if let last = runs.last, left - last.upperBound <= 1 {
+                runs[runs.count - 1] = last.lowerBound...right
+            } else {
+                runs.append(left...right)
+            }
+        }
+        return runs
+    }
+
+    @Test func theBatteryIsDrawnInsideItsSlotAndApartFromThePercent() throws {
+        for percent in [5, 30, 55, 80, 100] {
+            let runs = inkRuns(.power(PowerState(percent: percent, isCharging: false, onAC: false)))
+            let battery = try #require(runs.first, "\(percent)%")
+            // Ink at the row's very edge has been cut off there.
+            #expect(battery.lowerBound > 0 && battery.upperBound <= HUDContent.lineSymbolWidth, "\(percent)%: \(battery)")
+            #expect(runs.count > 1 && runs[1].lowerBound - battery.upperBound >= HUDContent.lineGap, "\(percent)%: \(runs)")
+        }
     }
 }

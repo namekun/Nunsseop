@@ -21,7 +21,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 EXHAUSTIVE='/exhaustive'
-DRAWING='NunsseopTests\.(PermissionLayoutTests|PermissionQuestionLayoutTests|CodexPermissionLayoutTests|PermissionAllowlistTests|AgentFooterRenderTests|LiveEarRenderTests|HeaderTabWidthTests|OnboardingRenderTests|RecapRenderTests)/'
+DRAWING='NunsseopTests\.(PermissionLayoutTests|PermissionQuestionLayoutTests|CodexPermissionLayoutTests|PermissionAllowlistTests|AgentFooterRenderTests|LiveEarRenderTests|HeaderTabWidthTests|OnboardingRenderTests|RecapRenderTests|HUDLineRenderTests)/'
 
 swift_test() {
     local CLT=/Library/Developer/CommandLineTools/Library/Developer
