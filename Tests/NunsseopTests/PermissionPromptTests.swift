@@ -977,14 +977,14 @@ struct ExactCommandRuleTests {
     }
 
     @Test func aPlainCommandWithNoSuggestionCanBeAlwaysAllowedAsItIs() throws {
-        let grant = try #require(grant("swift test --filter HeaderBar"))
-        #expect(grant.rules == ["Bash(swift test --filter HeaderBar)"])
-        #expect(grant.place == .localSettings)
+        let offered = try #require(grant("swift test --filter HeaderBar"))
+        #expect(offered.rules == ["Bash(swift test --filter HeaderBar)"])
+        #expect(offered.place == .localSettings)
     }
 
     @Test func claudeCodesOwnSuggestionStillWins() throws {
-        let grant = try #require(grant("npm run build", suggestions: [PermissionTestServer.addRules]))
-        #expect(grant.rules != ["Bash(npm run build)"])
+        let offered = try #require(grant("npm run build", suggestions: [PermissionTestServer.addRules]))
+        #expect(offered.rules != ["Bash(npm run build)"])
     }
 
     @Test func anythingARuleWouldReadWiderOrNeverMatchIsNotOffered() {
