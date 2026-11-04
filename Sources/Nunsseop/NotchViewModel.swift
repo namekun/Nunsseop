@@ -267,7 +267,11 @@ final class NotchViewModel: ObservableObject {
         // Claude Code's permission prompts wait here until answered, or until their hook is gone.
         PermissionLink.connect(board: approvals, gate: notifyServer.permissions, isOn: settings.$permissionPrompts.eraseToAnyPublisher(),
                                enabled: { AppSettings.load("permissionPrompts", default: true) },
-                               other: { [paseoWatcher] in paseoWatcher.approvals.answer($0, $1) })
+                               other: { [paseoWatcher] in paseoWatcher.approvals.answer($0, $1) },
+                               leavesToTerminal: { [weak self] prompt in
+                                   guard let self, self.settings.promptsToFrontTerminal, let session = prompt.session else { return false }
+                                   return Self.isInFront(app: self.agents.app(ofSession: session))
+                               })
             .forEach { $0.store(in: &cancellables) }
         approvals.$prompts
             .sink { [weak self] _ in self?.objectWillChange.send() }

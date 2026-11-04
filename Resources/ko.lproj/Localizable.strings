@@ -414,6 +414,7 @@
 
 /* Permission prompts */
 "Answer permission prompts and questions in the notch" = "권한 요청과 질문에 노치에서 답하기";
+"Leave them to the terminal while it's in front" = "터미널이 앞에 있으면 터미널에 맡기기";
 "Claude Code's permission prompts and questions also show in the notch, where you can allow or deny a prompt and pick the answer to a question. Answer a prompt in the terminal and the notch lets go of it; a question is asked in the terminal once you press “Answer in terminal” in the notch. If Nunsseop isn't running, the terminal asks as before. Works with Claude Code connected above. What a prompt asks is kept in memory only." = "Claude Code의 권한 요청과 질문이 노치에도 표시되어, 권한 요청은 허용하거나 거부하고 질문은 답을 고를 수 있습니다. 권한 요청은 터미널에서 먼저 답하면 노치의 요청이 사라지고, 질문은 노치에서 ‘터미널에서 답하기’를 눌러야 터미널에서 묻습니다. Nunsseop이 실행 중이 아니면 이전처럼 터미널에서 묻습니다. 위에서 Claude Code를 연결해야 동작합니다. 요청 내용은 메모리에만 보관됩니다.";
 "Codex's approvals (commands, file edits, tools) show in the notch too. Codex asks once to trust the new hook: review it in /hooks. While the notch holds an approval, Codex shows no prompt of its own; “Answer in terminal” hands it back." = "Codex의 승인 요청(명령, 파일 편집, 도구)도 노치에 표시됩니다. Codex가 새 훅을 신뢰할지 한 번 물으니 /hooks에서 검토하세요. 노치가 승인 요청을 잡고 있는 동안 Codex는 자체 확인창을 띄우지 않으며, ‘터미널에서 답하기’를 누르면 Codex로 돌아갑니다.";
 

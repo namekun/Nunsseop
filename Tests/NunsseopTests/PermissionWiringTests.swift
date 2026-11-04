@@ -12,9 +12,11 @@ struct PermissionWiringTests {
         let setting = PassthroughSubject<Bool, Never>()
         let links: [AnyCancellable]
 
-        init(enabled: @escaping @Sendable () -> Bool = { true }) async throws {
+        init(enabled: @escaping @Sendable () -> Bool = { true },
+             leavesToTerminal: @escaping @MainActor (PermissionPrompt) -> Bool = { _ in false }) async throws {
             server = try await PermissionTestServer()
-            links = PermissionLink.connect(board: board, gate: server.server.permissions, isOn: setting.eraseToAnyPublisher(), enabled: enabled)
+            links = PermissionLink.connect(board: board, gate: server.server.permissions, isOn: setting.eraseToAnyPublisher(), enabled: enabled,
+                                           leavesToTerminal: leavesToTerminal)
         }
 
         func ask(_ input: [String: Any] = ["command": "npm run build"]) throws -> RawClient {
@@ -30,6 +32,17 @@ struct PermissionWiringTests {
         await eventually { rig.board.prompts.count == 1 }
         #expect(rig.board.current?.detail == "make all")
         withExtendedLifetime(client) {}
+    }
+
+    @Test func aPromptLeftToTheTerminalShowsNoCardAndLetsTheHookGoAtOnce() async throws {
+        var asked: [String?] = []
+        let rig = try await Rig(leavesToTerminal: { asked.append($0.session); return true })
+        let client = try rig.ask(["command": "make all"])
+        // Nothing printed, as with "Answer in terminal": the terminal asks for itself.
+        let text = String(decoding: await client.read(timeout: 10), as: UTF8.self)
+        #expect(text.hasPrefix("HTTP/1.1 204"))
+        #expect(rig.board.prompts.isEmpty)
+        #expect(asked == ["s-1"])
     }
 
     @Test func turningTheSettingOffClearsThePromptsAndLetsTheirHooksGo() async throws {

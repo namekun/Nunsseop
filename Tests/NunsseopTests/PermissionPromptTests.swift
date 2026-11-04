@@ -949,3 +949,19 @@ struct PermissionBoardTests {
         #expect(height(grant: nil, hasNotch: true) > height(grant: nil, hasNotch: false))
     }
 }
+
+struct PermissionSessionTests {
+    @Test func aPromptKnowsTheSessionThatAsked() throws {
+        let parsed = try #require(PermissionPrompt.parse(PermissionTestServer.hookInput()))
+        #expect(parsed.prompt.session == "s-1")
+    }
+
+    @Test func aSessionIdThatIsNoPlainIdIsLeftOut() throws {
+        for value in [42, "", String(repeating: "a", count: 200), "s 1\n"] as [Any] {
+            var json = try #require(try JSONSerialization.jsonObject(with: PermissionTestServer.hookInput()) as? [String: Any])
+            json["session_id"] = value
+            let parsed = try #require(PermissionPrompt.parse(try JSONSerialization.data(withJSONObject: json)))
+            #expect(parsed.prompt.session == nil, "\(value)")
+        }
+    }
+}

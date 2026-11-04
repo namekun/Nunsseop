@@ -123,3 +123,20 @@ struct IdleEarWidthTests {
         #expect(NotchViewModel.idleEarWidth(for: IdleValue(symbol: nil, tint: nil, text: "")) == 8)
     }
 }
+
+@MainActor
+struct AgentAppBySessionTests {
+    @Test func aSessionIsFoundInTheAppItRunsIn() {
+        let board = AgentBoard()
+        var working = AgentBoard.Agent(state: .working)
+        working.session = "s-1"
+        working.app = "com.mitchellh.ghostty"
+        var other = AgentBoard.Agent(state: .waiting)
+        other.session = "s-2"
+        board.replace(source: "hooks", with: ["a": working, "b": other])
+        #expect(board.app(ofSession: "s-1") == "com.mitchellh.ghostty")
+        // A session whose hook named no app, and one nobody reported.
+        #expect(board.app(ofSession: "s-2") == nil)
+        #expect(board.app(ofSession: "s-3") == nil)
+    }
+}
