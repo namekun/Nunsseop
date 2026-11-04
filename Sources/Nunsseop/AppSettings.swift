@@ -74,6 +74,10 @@ final class AppSettings: ObservableObject {
     @Published var claudeLimitsAsked: Bool = AppSettings.load("claudeLimitsAsked", default: false) { didSet { save(claudeLimitsAsked, "claudeLimitsAsked") } }
     @Published var localNotifications: Bool = AppSettings.load("localNotifications", default: true) { didSet { save(localNotifications, "localNotifications") } }
     /// Answers Claude Code's permission prompts in the notch, through a hook in its settings that this adds and removes.
+    /// A prompt whose agent's terminal is the app in front is asked there, with no card.
+    @Published var promptsToFrontTerminal: Bool = AppSettings.load("promptsToFrontTerminal", default: true) {
+        didSet { save(promptsToFrontTerminal, "promptsToFrontTerminal") }
+    }
     @Published var permissionPrompts: Bool = AppSettings.load("permissionPrompts", default: true) {
         didSet { save(permissionPrompts, "permissionPrompts"); NotifyIntegration.updateConnected() }
     }

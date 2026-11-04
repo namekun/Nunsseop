@@ -744,6 +744,8 @@ struct PermissionPrompt: Identifiable, Equatable {
     let folder: String
     /// What "Always allow" would add; nil when it isn't offered.
     let grant: Grant?
+    /// The asking tool's own session id, which finds the terminal it runs in on the agents board.
+    var session: String?
     /// How tall what it shows is, at the narrowest closed card and at the narrowest open panel.
     let card: PermissionLayout.Measure
     let panel: PermissionLayout.Measure
@@ -841,7 +843,7 @@ struct PermissionPrompt: Identifiable, Equatable {
     static let titleLimit = 120
 
     struct Parsed {
-        let prompt: PermissionPrompt
+        var prompt: PermissionPrompt
         /// The `addRules` suggestion "Always allow" echoes back; nil unless the prompt offers it.
         let suggestion: [String: Any]?
         /// The `tool_input` of a question, which the answer is built from; nil for an approval.
@@ -860,6 +862,20 @@ struct PermissionPrompt: Identifiable, Equatable {
     ///   like in place of "Always allow".
     /// - dialect: the tool whose hook sent it, when it is none of Claude Code, Codex and OpenCode (see `PermissionDialect`).
     static func parse(_ body: Data, tag: String? = nil, dialect: PermissionDialect? = nil) -> Parsed? {
+        guard var parsed = parseRequest(body, tag: tag, dialect: dialect) else { return nil }
+        parsed.prompt.session = sessionID(body)
+        return parsed
+    }
+
+    /// The hook's `session_id` (`sessionId` for some tools), when it is a plain id.
+    static func sessionID(_ body: Data) -> String? {
+        guard let json = (try? JSONSerialization.jsonObject(with: body)) as? [String: Any],
+              let id = (json["session_id"] ?? json["sessionId"]) as? String, (1...128).contains(id.count),
+              id.unicodeScalars.allSatisfy({ CharacterSet.alphanumerics.contains($0) || "-_.:".unicodeScalars.contains($0) }) else { return nil }
+        return id
+    }
+
+    private static func parseRequest(_ body: Data, tag: String?, dialect: PermissionDialect?) -> Parsed? {
         // A key twice is read one way here and maybe the other by the tool that sent it; and two keys that differ only in how their
         // letters are composed are one key to Swift, which a dictionary bridged from Foundation's can't hold. Looked for before parsing.
         guard !StrictJSON.hasDuplicateKeys(body), var json = (try? JSONSerialization.jsonObject(with: body)) as? [String: Any] else { return nil }

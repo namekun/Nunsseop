@@ -638,6 +638,8 @@ private struct AlertsPane: View {
                 if !asking.isEmpty || paseo.present {
                     Toggle("Answer permission prompts and questions in the notch", isOn: $settings.permissionPrompts)
                         .disabled(!settings.localNotifications && !asking.isEmpty)
+                    Toggle("Leave them to the terminal while it's in front", isOn: $settings.promptsToFrontTerminal)
+                        .disabled(!settings.permissionPrompts)
                     if paseo.present {
                         Text("Paseo's tool approvals show in the notch too, where you can allow or deny them. “Answer in Paseo” leaves one for Paseo's own screens, and the notch lets go of one you answer there.")
                             .font(.caption).foregroundStyle(.secondary)

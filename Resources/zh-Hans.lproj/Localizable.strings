@@ -389,6 +389,7 @@
 
 /* Permission prompts */
 "Answer permission prompts and questions in the notch" = "在刘海中回应权限请求和提问";
+"Leave them to the terminal while it's in front" = "终端在最前面时交给终端";
 "Claude Code's permission prompts and questions also show in the notch, where you can allow or deny a prompt and pick the answer to a question. Answer a prompt in the terminal and the notch lets go of it; a question is asked in the terminal once you press “Answer in terminal” in the notch. If Nunsseop isn't running, the terminal asks as before. Works with Claude Code connected above. What a prompt asks is kept in memory only." = "Claude Code 的权限请求和提问也会显示在刘海中，权限请求可以允许或拒绝，提问可以直接选择答案。若先在终端中回应权限请求，刘海中的请求会随之消失；提问则要在刘海中点“在终端中回答”后，才会在终端里询问。Nunsseop 未运行时，终端会像以前一样询问。需要先在上方连接 Claude Code。请求的内容只保存在内存中。";
 "Codex's approvals (commands, file edits, tools) show in the notch too. Codex asks once to trust the new hook: review it in /hooks. While the notch holds an approval, Codex shows no prompt of its own; “Answer in terminal” hands it back." = "Codex 的批准请求（命令、文件编辑、工具）也会显示在刘海中。Codex 会询问一次是否信任新的钩子：请在 /hooks 中检查。刘海持有批准请求期间，Codex 不会显示自己的提示；点“在终端中回答”即可交还给 Codex。";
 

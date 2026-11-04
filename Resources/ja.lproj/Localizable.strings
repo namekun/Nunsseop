@@ -389,6 +389,7 @@
 
 /* Permission prompts */
 "Answer permission prompts and questions in the notch" = "ノッチで権限の確認と質問に答える";
+"Leave them to the terminal while it's in front" = "ターミナルが前面にあるときはターミナルに任せる";
 "Claude Code's permission prompts and questions also show in the notch, where you can allow or deny a prompt and pick the answer to a question. Answer a prompt in the terminal and the notch lets go of it; a question is asked in the terminal once you press “Answer in terminal” in the notch. If Nunsseop isn't running, the terminal asks as before. Works with Claude Code connected above. What a prompt asks is kept in memory only." = "Claude Code の権限の確認と質問がノッチにも表示され、確認は許可または拒否、質問は答えを選べます。確認はターミナルで先に答えるとノッチの表示は消え、質問はノッチの「ターミナルで答える」を押すとターミナルで尋ねられます。Nunsseop が起動していないときは、これまでどおりターミナルで確認されます。上で Claude Code を接続しておく必要があります。確認の内容はメモリ内にのみ保持されます。";
 "Codex's approvals (commands, file edits, tools) show in the notch too. Codex asks once to trust the new hook: review it in /hooks. While the notch holds an approval, Codex shows no prompt of its own; “Answer in terminal” hands it back." = "Codex の承認（コマンド、ファイルの編集、ツール）もノッチに表示されます。Codex は新しいフックを信頼するかを一度だけ尋ねるので、/hooks で確認してください。ノッチが承認を保持している間、Codex は自分の確認を表示しません。「ターミナルで答える」を押すと Codex に戻ります。";
 

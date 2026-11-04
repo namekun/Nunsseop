@@ -10,6 +10,7 @@ struct ToolSettingsStringsTests {
         "Copy Hermes enable command", "Enabled in Hermes", "Not enabled in Hermes yet",
         "Amp's plugin API is experimental, so an Amp update may stop this from working.",
         "Answer in Cursor",
+        "Leave them to the terminal while it's in front",
     ]
 
     private func table(_ language: String) throws -> NSDictionary {

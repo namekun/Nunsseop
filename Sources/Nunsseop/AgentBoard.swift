@@ -113,6 +113,11 @@ final class AgentBoard: ObservableObject {
         #endif
     }
 
+    /// The bundle id of the terminal app a session runs in, when a source that reports it knows the session.
+    func app(ofSession id: String, now: Date = .now) -> String? {
+        entries(now: now).first { $0.agent.session == id && $0.agent.app != nil }?.agent.app
+    }
+
     /// Everything listed that hasn't expired, as it is at `now`.
     func entries(now: Date = .now) -> [Entry] {
         listed(at: now).map { Entry(source: $0.source, id: $0.id, agent: $0.agent.effective(at: now)) }
