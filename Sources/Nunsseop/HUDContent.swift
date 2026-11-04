@@ -10,7 +10,8 @@ struct HUDContent: View {
     var singleLine = false
 
     static let lineFont = NSFont.systemFont(ofSize: 11, weight: .medium)
-    /// The symbol's slot in the single line; the widest symbol a notice uses (a battery) fits.
+    /// The symbol's slot in the single line; the widest symbol a notice uses (a battery) fits its ink, though on a Retina display its
+    /// image is a point wider.
     static let lineSymbolWidth: CGFloat = 20
     static let lineGap: CGFloat = 7
 
