@@ -154,10 +154,27 @@ final class NotchViewModel: ObservableObject {
     /// The eyebrow has faded out after sitting unused.
     @Published private(set) var browHidden = false
     private var browHideWork: DispatchWorkItem?
+    /// Another app is full screen on the notch's screen, which has no camera housing.
+    @Published var fullScreenInFront = false {
+        didSet {
+            guard fullScreenInFront != oldValue else { return }
+            if fullScreenInFront { scheduleBrowHide(after: 0) } else { resetBrowHide() }
+        }
+    }
+    /// How soon the eyebrow fades in a full-screen app once nothing keeps it up.
+    nonisolated static let fullScreenBrowHideDelay: TimeInterval = 1
 
-    /// Whether the eyebrow is faded out right now: hidden, and no HUD, live activity or sneak peek showing. Idle ears do not keep it up.
+    /// Whether the eyebrow is faded out right now: hidden, with nothing showing that keeps it up. Idle ears do not keep it up.
     var browFaded: Bool {
-        browHidden && !isExpanded && hud.event == nil && approvals.current == nil && !showsLiveActivity && !showsSneakPeek
+        browHidden && Self.browMayFade(expanded: isExpanded, pointerOver: false, hud: hud.event != nil, prompt: approvals.current != nil,
+                                       live: showsLiveActivity, peek: showsSneakPeek, fullScreen: fullScreenInFront)
+    }
+
+    /// Whether the eyebrow may fade: the notch is closed, the pointer is elsewhere, and no HUD or prompt shows. A live activity or a
+    /// sneak peek keeps it up too, except in a full-screen app, where it would sit on the video or slides.
+    nonisolated static func browMayFade(expanded: Bool, pointerOver: Bool, hud: Bool, prompt: Bool, live: Bool, peek: Bool,
+                                        fullScreen: Bool) -> Bool {
+        !expanded && !pointerOver && !hud && !prompt && (fullScreen || !live && !peek)
     }
     /// The eyebrow's mood: a moment's (a finished turn, a limit) while it lasts, otherwise the agents'.
     @Published private(set) var browMood: BrowMood = .rest
@@ -774,6 +791,10 @@ final class NotchViewModel: ObservableObject {
     /// Shows the eyebrow and starts counting down to hiding it again. It only hides while nothing else shows in the collapsed shape.
     func resetBrowHide() {
         browHidden = false
+        scheduleBrowHide()
+    }
+
+    private func scheduleBrowHide(after delay: TimeInterval? = nil) {
         browHideWork?.cancel()
         browHideWork = nil
         guard settings.autoHideBrow, !geometry.hasNotch else { return }
@@ -781,13 +802,15 @@ final class NotchViewModel: ObservableObject {
             MainActor.assumeIsolated {
                 guard let self else { return }
                 self.browHideWork = nil
-                let idle = !self.isExpanded && !self.pointerOverCollapsed && self.hud.event == nil && self.approvals.current == nil
-                    && !self.showsLiveActivity && !self.showsSneakPeek
+                let idle = Self.browMayFade(expanded: self.isExpanded, pointerOver: self.pointerOverCollapsed, hud: self.hud.event != nil,
+                                            prompt: self.approvals.current != nil, live: self.showsLiveActivity,
+                                            peek: self.showsSneakPeek, fullScreen: self.fullScreenInFront)
                 if idle { self.browHidden = true } else { self.resetBrowHide() }
             }
         }
         browHideWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + settings.browHideDelay, execute: work)
+        let wait = delay ?? (fullScreenInFront ? Self.fullScreenBrowHideDelay : settings.browHideDelay)
+        DispatchQueue.main.asyncAfter(deadline: .now() + wait, execute: work)
     }
 
     private func triggerSneakPeek() {

@@ -111,6 +111,8 @@ final class NotchWindowController {
     private var screenObserver: NSObjectProtocol?
     private var wakeObservers: [NSObjectProtocol] = []
     private var settleWork: [DispatchWorkItem] = []
+    private var fullScreenObservers: [NSObjectProtocol] = []
+    private var fullScreenWork: DispatchWorkItem?
     private var closedAt = Date.distantPast
     private var followWork: DispatchWorkItem?
     private var displayObserver: AnyCancellable?
@@ -622,6 +624,11 @@ final class NotchWindowController {
                 MainActor.assumeIsolated { self?.relayoutAsScreensSettle() }
             })
         }
+        for name in [NSWorkspace.activeSpaceDidChangeNotification, NSWorkspace.didActivateApplicationNotification] {
+            fullScreenObservers.append(NSWorkspace.shared.notificationCenter.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.checkFullScreenAsItSettles() }
+            })
+        }
         browHideObserver = model.settings.$autoHideBrow.map { _ in () }
             .merge(with: model.settings.$browHideDelay.map { _ in () })
             .sink { [weak self] _ in
@@ -700,8 +707,25 @@ final class NotchWindowController {
         guard let screen = NotchGeometry.pickScreen(preferredName: model.settings.displayName, pointer: pointer) else { return }
         model.geometry = NotchGeometry(screen: screen)
         panel.setFrame(model.geometry.panelFrame, display: true)
+        checkFullScreen()
         model.resetBrowHide()
         updateVisibility()
+    }
+
+    /// Notes whether an app is full screen on the notch's screen. Only a screen without a camera housing needs to know: on one
+    /// with it, the app stays below the housing.
+    private func checkFullScreen() {
+        model.fullScreenInFront = !model.geometry.hasNotch && FullScreenWindows.cover(screenFrame: model.geometry.screenFrame)
+    }
+
+    /// An app going full screen may still be growing into the screen when the space changes, so it is looked at again once that
+    /// animation has had time to end.
+    private func checkFullScreenAsItSettles() {
+        checkFullScreen()
+        fullScreenWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in MainActor.assumeIsolated { self?.checkFullScreen() } }
+        fullScreenWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: work)
     }
 
     /// Hides the notch in clamshell mode when the user turned that off.
