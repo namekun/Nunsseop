@@ -122,7 +122,7 @@ Desde la 0.37.0 la app está firmada y notarizada por Apple y se abre como cualq
 <details>
 <summary><b>¿Funciona en un MacBook Pro con Dynamic Island?</b></summary>
 
-Debería, pero aún no hemos podido probarlo en uno. La Dynamic Island la dibuja el sistema, así que la ceja se queda a su lado y no encima, y al pasar el cursor Nunsseop se abre como siempre. Si tienes uno, ejecuta `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` y [abre una incidencia](https://github.com/namekun/Nunsseop/issues) con lo que muestre; así podremos ajustarlo bien.
+Sí. Nunsseop lo reconoce por la forma de píldora de la cámara y ajusta la isla con las medidas que otro desarrollador tomó en un Mac17,13, porque nosotros aún no tenemos uno. El sistema dibuja la Dynamic Island por encima de todas las apps, así que la ceja se queda a su lado, al pasar el cursor Nunsseop se abre como siempre y el notch abierto empieza justo debajo de la isla. Si algo se ve raro en el tuyo, ejecuta `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` y [abre una incidencia](https://github.com/namekun/Nunsseop/issues) con lo que muestre; así podremos ajustarlo bien.
 </details>
 
 <details>

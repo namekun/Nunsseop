@@ -5,11 +5,16 @@ struct NotchGeometry: Equatable {
     var screenFrame: NSRect
     var collapsedSize: CGSize
     var hasNotch: Bool
-    /// On a display with a Dynamic Island, its width. The system draws there, so the eyebrow rests beside it.
+    /// On a display with a Dynamic Island, its width at rest. The system draws there, so the eyebrow rests beside it.
     var islandWidth: CGFloat?
+    /// On a display with a Dynamic Island, how far down from the top edge it reaches at rest. The system draws it over every app's
+    /// window, so an open notch starts below it.
+    var islandBottom: CGFloat?
 
     /// Without a camera housing the eyebrow floats this far below the top edge and stays inside the menu bar.
     var topInset: CGFloat { hasNotch ? 0 : 3 }
+    /// How far below the top edge the open notch starts: under the island where there is one, which nothing can be drawn over.
+    var expandedInset: CGFloat { islandBottom.map { $0 + 6 } ?? 0 }
 
     /// True while a MacBook's lid is closed (clamshell mode with an external display).
     static var lidIsClosed: Bool {
@@ -64,19 +69,23 @@ struct NotchGeometry: Equatable {
     /// Width of the collapsed eyebrow on a display without a camera housing.
     static let browWidth: CGFloat = 44
 
-    /// The PROLED MacBook Pros, from AppleDB ahead of their release: Apple's own list doesn't have them yet. An id that turns
-    /// out wrong leaves that Mac treated like any other with a notch.
+    /// The PROLED MacBook Pros (Mac17,13 measured; the others from AppleDB). Used only when the screen doesn't show its camera's shape.
     static let dynamicIslandModels: Set<String> = ["Mac17,10", "Mac17,11", "Mac17,12", "Mac17,13"]
     static func hasDynamicIsland(model: String) -> Bool { dynamicIslandModels.contains(model) }
 
-    /// Used until a Mac with an island has been measured.
-    static let estimatedIslandWidth: CGFloat = 200
-
-    /// The gap between the menu bar's halves when that gap looks like an island, otherwise the estimate.
-    static func islandWidth(frame: NSRect, safeTop: CGFloat, leftAuxWidth: CGFloat?, rightAuxWidth: CGFloat?) -> CGFloat {
-        guard safeTop > 0, let leftAuxWidth, let rightAuxWidth else { return estimatedIslandWidth }
+    /// A camera in a pill, not a notch: the gap between the menu bar's halves is narrower than three times its height. A notch is
+    /// about 185 x 32 pt, the pill about 59 x 40 pt.
+    static func hasPillCamera(frame: NSRect, safeTop: CGFloat, leftAuxWidth: CGFloat?, rightAuxWidth: CGFloat?) -> Bool {
+        guard safeTop > 0, let leftAuxWidth, let rightAuxWidth else { return false }
         let gap = frame.width - leftAuxWidth - rightAuxWidth
-        return (100...400).contains(gap) ? gap : estimatedIslandWidth
+        return gap > 0 && gap < 3 * safeTop
+    }
+
+    /// The system's island at rest, measured beside a 40 pt camera on Mac17,13 (109 x 33 pt, 6.5 pt below the top edge) and scaled
+    /// with the camera's height on other resolutions.
+    static func islandAtRest(cameraHeight: CGFloat) -> (width: CGFloat, bottom: CGFloat) {
+        let scale = (cameraHeight > 0 ? cameraHeight : 40) / 40
+        return ((109 * scale).rounded(), ((6.5 + 33) * scale).rounded(.up))
     }
 
     /// How far right of the middle a collapsed shape of this width rests: its left edge stays beside the island however wide it grows.
@@ -124,8 +133,9 @@ struct NotchGeometry: Equatable {
         screenFrame = screen.frame
         let safeTop = screen.safeAreaInsets.top
         let left = screen.auxiliaryTopLeftArea?.width, right = screen.auxiliaryTopRightArea?.width
-        if Self.fakesIsland || (Self.isBuiltin(screen) && Self.hasDynamicIsland(model: Self.modelIdentifier)) {
-            islandWidth = Self.islandWidth(frame: screen.frame, safeTop: safeTop, leftAuxWidth: left, rightAuxWidth: right)
+        let pill = Self.hasPillCamera(frame: screen.frame, safeTop: safeTop, leftAuxWidth: left, rightAuxWidth: right)
+        if Self.fakesIsland || (Self.isBuiltin(screen) && (pill || Self.hasDynamicIsland(model: Self.modelIdentifier))) {
+            (islandWidth, islandBottom) = Self.islandAtRest(cameraHeight: safeTop)
         }
         (collapsedSize, hasNotch) = Self.collapsedSize(
             frame: screen.frame, visibleFrame: screen.visibleFrame, safeTop: safeTop, leftAuxWidth: left, rightAuxWidth: right,
@@ -152,7 +162,8 @@ struct NotchGeometry: Equatable {
             lines += ["\(screen.name)\(screen.isBuiltin ? " (built-in)" : "")", "  frame: \(box(screen.frame))", "  visible: \(box(screen.visibleFrame))",
                       "  scale: \(number(screen.scale))", "  safe area top: \(number(screen.safeTop))",
                       "  left of camera: \(screen.leftAuxWidth.map(number) ?? "none")",
-                      "  right of camera: \(screen.rightAuxWidth.map(number) ?? "none")"]
+                      "  right of camera: \(screen.rightAuxWidth.map(number) ?? "none")",
+                      "  camera in a pill: \(hasPillCamera(frame: screen.frame, safeTop: screen.safeTop, leftAuxWidth: screen.leftAuxWidth, rightAuxWidth: screen.rightAuxWidth) ? "yes" : "no")"]
         }
         return lines.joined(separator: "\n")
     }
@@ -187,7 +198,7 @@ struct NotchGeometry: Equatable {
     /// The panel is sized for the largest allowed shape; only the drawn shape changes.
     var panelFrame: NSRect {
         let size = CGSize(width: maxExpandedWidth + 40,
-                          height: AppSettings.expandedHeightRange.upperBound + 20)
+                          height: AppSettings.expandedHeightRange.upperBound + 20 + expandedInset)
         return NSRect(x: screenFrame.midX - size.width / 2,
                       y: screenFrame.maxY - size.height,
                       width: size.width, height: size.height)

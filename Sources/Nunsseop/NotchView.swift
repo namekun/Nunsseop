@@ -20,7 +20,9 @@ struct NotchView: View {
         let topRadius: CGFloat = model.isExpanded ? 18 : 6
         let bottomRadius: CGFloat = model.isExpanded ? 26 : 14
         let notchHeight = model.geometry.collapsedSize.height
-        let shape = NotchShape(topRadius: model.geometry.hasNotch ? topRadius : (model.isExpanded ? 0 : 14), bottomRadius: bottomRadius, floating: !model.geometry.hasNotch,
+        // Open under an island the shape hangs clear of the top edge, so its top corners round like the bottom ones.
+        let floatingTop: CGFloat = model.isExpanded ? (model.geometry.islandBottom == nil ? 0 : bottomRadius) : 14
+        let shape = NotchShape(topRadius: model.geometry.hasNotch ? topRadius : floatingTop, bottomRadius: bottomRadius, floating: !model.geometry.hasNotch,
                               sideInset: !model.geometry.hasNotch && model.isExpanded ? 18 : 0)
         // With the left ear hidden, the collapsed shape grows right only and its top row starts past the camera.
         let shift = model.isExpanded ? 0 : model.collapsedShift
@@ -198,7 +200,7 @@ struct NotchView: View {
             .animation(model.browFaded ? .easeIn(duration: 0.3).delay(0.28) : .easeOut(duration: 0.2)) {
                 $0.opacity(model.browFaded ? 0 : 1)
             }
-            .padding(.top, model.isExpanded ? 0 : model.geometry.topInset)
+            .padding(.top, model.isExpanded ? model.geometry.expandedInset : model.geometry.topInset)
             // Ears appearing is when the app's menus matter, so they are read again then.
             .onChange(of: model.collapsedSize.width) { old, new in
                 if new > old { model.appMenus.refresh() }

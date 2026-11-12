@@ -122,7 +122,7 @@ Dock 아이콘은 없습니다. Nunsseop은 노치에 삽니다.
 <details>
 <summary><b>다이내믹 아일랜드가 있는 MacBook Pro에서도 되나요?</b></summary>
 
-될 것으로 보지만 아직 실제 기기로 시험해 보지 못했습니다. 다이내믹 아일랜드는 시스템이 그리는 자리라서, 눈썹은 그 위가 아니라 옆에 자리 잡고 마우스를 올리면 평소처럼 열립니다. 해당 기기가 있다면 `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info`를 실행해 [이슈](https://github.com/namekun/Nunsseop/issues)로 결과를 보내 주세요. 그 값으로 제대로 맞추겠습니다.
+됩니다. Nunsseop은 카메라가 알약 모양인 것으로 이 기기를 알아보고, 아일랜드 크기는 다른 개발자가 Mac17,13에서 잰 값으로 맞췄습니다(저희는 아직 실제 기기가 없습니다). 다이내믹 아일랜드는 시스템이 모든 앱 위에 그리기 때문에, 눈썹은 그 옆에 자리 잡고 마우스를 올리면 평소처럼 열리며, 펼친 노치는 아일랜드 바로 아래에서 시작합니다. 어색하게 보인다면 `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info`를 실행해 [이슈](https://github.com/namekun/Nunsseop/issues)로 결과를 보내 주세요. 그 값으로 제대로 맞추겠습니다.
 </details>
 
 <details>
