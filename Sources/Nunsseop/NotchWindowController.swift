@@ -883,7 +883,7 @@ final class NotchWindowController {
         if model.pointerOverCollapsed != overCollapsed { pointerOverCollapsedChanged(overCollapsed) }
 
         if model.isExpanded {
-            let inside = nearPanel && model.geometry.shapeRect(size: model.expandedSize, inset: 0).insetBy(dx: -6, dy: -6).contains(point)
+            let inside = nearPanel && model.geometry.shapeRect(size: model.expandedSize, inset: model.geometry.expandedInset).insetBy(dx: -6, dy: -6).contains(point)
             switch OpenNotchHold.of(composing: model.agentList.composing != nil, touring: model.onboarding.isActive, pinned: model.pinned) {
             case .composing:
                 // Typing a message to an agent: the notch stays open wherever the pointer goes, until the field closes.

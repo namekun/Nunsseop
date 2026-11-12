@@ -122,7 +122,7 @@ brew install --cask namekun/tap/nunsseop
 <details>
 <summary><b>在带灵动岛的 MacBook Pro 上能用吗？</b></summary>
 
-应该可以，但我们还没有真机可以测试。灵动岛由系统绘制，所以眉毛会停在它旁边而不是盖在上面，把指针移上去后和平时一样打开。如果你有这台 Mac，请运行 `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info`，并把输出通过 [Issue](https://github.com/namekun/Nunsseop/issues) 发给我们，我们会据此调整。
+可以。Nunsseop 通过摄像头的胶囊形状认出这台 Mac，灵动岛的大小按另一位开发者在 Mac17,13 上测得的数值来定（我们自己还没有真机）。灵动岛由系统绘制在所有 App 之上，所以眉毛停在它旁边，把指针移上去后和平时一样打开，展开的刘海从灵动岛正下方开始。如果看起来不对，请运行 `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info`，并把输出通过 [Issue](https://github.com/namekun/Nunsseop/issues) 发给我们，我们会据此调整。
 </details>
 
 <details>

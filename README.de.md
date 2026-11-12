@@ -122,7 +122,7 @@ Seit 0.37.0 ist die App von Apple signiert und notarisiert und öffnet sich wie 
 <details>
 <summary><b>Läuft es auf einem MacBook Pro mit Dynamic Island?</b></summary>
 
-Das sollte es, aber wir konnten es noch nicht auf einem echten Gerät testen. Die Dynamic Island zeichnet das System, deshalb sitzt die Braue daneben statt darüber, und beim Darüberfahren öffnet sich Nunsseop wie gewohnt. Wenn du so einen Mac hast, führe `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` aus und [eröffne ein Issue](https://github.com/namekun/Nunsseop/issues) mit der Ausgabe. Damit können wir es richtig anpassen.
+Ja. Nunsseop erkennt ihn an der pillenförmigen Kamera und richtet die Island nach Messungen aus, die ein anderer Entwickler an einem Mac17,13 gemacht hat, da wir selbst noch keinen haben. Das System zeichnet die Dynamic Island über jede App, deshalb sitzt die Braue daneben, beim Darüberfahren öffnet sich Nunsseop wie gewohnt, und die geöffnete Notch beginnt direkt unter der Island. Wenn bei dir etwas falsch aussieht, führe `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` aus und [eröffne ein Issue](https://github.com/namekun/Nunsseop/issues) mit der Ausgabe. Damit können wir es richtig anpassen.
 </details>
 
 <details>

@@ -252,34 +252,58 @@ struct DynamicIslandTests {
         #expect(shape.size.width == NotchGeometry.browWidth)
     }
 
-    @Test func theIslandIsAsWideAsTheGapItReportsAndOtherwiseAnEstimate() {
-        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 32, leftAuxWidth: 620, rightAuxWidth: 620) == 272)
-        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 0, leftAuxWidth: nil, rightAuxWidth: nil) == NotchGeometry.estimatedIslandWidth)
-        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 32, leftAuxWidth: 620, rightAuxWidth: nil) == NotchGeometry.estimatedIslandWidth)
-        // A gap too wide or too narrow to be an island says nothing about it.
-        #expect(NotchGeometry.islandWidth(frame: screen, safeTop: 32, leftAuxWidth: 756, rightAuxWidth: 756) == NotchGeometry.estimatedIslandWidth)
+    @Test func aCameraInAPillIsToldFromANotchByItsShape() {
+        // Mac17,13 at its default resolution: a 59 x 40 pt pill between the menu bar's halves.
+        #expect(NotchGeometry.hasPillCamera(frame: screen, safeTop: 40, leftAuxWidth: 726.5, rightAuxWidth: 726.5))
+        // A notch: 185 x 32 pt.
+        #expect(!NotchGeometry.hasPillCamera(frame: screen, safeTop: 32, leftAuxWidth: 663.5, rightAuxWidth: 663.5))
+        // No camera at all, or a screen that doesn't say where its halves are.
+        #expect(!NotchGeometry.hasPillCamera(frame: screen, safeTop: 0, leftAuxWidth: nil, rightAuxWidth: nil))
+        #expect(!NotchGeometry.hasPillCamera(frame: screen, safeTop: 40, leftAuxWidth: 726.5, rightAuxWidth: nil))
+    }
+
+    @Test func theIslandAtRestIsAsMeasuredAndScalesWithTheCamera() {
+        let measured = NotchGeometry.islandAtRest(cameraHeight: 40)
+        #expect(measured.width == 109 && measured.bottom == 40)
+        let larger = NotchGeometry.islandAtRest(cameraHeight: 48)
+        #expect(larger.width == 131 && larger.bottom == 48)
+        // A screen that reports no camera height (the debug island) uses the measured one.
+        #expect(NotchGeometry.islandAtRest(cameraHeight: 0) == measured)
+    }
+
+    @MainActor @Test func anOpenNotchStartsBelowTheIsland() {
+        var geometry = NotchGeometry()
+        geometry.screenFrame = screen
+        #expect(geometry.expandedInset == 0)
+        let flat = geometry.panelFrame.height
+        (geometry.islandWidth, geometry.islandBottom) = NotchGeometry.islandAtRest(cameraHeight: 40)
+        #expect(geometry.expandedInset == 46)
+        let open = geometry.shapeRect(size: CGSize(width: 600, height: AppSettings.expandedHeightRange.upperBound), inset: geometry.expandedInset)
+        #expect(open.maxY == screen.maxY - 46, "the island reaches 40 pt down; the open notch starts 6 pt under it")
+        #expect(geometry.panelFrame.height == flat + 46, "the panel grows so the lowered shape still fits")
+        #expect(geometry.panelFrame.minY <= open.minY, "the tallest open notch fits the panel")
     }
 
     @MainActor @Test func theEyebrowRestsBesideTheIslandAndOpensInTheMiddle() {
         var geometry = NotchGeometry()
         geometry.screenFrame = screen
         #expect(geometry.restShift(width: 300) == 0)
-        geometry.islandWidth = 200
+        geometry.islandWidth = 109
         // Half the island, the gap, half the eyebrow.
-        #expect(geometry.restShift(width: NotchGeometry.browWidth) == 100 + 8 + NotchGeometry.browWidth / 2)
+        #expect(geometry.restShift(width: NotchGeometry.browWidth) == 54.5 + 8 + NotchGeometry.browWidth / 2)
         let rect = NotchViewModel.collapsedRect(geometry: geometry, size: geometry.collapsedSize, shift: 0)
-        #expect(rect.minX >= screen.midX + 100, "the eyebrow's target must clear the island")
+        #expect(rect.minX >= screen.midX + 54.5, "the eyebrow's target must clear the island")
         #expect(geometry.shapeRect(size: CGSize(width: 600, height: 200), inset: 0).midX == screen.midX)
     }
 
     @MainActor @Test func aShapeThatGrowsStaysClearOfTheIsland() {
         var geometry = NotchGeometry()
         geometry.screenFrame = screen
-        geometry.islandWidth = 200
+        geometry.islandWidth = 109
         // A HUD with two ears, the inline sneak peek, the approval card.
         for width in [120.0, 248, 266, 380, 500] {
             let rect = NotchViewModel.collapsedRect(geometry: geometry, size: CGSize(width: width, height: 28), shift: 0)
-            #expect(rect.minX == screen.midX + 100 + 8, "\(width)")
+            #expect(rect.minX == screen.midX + 54.5 + 8, "\(width)")
             #expect(rect.maxX <= geometry.panelFrame.maxX, "\(width)")
         }
     }
@@ -298,6 +322,7 @@ struct DynamicIslandTests {
         #expect(report.contains("safe area top: 32"))
         #expect(report.contains("left of camera: 620"))
         #expect(report.contains("right of camera: none"))
+        #expect(report.contains("camera in a pill: no"), "without both halves the shape can't be told")
         #expect(report.contains("scale: 2"))
     }
 }

@@ -122,7 +122,7 @@ Dock にアイコンは出ません。Nunsseop はノッチの中にいます。
 <details>
 <summary><b>Dynamic Island のある MacBook Pro でも動きますか？</b></summary>
 
-動くはずですが、実機ではまだ試せていません。Dynamic Island はシステムが描く場所なので、眉はその上ではなく横に置かれ、ポインターを合わせるといつもどおり開きます。お持ちの方は `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` を実行し、結果を [Issue](https://github.com/namekun/Nunsseop/issues) で送ってください。その値をもとに調整します。
+動きます。カメラが錠剤の形をしていることでこの Mac を見分け、アイランドの大きさは別の開発者が Mac17,13 で測った値に合わせています(私たちはまだ実機を持っていません)。Dynamic Island はシステムがすべてのアプリの上に描くので、眉はその横に置かれ、ポインターを合わせるといつもどおり開き、開いたノッチはアイランドのすぐ下から始まります。見え方がおかしい場合は `/Applications/Nunsseop.app/Contents/MacOS/Nunsseop --print-screen-info` を実行し、結果を [Issue](https://github.com/namekun/Nunsseop/issues) で送ってください。その値をもとに調整します。
 </details>
 
 <details>
