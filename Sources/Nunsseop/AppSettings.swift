@@ -113,6 +113,8 @@ final class AppSettings: ObservableObject {
     @Published var perAppVolume: Bool = AppSettings.load("perAppVolume", default: false) { didSet { save(perAppVolume, "perAppVolume") } }
     /// Order of the tabs after Home, as NotchTab raw values.
     @Published var tabOrder: [String] = AppSettings.load("tabOrder", default: NotchTab.allCases.filter { $0 != .home }.map(\.rawValue)) { didSet { save(tabOrder, "tabOrder") } }
+    /// The Home widgets that are on, as `HomeWidget` raw values in the order they show. None until the user picks some.
+    @Published var homeWidgets: [String] = AppSettings.load("homeWidgets", default: []) { didSet { save(homeWidgets, "homeWidgets") } }
     @Published var headerDate: Bool = AppSettings.load("headerDate", default: true) { didSet { save(headerDate, "headerDate") } }
     @Published var headerWeather: Bool = AppSettings.load("headerWeather", default: true) { didSet { save(headerWeather, "headerWeather") } }
     @Published var collapsedMusic: Bool = AppSettings.load("collapsedMusic", default: true) { didSet { save(collapsedMusic, "collapsedMusic") } }
@@ -297,6 +299,12 @@ final class AppSettings: ObservableObject {
         rest.insert(contentsOf: moving, at: min(destination - source.count { $0 < destination }, rest.count))
         return rest
     }
+
+    var chosenHomeWidgets: [HomeWidget] { HomeWidget.chosen(saved: homeWidgets) }
+
+    func setHomeWidget(_ widget: HomeWidget, on: Bool) { homeWidgets = HomeWidget.setting(widget, on: on, in: homeWidgets) }
+
+    func moveHomeWidget(_ widget: HomeWidget, by offset: Int) { homeWidgets = HomeWidget.moving(widget, by: offset, in: homeWidgets) }
 
     func resetSizes() {
         expandedWidth = 620

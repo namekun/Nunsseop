@@ -691,3 +691,15 @@
 "Not enabled in Hermes yet" = "尚未在 Hermes 中启用";
 "Amp's plugin API is experimental, so an Amp update may stop this from working." = "Amp 的插件 API 仍属实验性质，Amp 更新后可能会失效。";
 "Answer in Cursor" = "在 Cursor 中回答";
+
+/* Home widgets */
+"Clock" = "时钟";
+"Note" = "便笺";
+"To-do" = "待办";
+"Home widgets" = "主页小组件";
+"Widgets show under the calendar in the order they are listed. A widget that is off runs nothing." = "小组件按列表顺序显示在日历下方。关闭的小组件不会运行任何内容。";
+"Move up" = "上移";
+"Move down" = "下移";
+"Add a to-do" = "添加待办";
+"Nothing to do" = "没有待办";
+"Mark as done" = "标记为完成";

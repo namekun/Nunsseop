@@ -7,20 +7,23 @@ struct HomePanels: View {
     let calendar: CalendarModel?
     let showsReminders: Bool
     let weather: WeatherModel?
+    var widgets: HomeWidgetBoard?
 
     /// The right column's width, and the days of the week it has room for.
     nonisolated static func column(for width: CGFloat) -> (width: CGFloat, days: Int) {
         width >= 520 ? (280, 7) : (214, 5)
     }
 
+    private var hasColumn: Bool { calendar != nil || weather != nil || widgets != nil }
+
     var body: some View {
         GeometryReader { proxy in
             let column = Self.column(for: proxy.size.width)
             HStack(spacing: 0) {
                 HomeTab(nowPlaying: nowPlaying, lyrics: lyrics)
-                    .padding(.trailing, calendar == nil && weather == nil ? 0 : 14)
+                    .padding(.trailing, hasColumn ? 14 : 0)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                if calendar != nil || weather != nil {
+                if hasColumn {
                     PanelVLine().padding(.vertical, 2)
                     VStack(spacing: 0) {
                         if let calendar {
@@ -28,6 +31,7 @@ struct HomePanels: View {
                         } else {
                             Spacer(minLength: 0)
                         }
+                        if let widgets { HomeWidgetRows(board: widgets) }
                         if let weather { WeatherRow(weather: weather) }
                     }
                     .padding(.leading, 14)

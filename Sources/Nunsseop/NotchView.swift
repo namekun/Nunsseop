@@ -69,7 +69,8 @@ struct NotchView: View {
                                         HomePanels(nowPlaying: nowPlaying, lyrics: model.settings.lyricsEnabled ? model.lyrics : nil,
                                                    calendar: model.settings.calendarEnabled ? model.calendar : nil,
                                                    showsReminders: model.settings.remindersEnabled,
-                                                   weather: model.settings.headerWeather ? model.weather : nil)
+                                                   weather: model.settings.headerWeather ? model.weather : nil,
+                                                   widgets: homeWidgets)
                                     }
                                 case .shelf:
                                     ShelfView(shelf: model.shelf, isDropTargeted: isDropTargeted && !isAirDropTargeted,
@@ -224,6 +225,14 @@ struct NotchView: View {
         // The shape slides over when the left ear hides or shows, rather than jumping.
         .animation(motion.earsGrow, value: model.collapsedShift)
         .animation(.easeInOut(duration: 0.18), value: model.tab)
+    }
+
+    /// The Home widgets the user turned on; nil while none is, so Home has nothing of them.
+    private var homeWidgets: HomeWidgetBoard? {
+        let widgets = model.settings.chosenHomeWidgets
+        guard !widgets.isEmpty else { return nil }
+        return HomeWidgetBoard(widgets: widgets, notes: model.notes, todos: model.todos,
+                               openNotes: model.settings.notesTab ? { model.tab = .notes } : nil)
     }
 
     private var motion: NotchMotion { NotchMotion(reduceMotion: reduceMotion) }

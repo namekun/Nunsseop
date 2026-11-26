@@ -691,3 +691,15 @@
 "Not enabled in Hermes yet" = "Aún no activado en Hermes";
 "Amp's plugin API is experimental, so an Amp update may stop this from working." = "La API de plugins de Amp es experimental, así que una actualización de Amp puede dejar de funcionar.";
 "Answer in Cursor" = "Responder en Cursor";
+
+/* Home widgets */
+"Clock" = "Reloj";
+"Note" = "Nota";
+"To-do" = "Tareas";
+"Home widgets" = "Widgets de Inicio";
+"Widgets show under the calendar in the order they are listed. A widget that is off runs nothing." = "Los widgets aparecen bajo el calendario en el orden de la lista. Un widget desactivado no ejecuta nada.";
+"Move up" = "Subir";
+"Move down" = "Bajar";
+"Add a to-do" = "Añadir una tarea";
+"Nothing to do" = "Nada que hacer";
+"Mark as done" = "Marcar como hecha";

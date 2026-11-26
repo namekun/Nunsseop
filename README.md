@@ -81,6 +81,7 @@ On a fresh install the notch also opens by itself after a second and walks you t
 - **Camera and mic indicator.** A dot on the notch while any app uses them.
 - **Tools.** Switch audio output, set each app's volume (experimental, macOS 14.2+), mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from anywhere on screen, and copy the text out of any part of the screen.
 - **Weather, downloads, mirror and Dock apps**, one hover away. Weather is a row at the bottom of Home.
+- **Widgets on Home.** In Settings › Notch, pick a clock, a note or a to-do and put them in the order you like. They sit under the calendar, and one that is off runs nothing.
 
 **📞 Even when it's closed**
 - **Calls.** During a call in Zoom, FaceTime, Teams, Slack, Discord, WhatsApp or Google Meet, the closed notch shows the app and how long you've been talking. It goes by which app uses the microphone, so showing the call of a desktop app needs no permission (in a browser, Meet or Zoom and Teams on the web need Automation for that browser). For Zoom, FaceTime and Meet you can mute the mic from the notch (and turn the camera off in Zoom and Meet), without switching to the call; Zoom and FaceTime need Accessibility for that, and Meet needs *Allow JavaScript from Apple Events* in a Chromium browser.

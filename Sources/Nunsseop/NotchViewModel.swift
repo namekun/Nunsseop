@@ -100,6 +100,7 @@ final class NotchViewModel: ObservableObject {
     let timer = TimerModel()
     let clipboard = ClipboardHistory()
     let notes = NotesModel()
+    let todos = TodoModel()
     let tools = ToolsModel()
     let appVolume = AppVolumeModel()
     let screenshots = ScreenshotWatcher()
