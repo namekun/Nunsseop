@@ -158,6 +158,9 @@
 "Keep the current lyric under the notch while playing" = "播放时在刘海下方持续显示当前歌词";
 "Weather city (e.g. Seoul)" = "天气城市（如：北京）";
 "Weather comes from Open-Meteo. Leave the city empty to hide it." = "天气来自 Open-Meteo。城市留空则不显示。";
+"World clock" = "世界时钟";
+"Cities for the world clock (e.g. New York, London)" = "世界时钟的城市（例如：纽约, 伦敦）";
+"Shows up to three cities' time on Home, and how far it is from here. Cities the Mac doesn't know are looked up on Open-Meteo. Leave it empty to hide it." = "在主页显示最多三个城市的当前时间以及与本地的时差。Mac 不认识的城市会在 Open-Meteo 上查找。留空则不显示。";
 "Downloads" = "下载";
 "Show when downloads start and finish" = "下载开始和完成时显示";
 "Add finished downloads to the shelf" = "将已完成的下载加入架子";

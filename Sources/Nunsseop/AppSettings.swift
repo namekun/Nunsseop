@@ -135,6 +135,8 @@ final class AppSettings: ObservableObject {
     @Published var lyricsUnderNotch: Bool = AppSettings.load("lyricsUnderNotch", default: false) { didSet { save(lyricsUnderNotch, "lyricsUnderNotch") } }
     /// City for the header weather chip; empty hides it.
     @Published var weatherCity: String = AppSettings.load("weatherCity", default: "") { didSet { save(weatherCity, "weatherCity") } }
+    /// Cities for the world clock on Home, separated by commas; empty hides it.
+    @Published var worldClockCities: String = AppSettings.load("worldClockCities", default: "") { didSet { save(worldClockCities, "worldClockCities") } }
     @Published var downloadAlerts: Bool = AppSettings.load("downloadAlerts", default: true) { didSet { save(downloadAlerts, "downloadAlerts") } }
     @Published var limitAlerts: Bool = AppSettings.load("limitAlerts", default: true) { didSet { save(limitAlerts, "limitAlerts") } }
     /// The notch cheers, eyebrow hopping, when a coding agent finishes its turn.

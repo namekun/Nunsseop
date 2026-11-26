@@ -183,6 +183,9 @@
 "Keep the current lyric under the notch while playing" = "재생 중 현재 가사를 노치 아래에 계속 표시";
 "Weather city (e.g. Seoul)" = "날씨 도시 (예: 서울)";
 "Weather comes from Open-Meteo. Leave the city empty to hide it." = "날씨는 Open-Meteo에서 가져옵니다. 도시를 비워 두면 표시하지 않습니다.";
+"World clock" = "세계 시계";
+"Cities for the world clock (e.g. New York, London)" = "세계 시계 도시 (예: 뉴욕, 런던)";
+"Shows up to three cities' time on Home, and how far it is from here. Cities the Mac doesn't know are looked up on Open-Meteo. Leave it empty to hide it." = "홈에 최대 세 도시의 현재 시간과 이곳과의 시차를 표시합니다. Mac이 모르는 도시는 Open-Meteo에서 찾습니다. 비워 두면 표시하지 않습니다.";
 "Downloads" = "다운로드";
 "Show when downloads start and finish" = "다운로드 시작·완료 시 표시";
 "Add finished downloads to the shelf" = "완료된 다운로드를 선반에 추가";

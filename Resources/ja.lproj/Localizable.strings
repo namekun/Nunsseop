@@ -158,6 +158,9 @@
 "Keep the current lyric under the notch while playing" = "再生中は現在の歌詞をノッチの下に表示し続ける";
 "Weather city (e.g. Seoul)" = "天気の都市（例: 東京）";
 "Weather comes from Open-Meteo. Leave the city empty to hide it." = "天気は Open-Meteo から取得します。都市を空にすると非表示になります。";
+"World clock" = "世界時計";
+"Cities for the world clock (e.g. New York, London)" = "世界時計の都市 (例: ニューヨーク, ロンドン)";
+"Shows up to three cities' time on Home, and how far it is from here. Cities the Mac doesn't know are looked up on Open-Meteo. Leave it empty to hide it." = "ホームに最大3都市の現在時刻と、ここからの時差を表示します。Mac が知らない都市は Open-Meteo で検索します。空にすると非表示になります。";
 "Downloads" = "ダウンロード";
 "Show when downloads start and finish" = "ダウンロードの開始と完了を表示";
 "Add finished downloads to the shelf" = "完了したダウンロードをシェルフに追加";

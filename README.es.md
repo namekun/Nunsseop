@@ -81,6 +81,7 @@ En una instalación nueva, el notch también se abre solo al cabo de un segundo 
 - **Indicador de cámara y micrófono.** Un punto en el notch mientras cualquier app los usa.
 - **Herramientas.** Cambia la salida de audio, ajusta el volumen de cada app (experimental, macOS 14.2+), silencia el micrófono, mantén el Mac activo, graba la pantalla, expulsa discos, toma un color de cualquier punto de la pantalla y copia el texto de cualquier zona de la pantalla.
 - **El tiempo, las descargas, el espejo y las apps del Dock**, a un gesto del puntero. El tiempo es una fila al pie de Inicio.
+- **Reloj mundial.** Actívalo en Ajustes › Servicios indicando hasta tres ciudades, y Inicio muestra la hora de cada una y cuánto se aleja de la tuya. Mientras está vacío, no se ejecuta nada.
 
 **📞 Incluso plegado**
 - **Llamadas.** Durante una llamada en Zoom, FaceTime, Teams, Slack, Discord, WhatsApp o Google Meet, el notch plegado muestra la app y cuánto llevas hablando. Se basa en qué app usa el micrófono, así que mostrar la llamada de una app de escritorio no necesita permiso; en un navegador (Meet, o Zoom y Teams en la web) hace falta Automatización para ese navegador. En Zoom, FaceTime y Meet puedes silenciar el micrófono desde el notch (y apagar la cámara en Zoom y Meet), sin cambiar a la llamada; Zoom y FaceTime necesitan Accesibilidad, y Meet necesita *Permitir JavaScript desde Apple Events* en un navegador Chromium.
@@ -254,6 +255,7 @@ Nunsseop no recopila ni envía datos personales. Solo se conecta a internet para
 - consultar `api.github.com` en busca de una versión nueva una vez al día (se puede desactivar) y, cuando instalas una actualización en una copia del DMG, descargar de GitHub el `appcast.xml` y el DMG de la última versión;
 - buscar letras sincronizadas en `lrclib.net` (se puede desactivar);
 - obtener el tiempo de `open-meteo.com` para la ciudad que indiques (desactivado hasta que indiques una), y pedir al geocodificador de Apple la ubicación de la ciudad cuando Open-Meteo no la encuentra;
+- buscar en `open-meteo.com` (o en el geocodificador de Apple) una ciudad que añadas al reloj mundial, solo cuando la lista de zonas horarias del Mac no la conoce;
 - descargar carátulas por HTTPS desde servicios de música conocidos, solo cuando el helper de MediaRemote no está disponible;
 - pedir a `api.anthropic.com` tus límites de Claude aproximadamente cada hora, con el inicio de sesión de Claude Code guardado en el llavero, solo si activas los límites de Claude en tiempo real.
 

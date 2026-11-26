@@ -123,6 +123,7 @@ final class NotchViewModel: ObservableObject {
     let launcher = AppLauncher()
     let lyrics = LyricsModel()
     let weather = WeatherModel()
+    let worldClock = WorldClockModel()
     let downloads = DownloadWatcher()
     let peripherals = PeripheralMonitor()
     let privacy = PrivacyMonitor()

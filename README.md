@@ -81,6 +81,7 @@ On a fresh install the notch also opens by itself after a second and walks you t
 - **Camera and mic indicator.** A dot on the notch while any app uses them.
 - **Tools.** Switch audio output, set each app's volume (experimental, macOS 14.2+), mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from anywhere on screen, and copy the text out of any part of the screen.
 - **Weather, downloads, mirror and Dock apps**, one hover away. Weather is a row at the bottom of Home.
+- **World clock.** Turn it on in Settings › Services by entering up to three cities, and Home shows the time in each and how far it is from here. Nothing runs while it is empty.
 
 **📞 Even when it's closed**
 - **Calls.** During a call in Zoom, FaceTime, Teams, Slack, Discord, WhatsApp or Google Meet, the closed notch shows the app and how long you've been talking. It goes by which app uses the microphone, so showing the call of a desktop app needs no permission (in a browser, Meet or Zoom and Teams on the web need Automation for that browser). For Zoom, FaceTime and Meet you can mute the mic from the notch (and turn the camera off in Zoom and Meet), without switching to the call; Zoom and FaceTime need Accessibility for that, and Meet needs *Allow JavaScript from Apple Events* in a Chromium browser.
@@ -254,6 +255,7 @@ Nunsseop doesn't collect or send personal data. It goes online only to:
 - check `api.github.com` for a newer release once a day (can be turned off), and, when you install an update in a copy from the DMG, fetch the `appcast.xml` and DMG of the latest release from GitHub;
 - look up synced lyrics on `lrclib.net` (can be turned off);
 - fetch weather from `open-meteo.com` for the city you enter (off until you enter one), asking Apple's geocoder for the city's location when Open-Meteo can't find it;
+- look up a city you add to the world clock on `open-meteo.com` (or Apple's geocoder) only when the Mac's own time zone list doesn't know it;
 - download artwork over HTTPS from known music services, only when the MediaRemote helper is unavailable;
 - ask `api.anthropic.com` for your Claude limits about once an hour, using Claude Code's sign-in from the Keychain, only if you turn live Claude limits on.
 

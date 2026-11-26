@@ -7,6 +7,7 @@ struct HomePanels: View {
     let calendar: CalendarModel?
     let showsReminders: Bool
     let weather: WeatherModel?
+    var worldClock: WorldClockModel?
 
     /// The right column's width, and the days of the week it has room for.
     nonisolated static func column(for width: CGFloat) -> (width: CGFloat, days: Int) {
@@ -18,9 +19,9 @@ struct HomePanels: View {
             let column = Self.column(for: proxy.size.width)
             HStack(spacing: 0) {
                 HomeTab(nowPlaying: nowPlaying, lyrics: lyrics)
-                    .padding(.trailing, calendar == nil && weather == nil ? 0 : 14)
+                    .padding(.trailing, calendar == nil && weather == nil && worldClock == nil ? 0 : 14)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                if calendar != nil || weather != nil {
+                if calendar != nil || weather != nil || worldClock != nil {
                     PanelVLine().padding(.vertical, 2)
                     VStack(spacing: 0) {
                         if let calendar {
@@ -29,6 +30,7 @@ struct HomePanels: View {
                             Spacer(minLength: 0)
                         }
                         if let weather { WeatherRow(weather: weather) }
+                        if let worldClock { WorldClockRow(worldClock: worldClock) }
                     }
                     .padding(.leading, 14)
                     .frame(width: column.width, alignment: .topLeading)
