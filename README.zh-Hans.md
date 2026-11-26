@@ -81,6 +81,7 @@ brew install --cask namekun/tap/nunsseop
 - **相机和麦克风指示。** 任何应用在使用它们时，刘海上会出现一个圆点。
 - **工具。** 切换音频输出、调节每个应用的音量（实验性，需要 macOS 14.2 或更高版本）、麦克风静音、让 Mac 保持唤醒、录制屏幕、推出磁盘、从屏幕上任意位置取色，以及拷贝屏幕上任意区域里的文字。
 - **天气、下载、镜子和程序坞应用**，悬停即达。天气在主页最下面一行。
+- **世界时钟。** 在“设置 › 服务”中输入最多三个城市，主页就会显示各城市的当前时间以及与本地的时差。留空时不会运行任何东西。
 
 **📞 收起时也不闲着**
 - **通话。** 在 Zoom、FaceTime、Teams、Slack、Discord、WhatsApp 或 Google Meet 通话期间，收起的刘海会显示通话所用的应用和已通话的时长。它根据哪个应用在使用麦克风来判断，所以显示桌面应用的通话不需要权限；浏览器中的通话（Meet，以及网页版 Zoom、Teams）则需要对该浏览器的自动化权限。对于 Zoom、FaceTime 和 Meet，你可以直接在刘海上给麦克风静音（Zoom 和 Meet 还能关闭相机），不必切换到通话窗口；Zoom 和 FaceTime 需要辅助功能权限，Meet 需要在 Chromium 内核的浏览器中打开*允许来自 Apple 事件的 JavaScript*。
@@ -254,6 +255,7 @@ Nunsseop 不会收集或发送个人数据。它只会在以下情况下联网�
 - 每天向 `api.github.com` 检查一次是否有新版本（可以关闭）；在从 DMG 安装的应用中安装更新时，从 GitHub 获取最新版本的 `appcast.xml` 和 DMG；
 - 到 `lrclib.net` 查找同步歌词（可以关闭）；
 - 从 `open-meteo.com` 获取你输入的城市的天气（输入城市之前保持关闭），当 Open-Meteo 找不到该城市时，会向 Apple 的地理编码服务查询城市的位置；
+- 仅当 Mac 自带的时区列表不认识时，才会在 `open-meteo.com`（或 Apple 的地理编码服务）上查找你添加到世界时钟的城市；
 - 通过 HTTPS 从已知的音乐服务下载封面，仅在 MediaRemote 辅助库不可用时；
 - 大约每小时向 `api.anthropic.com` 查询一次你的 Claude 用量上限，使用钥匙串中 Claude Code 的登录信息，仅在你开启实时获取 Claude 用量上限时。
 

@@ -519,6 +519,9 @@ final class NotchWindowController {
             .sink { [weak self] city, header, left, right in
                 self?.model.weather.setCity(header || left == .weather || right == .weather ? city : "")
             })
+        settingsObservers.append(model.settings.$worldClockCities
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .sink { [weak self] cities in self?.model.worldClock.setCities(cities) })
         // The limits are also read in the background for the limit alerts, not only for an ear that shows them.
         settingsObservers.append(model.settings.$idleLeft.combineLatest(model.settings.$idleRight, model.settings.$limitAlerts)
             .map { left, right, alerts in left.usesAIUsage || right.usesAIUsage ? 20 : alerts ? 60 : nil as TimeInterval? }

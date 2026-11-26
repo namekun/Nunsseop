@@ -848,6 +848,11 @@ private struct ServicesPane: View {
                 Text("Weather comes from Open-Meteo. Leave the city empty to hide it.")
                     .font(.caption).foregroundStyle(.secondary)
             }
+            Section("World clock") {
+                TextField("Cities for the world clock (e.g. New York, London)", text: $settings.worldClockCities)
+                Text("Shows up to three cities' time on Home, and how far it is from here. Cities the Mac doesn't know are looked up on Open-Meteo. Leave it empty to hide it.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
             Section("Clipboard") {
                 Toggle("Remove tracking parameters from copied links", isOn: $settings.cleanLinks)
                     .disabled(!settings.clipboardTab)

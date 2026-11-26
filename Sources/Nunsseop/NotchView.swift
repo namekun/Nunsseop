@@ -69,7 +69,8 @@ struct NotchView: View {
                                         HomePanels(nowPlaying: nowPlaying, lyrics: model.settings.lyricsEnabled ? model.lyrics : nil,
                                                    calendar: model.settings.calendarEnabled ? model.calendar : nil,
                                                    showsReminders: model.settings.remindersEnabled,
-                                                   weather: model.settings.headerWeather ? model.weather : nil)
+                                                   weather: model.settings.headerWeather ? model.weather : nil,
+                                                   worldClock: model.settings.worldClockCities.isEmpty ? nil : model.worldClock)
                                     }
                                 case .shelf:
                                     ShelfView(shelf: model.shelf, isDropTargeted: isDropTargeted && !isAirDropTargeted,

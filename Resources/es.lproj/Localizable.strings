@@ -158,6 +158,9 @@
 "Keep the current lyric under the notch while playing" = "Mantener la letra actual bajo el notch durante la reproducción";
 "Weather city (e.g. Seoul)" = "Ciudad del tiempo (p. ej., Madrid)";
 "Weather comes from Open-Meteo. Leave the city empty to hide it." = "El tiempo viene de Open-Meteo. Deja la ciudad vacía para ocultarlo.";
+"World clock" = "Reloj mundial";
+"Cities for the world clock (e.g. New York, London)" = "Ciudades del reloj mundial (p. ej. Nueva York, Londres)";
+"Shows up to three cities' time on Home, and how far it is from here. Cities the Mac doesn't know are looked up on Open-Meteo. Leave it empty to hide it." = "Muestra en Inicio la hora de hasta tres ciudades y cuánto se aleja de la tuya. Las ciudades que el Mac no conoce se buscan en Open-Meteo. Déjalo vacío para ocultarlo.";
 "Downloads" = "Descargas";
 "Show when downloads start and finish" = "Mostrar cuándo empiezan y terminan las descargas";
 "Add finished downloads to the shelf" = "Añadir descargas terminadas al estante";

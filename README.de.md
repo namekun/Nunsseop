@@ -81,6 +81,7 @@ Bei einer frischen Installation öffnet sich die Notch nach einer Sekunde außer
 - **Kamera- und Mikrofonanzeige.** Ein Punkt auf der Notch, solange eine App sie verwendet.
 - **Werkzeuge.** Audioausgabe wechseln, die Lautstärke jeder App einstellen (experimentell, macOS 14.2+), das Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe an beliebiger Stelle des Bildschirms auswählen und den Text aus jedem Bereich des Bildschirms kopieren.
 - **Wetter, Downloads, Spiegel und Dock-Apps**, nur einen Hover entfernt. Das Wetter ist eine Zeile unten im Start-Tab.
+- **Weltzeituhr.** Aktiviere sie unter Einstellungen › Dienste, indem du bis zu drei Städte eingibst; Home zeigt dann die Uhrzeit dort und den Abstand zu hier. Solange sie leer ist, läuft nichts.
 
 **📞 Auch wenn sie geschlossen ist**
 - **Anrufe.** Bei einem Anruf in Zoom, FaceTime, Teams, Slack, Discord, WhatsApp oder Google Meet zeigt die geschlossene Notch die App und wie lange du schon sprichst. Maßgeblich ist, welche App das Mikrofon nutzt, daher braucht die Anzeige eines Anrufs in einer Desktop-App keine Berechtigung; bei Anrufen im Browser (Meet, Zoom oder Teams im Web) braucht sie Automation für diesen Browser. Bei Zoom, FaceTime und Meet kannst du das Mikrofon stummschalten (bei Zoom und Meet auch die Kamera ausschalten), direkt von der Notch aus, ohne zum Anruf zu wechseln; Zoom und FaceTime brauchen dafür Bedienungshilfen, Meet braucht in einem Chromium-Browser die Option *JavaScript von Apple Events erlauben*.
@@ -254,6 +255,7 @@ Nunsseop sammelt und sendet keine persönlichen Daten. Es geht nur für Folgende
 - einmal täglich bei `api.github.com` nach einer neueren Version fragen (abschaltbar) und, wenn du in einer Kopie aus dem DMG ein Update installierst, `appcast.xml` und DMG der neuesten Version von GitHub laden;
 - synchronisierte Songtexte auf `lrclib.net` nachschlagen (abschaltbar);
 - das Wetter von `open-meteo.com` für die von dir eingegebene Stadt abrufen (aus, bis du eine eingibst), wobei Apples Geocoder nach dem Standort der Stadt gefragt wird, wenn Open-Meteo sie nicht findet;
+- eine Stadt, die du zur Weltzeituhr hinzufügst, bei `open-meteo.com` (oder Apples Geocoder) nachschlagen, aber nur, wenn die Zeitzonenliste des Macs sie nicht kennt;
 - Cover per HTTPS von bekannten Musikdiensten laden, nur wenn die MediaRemote-Hilfsbibliothek nicht verfügbar ist;
 - bei `api.anthropic.com` etwa einmal pro Stunde deine Claude-Limits abfragen, mit der Anmeldung von Claude Code aus dem Schlüsselbund, nur wenn du die Live-Abfrage der Claude-Limits einschaltest.
 

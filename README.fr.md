@@ -81,6 +81,7 @@ Sur une installation toute neuve, l’encoche s’ouvre aussi toute seule au bou
 - **Indicateur caméra et micro.** Un point sur l’encoche tant qu’une app les utilise.
 - **Outils.** Changez de sortie audio, réglez le volume de chaque app (expérimental, macOS 14.2 et ultérieur), coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur n’importe où à l’écran et copiez le texte de n’importe quelle zone de l’écran.
 - **Météo, téléchargements, miroir et apps du Dock**, à un survol de souris. La météo est une ligne au bas d’Accueil.
+- **Horloge mondiale.** Activez-la dans Réglages › Services en saisissant jusqu’à trois villes ; Accueil affiche l’heure de chacune et son décalage avec ici. Tant qu’elle est vide, rien ne tourne.
 
 **📞 Même fermée**
 - **Appels.** Pendant un appel dans Zoom, FaceTime, Teams, Slack, Discord, WhatsApp ou Google Meet, l’encoche fermée affiche l’app et la durée de la conversation. Elle se base sur l’app qui utilise le micro, donc afficher l’appel d’une app de bureau ne demande aucune autorisation ; dans un navigateur (Meet, ou Zoom et Teams en ligne), il faut l’Automatisation pour ce navigateur. Pour Zoom, FaceTime et Meet, vous pouvez couper le micro depuis l’encoche (et désactiver la caméra dans Zoom et Meet), sans revenir à l’appel ; Zoom et FaceTime demandent l’Accessibilité, et Meet demande *Autoriser JavaScript depuis les Apple Events* dans un navigateur Chromium.
@@ -254,6 +255,7 @@ Nunsseop ne collecte ni n’envoie aucune donnée personnelle. Elle ne se connec
 - consulter `api.github.com` une fois par jour à la recherche d’une nouvelle version (peut être désactivé) et, quand vous installez une mise à jour dans une copie issue du DMG, télécharger depuis GitHub le `appcast.xml` et le DMG de la dernière version ;
 - chercher des paroles synchronisées sur `lrclib.net` (peut être désactivé) ;
 - récupérer la météo auprès de `open-meteo.com` pour la ville que vous saisissez (désactivé tant que vous n’en saisissez pas), en demandant au géocodeur d’Apple les coordonnées de la ville quand Open-Meteo ne la trouve pas ;
+- chercher auprès de `open-meteo.com` (ou du géocodeur d’Apple) une ville ajoutée à l’horloge mondiale, uniquement quand la liste des fuseaux horaires du Mac ne la connaît pas ;
 - télécharger des pochettes en HTTPS depuis des services musicaux connus, uniquement quand l’assistant MediaRemote est indisponible ;
 - demander à `api.anthropic.com` vos limites Claude environ une fois par heure, avec la connexion de Claude Code lue dans le trousseau, uniquement si vous activez les limites de Claude en temps réel.
 
