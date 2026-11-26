@@ -143,6 +143,8 @@
 "On" = "Activado";
 "Off" = "Desactivado";
 "Keep awake" = "Mantener activo";
+"Wi-Fi" = "Wi‑Fi";
+"Bluetooth" = "Bluetooth";
 "Drives" = "Discos";
 "No external drives" = "Sin discos externos";
 "Eject" = "Expulsar";

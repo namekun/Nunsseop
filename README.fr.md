@@ -79,7 +79,7 @@ Sur une installation toute neuve, l’encoche s’ouvre aussi toute seule au bou
 - **HUD système.** Volume, luminosité (y compris les écrans externes DDC), rétroéclairage du clavier, charge, verrouillage des majuscules et batterie des AirPods apparaissent dans l’encoche. Elle peut prendre le contrôle des touches de volume et de luminosité pour que le HUD du système reste à l’écart.
 - **Statistiques système et batteries.** Processeur, mémoire, disque, réseau et batterie de ce Mac en panneaux, ainsi que votre souris, clavier et trackpad, avec un avertissement quand l’un d’eux faiblit.
 - **Indicateur caméra et micro.** Un point sur l’encoche tant qu’une app les utilise.
-- **Outils.** Changez de sortie audio, réglez le volume de chaque app (expérimental, macOS 14.2 et ultérieur), coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur n’importe où à l’écran et copiez le texte de n’importe quelle zone de l’écran.
+- **Outils.** Changez de sortie audio, réglez le volume de chaque app (expérimental, macOS 14.2 et ultérieur), coupez le micro, activez ou désactivez le Wi‑Fi et le Bluetooth, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur n’importe où à l’écran et copiez le texte de n’importe quelle zone de l’écran.
 - **Météo, téléchargements, miroir et apps du Dock**, à un survol de souris. La météo est une ligne au bas d’Accueil.
 
 **📞 Même fermée**
@@ -243,6 +243,7 @@ Nunsseop demande la plupart des autorisations seulement la première fois que vo
 | Affichage des appels Google Meet, Zoom et Teams dans un navigateur, et boutons micro et caméra de Meet | Automatisation (ce navigateur) | Quand un navigateur utilise le micro pour la première fois |
 | Ajout des nouvelles captures d’écran à l’Étagère, alertes de téléchargement | Dossiers Bureau et Téléchargements | Au premier démarrage de Nunsseop, macOS peut demander (il surveille le dossier des captures, par défaut le Bureau, et celui des Téléchargements) |
 | Volume par app | Enregistrement de l’audio du système | La première fois que vous baissez le volume d’une app dans l’onglet Outils |
+| Activer ou désactiver le Bluetooth | Bluetooth | La première fois que vous actionnez l’interrupteur Bluetooth dans l’onglet Outils |
 | Bouton micro pour les appels Zoom et FaceTime, bouton caméra pour Zoom | Accessibilité | Jamais demandée d’elle-même : les boutons apparaissent une fois Nunsseop autorisé dans Accessibilité (par exemple via l’option des touches de volume ci-dessus) |
 | Saisie de messages dans des sessions d’agents, passage à l’onglet d’une session, reprise de conversations dans un nouvel onglet (iTerm2 et Ghostty seulement) | Automatisation (Terminal, iTerm2, Ghostty) | La première fois que vous le faites dans cette app ; pour Ghostty, aussi quand l’onglet Agents liste pour la première fois une session qui y tourne |
 | Lancement à l’ouverture de session | Ouverture | Quand vous l’activez dans les Réglages |

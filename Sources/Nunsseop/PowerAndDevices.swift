@@ -82,6 +82,11 @@ enum BluetoothProfiler {
 
     /// Nil when system_profiler could not run or its output was unreadable.
     static func connectedDevices() -> [Device]? {
+        output().flatMap(connectedDevices(in:))
+    }
+
+    /// The raw JSON, or nil when system_profiler could not run.
+    static func output() -> Data? {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/sbin/system_profiler")
         process.arguments = ["SPBluetoothDataType", "-json"]
@@ -94,7 +99,7 @@ enum BluetoothProfiler {
         }
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         process.waitUntilExit()
-        return connectedDevices(in: data)
+        return data
     }
 
     static func connectedDevices(in data: Data) -> [Device]? {

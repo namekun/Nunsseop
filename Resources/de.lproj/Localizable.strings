@@ -143,6 +143,8 @@
 "On" = "An";
 "Off" = "Aus";
 "Keep awake" = "Wach halten";
+"Wi-Fi" = "WLAN";
+"Bluetooth" = "Bluetooth";
 "Drives" = "Laufwerke";
 "No external drives" = "Keine externen Laufwerke";
 "Eject" = "Auswerfen";

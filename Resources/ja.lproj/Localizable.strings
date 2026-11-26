@@ -143,6 +143,8 @@
 "On" = "オン";
 "Off" = "オフ";
 "Keep awake" = "スリープさせない";
+"Wi-Fi" = "Wi-Fi";
+"Bluetooth" = "Bluetooth";
 "Drives" = "ドライブ";
 "No external drives" = "外部ドライブはありません";
 "Eject" = "取り出す";
