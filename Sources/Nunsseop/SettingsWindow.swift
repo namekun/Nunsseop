@@ -327,6 +327,28 @@ struct ShortcutsSection: View {
     }
 }
 
+/// A switch for each Home widget; the ones that are on can be moved up and down.
+private struct HomeWidgetChoices: View {
+    @ObservedObject var settings: AppSettings
+
+    var body: some View {
+        let chosen = settings.chosenHomeWidgets
+        ForEach(HomeWidget.allCases) { widget in
+            let index = chosen.firstIndex(of: widget)
+            HStack {
+                Toggle(widget.title, isOn: Binding(get: { index != nil }, set: { settings.setHomeWidget(widget, on: $0) }))
+                if let index {
+                    Button { settings.moveHomeWidget(widget, by: -1) } label: { Image(systemName: "chevron.up") }
+                        .disabled(index == 0).help(Text("Move up"))
+                    Button { settings.moveHomeWidget(widget, by: 1) } label: { Image(systemName: "chevron.down") }
+                        .disabled(index == chosen.count - 1).help(Text("Move down"))
+                }
+            }
+            .buttonStyle(.borderless)
+        }
+    }
+}
+
 /// What the notch shows: which tabs and in what order, the header, and the collapsed notch.
 private struct LayoutPane: View {
     @ObservedObject var settings: AppSettings
@@ -346,6 +368,14 @@ private struct LayoutPane: View {
                 Toggle("Reminders", isOn: $settings.remindersEnabled)
                     .disabled(!settings.calendarEnabled)
                 Toggle("Show weather on Home", isOn: $settings.headerWeather)
+            }
+            Section {
+                HomeWidgetChoices(settings: settings)
+            } header: {
+                Text("Home widgets")
+            } footer: {
+                Text("Widgets show under the calendar in the order they are listed. A widget that is off runs nothing.")
+                    .font(.caption).foregroundStyle(.secondary)
             }
             if settings.calendarEnabled {
                 CalendarChoices(settings: settings)

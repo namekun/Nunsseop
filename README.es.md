@@ -81,6 +81,7 @@ En una instalación nueva, el notch también se abre solo al cabo de un segundo 
 - **Indicador de cámara y micrófono.** Un punto en el notch mientras cualquier app los usa.
 - **Herramientas.** Cambia la salida de audio, ajusta el volumen de cada app (experimental, macOS 14.2+), silencia el micrófono, mantén el Mac activo, graba la pantalla, expulsa discos, toma un color de cualquier punto de la pantalla y copia el texto de cualquier zona de la pantalla.
 - **El tiempo, las descargas, el espejo y las apps del Dock**, a un gesto del puntero. El tiempo es una fila al pie de Inicio.
+- **Widgets en Inicio.** En Ajustes › Notch, elige un reloj, una nota o una tarea y ponlos en el orden que quieras. Aparecen bajo el calendario, y uno desactivado no ejecuta nada.
 
 **📞 Incluso plegado**
 - **Llamadas.** Durante una llamada en Zoom, FaceTime, Teams, Slack, Discord, WhatsApp o Google Meet, el notch plegado muestra la app y cuánto llevas hablando. Se basa en qué app usa el micrófono, así que mostrar la llamada de una app de escritorio no necesita permiso; en un navegador (Meet, o Zoom y Teams en la web) hace falta Automatización para ese navegador. En Zoom, FaceTime y Meet puedes silenciar el micrófono desde el notch (y apagar la cámara en Zoom y Meet), sin cambiar a la llamada; Zoom y FaceTime necesitan Accesibilidad, y Meet necesita *Permitir JavaScript desde Apple Events* en un navegador Chromium.

@@ -716,3 +716,15 @@
 "Not enabled in Hermes yet" = "Hermes에서 아직 꺼져 있음";
 "Amp's plugin API is experimental, so an Amp update may stop this from working." = "Amp의 플러그인 API는 실험 단계라서, Amp 업데이트 후 작동하지 않을 수 있습니다.";
 "Answer in Cursor" = "Cursor에서 답하기";
+
+/* Home widgets */
+"Clock" = "시계";
+"Note" = "메모";
+"To-do" = "할 일";
+"Home widgets" = "홈 위젯";
+"Widgets show under the calendar in the order they are listed. A widget that is off runs nothing." = "위젯은 목록의 순서대로 캘린더 아래에 표시돼요. 꺼진 위젯은 아무것도 실행하지 않아요.";
+"Move up" = "위로 이동";
+"Move down" = "아래로 이동";
+"Add a to-do" = "할 일 추가";
+"Nothing to do" = "할 일이 없어요";
+"Mark as done" = "완료로 표시";

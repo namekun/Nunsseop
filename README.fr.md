@@ -81,6 +81,7 @@ Sur une installation toute neuve, l’encoche s’ouvre aussi toute seule au bou
 - **Indicateur caméra et micro.** Un point sur l’encoche tant qu’une app les utilise.
 - **Outils.** Changez de sortie audio, réglez le volume de chaque app (expérimental, macOS 14.2 et ultérieur), coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur n’importe où à l’écran et copiez le texte de n’importe quelle zone de l’écran.
 - **Météo, téléchargements, miroir et apps du Dock**, à un survol de souris. La météo est une ligne au bas d’Accueil.
+- **Widgets dans Accueil.** Dans Réglages › Notch, choisissez une horloge, une note ou des tâches et placez-les dans l’ordre voulu. Elles s’affichent sous le calendrier, et un widget désactivé n’exécute rien.
 
 **📞 Même fermée**
 - **Appels.** Pendant un appel dans Zoom, FaceTime, Teams, Slack, Discord, WhatsApp ou Google Meet, l’encoche fermée affiche l’app et la durée de la conversation. Elle se base sur l’app qui utilise le micro, donc afficher l’appel d’une app de bureau ne demande aucune autorisation ; dans un navigateur (Meet, ou Zoom et Teams en ligne), il faut l’Automatisation pour ce navigateur. Pour Zoom, FaceTime et Meet, vous pouvez couper le micro depuis l’encoche (et désactiver la caméra dans Zoom et Meet), sans revenir à l’appel ; Zoom et FaceTime demandent l’Accessibilité, et Meet demande *Autoriser JavaScript depuis les Apple Events* dans un navigateur Chromium.

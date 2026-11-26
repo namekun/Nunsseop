@@ -691,3 +691,15 @@
 "Not enabled in Hermes yet" = "Hermes ではまだ有効になっていません";
 "Amp's plugin API is experimental, so an Amp update may stop this from working." = "Amp のプラグイン API は実験的なので、Amp のアップデートで動かなくなることがあります。";
 "Answer in Cursor" = "Cursor で答える";
+
+/* Home widgets */
+"Clock" = "時計";
+"Note" = "メモ";
+"To-do" = "やること";
+"Home widgets" = "ホームのウィジェット";
+"Widgets show under the calendar in the order they are listed. A widget that is off runs nothing." = "ウィジェットは一覧の順にカレンダーの下に表示されます。オフのウィジェットは何も実行しません。";
+"Move up" = "上へ移動";
+"Move down" = "下へ移動";
+"Add a to-do" = "やることを追加";
+"Nothing to do" = "やることはありません";
+"Mark as done" = "完了にする";

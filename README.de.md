@@ -81,6 +81,7 @@ Bei einer frischen Installation öffnet sich die Notch nach einer Sekunde außer
 - **Kamera- und Mikrofonanzeige.** Ein Punkt auf der Notch, solange eine App sie verwendet.
 - **Werkzeuge.** Audioausgabe wechseln, die Lautstärke jeder App einstellen (experimentell, macOS 14.2+), das Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe an beliebiger Stelle des Bildschirms auswählen und den Text aus jedem Bereich des Bildschirms kopieren.
 - **Wetter, Downloads, Spiegel und Dock-Apps**, nur einen Hover entfernt. Das Wetter ist eine Zeile unten im Start-Tab.
+- **Widgets im Start-Tab.** In den Einstellungen › Notch wählst du Uhr, Notiz oder Aufgaben und bringst sie in deine Reihenfolge. Sie stehen unter dem Kalender, und ein ausgeschaltetes Widget führt nichts aus.
 
 **📞 Auch wenn sie geschlossen ist**
 - **Anrufe.** Bei einem Anruf in Zoom, FaceTime, Teams, Slack, Discord, WhatsApp oder Google Meet zeigt die geschlossene Notch die App und wie lange du schon sprichst. Maßgeblich ist, welche App das Mikrofon nutzt, daher braucht die Anzeige eines Anrufs in einer Desktop-App keine Berechtigung; bei Anrufen im Browser (Meet, Zoom oder Teams im Web) braucht sie Automation für diesen Browser. Bei Zoom, FaceTime und Meet kannst du das Mikrofon stummschalten (bei Zoom und Meet auch die Kamera ausschalten), direkt von der Notch aus, ohne zum Anruf zu wechseln; Zoom und FaceTime brauchen dafür Bedienungshilfen, Meet braucht in einem Chromium-Browser die Option *JavaScript von Apple Events erlauben*.
