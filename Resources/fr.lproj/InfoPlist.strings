@@ -6,3 +6,4 @@
 "NSDownloadsFolderUsageDescription" = "Indique le début et la fin des téléchargements.";
 "NSMicrophoneUsageDescription" = "Enregistre le son du micro avec l’enregistrement de l’écran si vous l’activez dans les réglages.";
 "NSAudioCaptureUsageDescription" = "Change le volume de chaque app lorsque vous activez le volume par app. Le son est seulement transmis au niveau choisi ; rien n’est enregistré ni conservé.";
+"NSFocusStatusUsageDescription" = "Affiche dans le notch quand un mode de concentration s'active ou se désactive, si vous l'activez dans les Réglages. Seul le fait qu'un mode soit actif est lu, pas lequel.";

@@ -554,6 +554,9 @@ private struct AlertsPane: View {
             }
             Section("Privacy") {
                 Toggle("Show when an app uses the camera or microphone", isOn: $settings.privacyIndicator)
+                Toggle("Show when a Focus turns on or off", isOn: $settings.focusIndicator)
+                Text("macOS asks to share Focus Status the first time. It only tells whether a Focus is on, not which one, and only while “Share Focus Status” is on in System Settings › Focus.")
+                    .font(.caption).foregroundStyle(.secondary)
             }
             Section("Calendar") {
                 Toggle("Show events 5 minutes before they start", isOn: $settings.eventAlerts)

@@ -44,6 +44,8 @@
 	<string>Watches for new screenshots so they can be added to the shelf.</string>
 	<key>NSDownloadsFolderUsageDescription</key>
 	<string>Shows when downloads start and finish.</string>
+	<key>NSFocusStatusUsageDescription</key>
+	<string>Shows in the notch when a Focus turns on or off, if you turn that on in Settings. Only whether a Focus is on is read, not which one.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>

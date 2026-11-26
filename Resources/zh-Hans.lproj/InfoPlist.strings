@@ -6,3 +6,4 @@
 "NSDownloadsFolderUsageDescription" = "在下载开始和完成时提示。";
 "NSMicrophoneUsageDescription" = "在设置中开启后，录制屏幕时一并录制麦克风声音。";
 "NSAudioCaptureUsageDescription" = "开启“按应用调节音量”后，用于更改各个应用的音量。音频仅按你选择的音量直接播放，不会被录制或保存。";
+"NSFocusStatusUsageDescription" = "在设置中开启后，专注模式开启或关闭时会在刘海中显示。只读取是否有专注模式开启，不读取是哪一个。";

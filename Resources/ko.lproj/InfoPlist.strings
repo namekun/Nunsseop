@@ -6,3 +6,4 @@
 "NSDownloadsFolderUsageDescription" = "다운로드가 시작되고 끝날 때 알려 줍니다.";
 "NSMicrophoneUsageDescription" = "설정에서 켠 경우 화면 녹화에 마이크 소리를 함께 녹음합니다.";
 "NSAudioCaptureUsageDescription" = "앱별 볼륨을 켰을 때 앱마다 소리 크기를 바꿉니다. 소리는 고른 크기로 그대로 전달할 뿐 녹음하거나 저장하지 않습니다.";
+"NSFocusStatusUsageDescription" = "설정에서 켜면 집중 모드가 켜지거나 꺼질 때 노치에 표시합니다. 집중 모드가 켜져 있는지만 읽고, 어떤 모드인지는 읽지 않습니다.";

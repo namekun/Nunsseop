@@ -125,6 +125,7 @@ final class NotchWindowController {
     private var hotKeys: [ShortcutAction: GlobalHotKey] = [:]
     private var resignObserver: NSObjectProtocol?
     private lazy var shakeShelf = ShakeShelf(shelf: model.shelf, hud: model.hud)
+    private let focus = FocusMonitor()
 
     /// A watcher that only feeds the notch: it runs while its setting is on and the panel is on screen.
     private struct Feature {
@@ -141,6 +142,7 @@ final class NotchWindowController {
     private lazy var features: [Feature] = {
         let model = model
         let shakeShelf = shakeShelf
+        let focus = focus
         return [
             Feature(setting: \.clipboardTab, changes: \.$clipboardTab,
                     start: { model.clipboard.start() }, stop: { _ in model.clipboard.stop() }),
@@ -175,6 +177,9 @@ final class NotchWindowController {
             // Hiding keeps the last camera/mic state, so showing again during a call already announced stays quiet.
             Feature(setting: \.privacyIndicator, changes: \.$privacyIndicator,
                     start: { model.privacy.start() }, stop: { hiding in model.privacy.stop(clearing: !hiding) }),
+            // Off, it neither reads the Focus status nor asks for it. Hiding keeps the last state, as for the privacy indicator.
+            Feature(setting: \.focusIndicator, changes: \.$focusIndicator,
+                    start: { focus.start() }, stop: { hiding in focus.stop(clearing: !hiding) }),
             Feature(setting: \.peripheralBatteries, changes: \.$peripheralBatteries,
                     start: { model.peripherals.start() }, stop: { _ in model.peripherals.stop() }),
             Feature(setting: \.shakeToShelf, changes: \.$shakeToShelf,
@@ -433,6 +438,11 @@ final class NotchWindowController {
             let title = camera && mic ? String(localized: "Camera and microphone in use")
                 : camera ? String(localized: "Camera in use") : String(localized: "Microphone in use")
             self.model.hud.show(.notice(symbol: camera ? "video.fill" : "mic.fill", title: title, detail: nil), duration: 3)
+        }
+        focus.onChange = { [weak self] focused in
+            guard let self, self.model.settings.focusIndicator else { return }
+            self.model.hud.show(.notice(symbol: focused ? "moon.fill" : "moon", title: focused ? String(localized: "Focus on") : String(localized: "Focus off"),
+                                        detail: nil), duration: 3)
         }
         model.recorder.onFinished = { [weak self] url in
             guard let self, let url else { return }

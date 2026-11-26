@@ -230,6 +230,10 @@
 "Privacy" = "隐私";
 "Show events 5 minutes before they start" = "日程开始前 5 分钟显示";
 "Show when an app uses the camera or microphone" = "应用使用相机或麦克风时显示";
+"Show when a Focus turns on or off" = "专注模式开启或关闭时显示";
+"macOS asks to share Focus Status the first time. It only tells whether a Focus is on, not which one, and only while “Share Focus Status” is on in System Settings › Focus." = "首次使用时，macOS 会请求共享专注状态。它只能告诉你是否有专注模式开启，而不是哪一个，并且仅在“系统设置 › 专注模式”中打开“共享专注状态”时才可读取。";
+"Focus on" = "专注模式已开启";
+"Focus off" = "专注模式已关闭";
 "Screen recording" = "屏幕录制";
 "Record microphone audio" = "录制麦克风声音";
 "Recordings are saved where screenshots go and added to the shelf. Screen Recording permission is needed the first time." = "录屏会存储到截屏的存储位置并添加到架子。首次使用需要屏幕录制权限。";

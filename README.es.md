@@ -79,6 +79,7 @@ En una instalación nueva, el notch también se abre solo al cabo de un segundo 
 - **HUDs del sistema.** Volumen, brillo (incluidas las pantallas externas DDC), retroiluminación del teclado, carga, Bloq Mayús y batería de los AirPods aparecen en el notch. Puede quedarse con las teclas de volumen y brillo para que no salga el HUD del sistema.
 - **Estadísticas del sistema y baterías.** CPU, memoria, disco, red y la batería de este Mac en paneles, además del ratón, el teclado y el trackpad, con un aviso cuando alguno tiene la batería baja.
 - **Indicador de cámara y micrófono.** Un punto en el notch mientras cualquier app los usa.
+- **Indicador de Concentración.** Cuando se activa o desactiva una Concentración de macOS, el notch lo avisa. Desactivado por defecto (Ajustes › Avisos); la primera vez, macOS pide compartir el estado de Concentración. Muestra si hay una Concentración activa, no cuál, y solo mientras *Compartir estado de Concentración* esté activado en Ajustes del Sistema › Concentración.
 - **Herramientas.** Cambia la salida de audio, ajusta el volumen de cada app (experimental, macOS 14.2+), silencia el micrófono, mantén el Mac activo, graba la pantalla, expulsa discos, toma un color de cualquier punto de la pantalla y copia el texto de cualquier zona de la pantalla.
 - **El tiempo, las descargas, el espejo y las apps del Dock**, a un gesto del puntero. El tiempo es una fila al pie de Inicio.
 
@@ -236,6 +237,7 @@ Nunsseop pide la mayoría de los permisos solo la primera vez que usas la funci�
 | Calendario | Calendarios | Al pulsar *Permitir acceso* en la pestaña Inicio |
 | Recordatorios | Recordatorios | Al pulsar *Permitir recordatorios* en la pestaña Inicio |
 | Espejo | Cámara | Al pulsar *Permitir cámara* en la pestaña Espejo |
+| Indicador de Concentración | Estado de Concentración | La primera vez que lo activas en Ajustes |
 | Grabación de pantalla y copia de texto de las ventanas de otras apps | Grabación de pantalla | La primera vez que inicias una grabación o capturas texto |
 | Grabación con sonido | Micrófono | La primera vez que grabas con el audio del micrófono activado |
 | Quedarse con las teclas de volumen, brillo y retroiluminación del teclado | Accesibilidad | Al activar la opción en Ajustes |

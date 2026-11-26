@@ -79,6 +79,7 @@ Bei einer frischen Installation öffnet sich die Notch nach einer Sekunde außer
 - **System-HUDs.** Lautstärke, Helligkeit (auch bei externen DDC-Bildschirmen), Tastaturbeleuchtung, Ladevorgang, Feststelltaste und AirPods-Akku erscheinen in der Notch. Die App kann die Tasten für Lautstärke und Helligkeit übernehmen, damit das System-HUD ausbleibt.
 - **Systemwerte und Akkus.** CPU, Speicher, Festplatte, Netzwerk und der Akku dieses Macs als Panels sowie deine Maus, Tastatur und dein Trackpad, mit einer Warnung bei niedrigem Akkustand.
 - **Kamera- und Mikrofonanzeige.** Ein Punkt auf der Notch, solange eine App sie verwendet.
+- **Fokus-Anzeige.** Wenn ein macOS-Fokus ein- oder ausgeschaltet wird, sagt die Notch es. Standardmäßig aus (Einstellungen › Hinweise); beim ersten Mal bittet macOS darum, den Fokus-Status zu teilen. Gezeigt wird, ob ein Fokus aktiv ist, nicht welcher, und nur solange *Fokus-Status teilen* in Systemeinstellungen › Fokus aktiviert ist.
 - **Werkzeuge.** Audioausgabe wechseln, die Lautstärke jeder App einstellen (experimentell, macOS 14.2+), das Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe an beliebiger Stelle des Bildschirms auswählen und den Text aus jedem Bereich des Bildschirms kopieren.
 - **Wetter, Downloads, Spiegel und Dock-Apps**, nur einen Hover entfernt. Das Wetter ist eine Zeile unten im Start-Tab.
 
@@ -236,6 +237,7 @@ Nunsseop bittet um die meisten Berechtigungen erst, wenn du die Funktion zum ers
 | Kalender | Kalender | Wenn du im Start-Tab auf *Zugriff erlauben* drückst |
 | Erinnerungen | Erinnerungen | Wenn du im Start-Tab auf *Erinnerungen erlauben* drückst |
 | Spiegel | Kamera | Wenn du im Spiegel-Tab auf *Kamera erlauben* drückst |
+| Fokus-Anzeige | Fokus-Status | Wenn du sie zum ersten Mal in den Einstellungen einschaltest |
 | Bildschirmaufnahme und Text aus Fenstern anderer Apps kopieren | Bildschirmaufnahme | Beim ersten Start einer Aufnahme oder Texterfassung |
 | Aufnahme mit Ton | Mikrofon | Beim ersten Aufnehmen mit eingeschaltetem Mikrofonton |
 | Übernahme der Tasten für Lautstärke, Helligkeit und Tastaturbeleuchtung | Bedienungshilfen | Wenn du die Option in den Einstellungen einschaltest |

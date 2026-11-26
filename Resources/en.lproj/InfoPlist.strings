@@ -6,3 +6,4 @@
 "NSDownloadsFolderUsageDescription" = "Shows when downloads start and finish.";
 "NSMicrophoneUsageDescription" = "Records microphone audio with a screen recording when you turn that on in Settings.";
 "NSAudioCaptureUsageDescription" = "Changes the volume of individual apps when you turn on per-app volume. Audio is only passed through at the level you choose; nothing is recorded or saved.";
+"NSFocusStatusUsageDescription" = "Shows in the notch when a Focus turns on or off, if you turn that on in Settings. Only whether a Focus is on is read, not which one.";
