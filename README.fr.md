@@ -79,6 +79,7 @@ Sur une installation toute neuve, l’encoche s’ouvre aussi toute seule au bou
 - **HUD système.** Volume, luminosité (y compris les écrans externes DDC), rétroéclairage du clavier, charge, verrouillage des majuscules et batterie des AirPods apparaissent dans l’encoche. Elle peut prendre le contrôle des touches de volume et de luminosité pour que le HUD du système reste à l’écart.
 - **Statistiques système et batteries.** Processeur, mémoire, disque, réseau et batterie de ce Mac en panneaux, ainsi que votre souris, clavier et trackpad, avec un avertissement quand l’un d’eux faiblit.
 - **Indicateur caméra et micro.** Un point sur l’encoche tant qu’une app les utilise.
+- **Indicateur de concentration.** Quand un mode de concentration de macOS s’active ou se désactive, l’encoche le signale. Désactivé par défaut (Réglages › Alertes) ; la première fois, macOS demande à partager l’état de concentration. Elle indique si un mode est actif, pas lequel, et seulement tant que *Partager l’état de concentration* est activé dans Réglages Système › Concentration.
 - **Outils.** Changez de sortie audio, réglez le volume de chaque app (expérimental, macOS 14.2 et ultérieur), coupez le micro, gardez le Mac éveillé, enregistrez l’écran, éjectez des disques, prélevez une couleur n’importe où à l’écran et copiez le texte de n’importe quelle zone de l’écran.
 - **Météo, téléchargements, miroir et apps du Dock**, à un survol de souris. La météo est une ligne au bas d’Accueil.
 
@@ -236,6 +237,7 @@ Nunsseop demande la plupart des autorisations seulement la première fois que vo
 | Calendrier | Calendriers | Quand vous appuyez sur *Autoriser l’accès* dans l’onglet Accueil |
 | Rappels | Rappels | Quand vous appuyez sur *Autoriser les rappels* dans l’onglet Accueil |
 | Miroir | Caméra | Quand vous appuyez sur *Autoriser la caméra* dans l’onglet Miroir |
+| Indicateur de concentration | État de concentration | La première fois que vous l’activez dans les Réglages |
 | Enregistrement de l’écran, et copie du texte des fenêtres d’autres apps | Enregistrement de l’écran | La première fois que vous lancez un enregistrement ou une capture de texte |
 | Enregistrement avec le son | Micro | La première fois que vous enregistrez avec le son du micro activé |
 | Prise de contrôle des touches de volume, de luminosité et de rétroéclairage du clavier | Accessibilité | Quand vous activez l’option dans les Réglages |

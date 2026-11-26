@@ -230,6 +230,10 @@
 "Privacy" = "プライバシー";
 "Show events 5 minutes before they start" = "予定の5分前に表示";
 "Show when an app uses the camera or microphone" = "アプリがカメラやマイクを使っているときに表示";
+"Show when a Focus turns on or off" = "集中モードがオン・オフになったときに表示";
+"macOS asks to share Focus Status the first time. It only tells whether a Focus is on, not which one, and only while “Share Focus Status” is on in System Settings › Focus." = "初回は macOS が集中モードの状況の共有を求めます。わかるのは集中モードがオンかどうかだけで、どのモードかはわかりません。システム設定 › 集中モードで「集中モードの状況を共有」がオンのときだけ取得できます。";
+"Focus on" = "集中モード オン";
+"Focus off" = "集中モード オフ";
 "Screen recording" = "画面収録";
 "Record microphone audio" = "マイクの音声を録音";
 "Recordings are saved where screenshots go and added to the shelf. Screen Recording permission is needed the first time." = "録画はスクリーンショットの保存先に保存され、シェルフに追加されます。初回は画面収録の許可が必要です。";

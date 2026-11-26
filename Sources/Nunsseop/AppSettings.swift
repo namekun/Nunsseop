@@ -108,6 +108,8 @@ final class AppSettings: ObservableObject {
     @Published var peripheralBatteries: Bool = AppSettings.load("peripheralBatteries", default: true) { didSet { save(peripheralBatteries, "peripheralBatteries") } }
     /// Shows when any app uses the camera or microphone.
     @Published var privacyIndicator: Bool = AppSettings.load("privacyIndicator", default: true) { didSet { save(privacyIndicator, "privacyIndicator") } }
+    /// Shows when a macOS Focus turns on or off. Off until the user agrees: the first time, the system asks for Focus Status.
+    @Published var focusIndicator: Bool = AppSettings.load("focusIndicator", default: false) { didSet { save(focusIndicator, "focusIndicator") } }
     @Published var recordAudio: Bool = AppSettings.load("recordAudio", default: false) { didSet { save(recordAudio, "recordAudio") } }
     /// A volume slider for each app playing sound, in the Tools tab. Experimental, so off by default.
     @Published var perAppVolume: Bool = AppSettings.load("perAppVolume", default: false) { didSet { save(perAppVolume, "perAppVolume") } }

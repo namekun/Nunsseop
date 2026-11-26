@@ -79,6 +79,7 @@ On a fresh install the notch also opens by itself after a second and walks you t
 - **System HUDs.** Volume, brightness (including DDC external displays), keyboard backlight, charging, Caps Lock and AirPods battery appear in the notch. It can take over the volume and brightness keys so the system HUD stays away.
 - **System stats and batteries.** CPU, memory, disk, network and this Mac's battery as panels, plus your mouse, keyboard and trackpad, with a warning when one runs low.
 - **Camera and mic indicator.** A dot on the notch while any app uses them.
+- **Focus indicator.** When a macOS Focus turns on or off, the notch says so. Off by default (Settings › Alerts); the first time, macOS asks to share Focus Status. It shows whether a Focus is on, not which one, and only while *Share Focus Status* is on in System Settings › Focus.
 - **Tools.** Switch audio output, set each app's volume (experimental, macOS 14.2+), mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from anywhere on screen, and copy the text out of any part of the screen.
 - **Weather, downloads, mirror and Dock apps**, one hover away. Weather is a row at the bottom of Home.
 
@@ -236,6 +237,7 @@ Nunsseop asks for most permissions only when you first use the feature that need
 | Calendar | Calendars | When you press *Allow Access* on the Home tab |
 | Reminders | Reminders | When you press *Allow Reminders* on the Home tab |
 | Mirror | Camera | When you press *Allow Camera* on the Mirror tab |
+| Focus indicator | Focus Status | The first time you turn it on in Settings |
 | Screen recording, and copying text from other apps' windows | Screen Recording | The first time you start a recording or capture text |
 | Recording with sound | Microphone | The first time you record with microphone audio on |
 | Taking over volume, brightness and keyboard backlight keys | Accessibility | When you turn the option on in Settings |

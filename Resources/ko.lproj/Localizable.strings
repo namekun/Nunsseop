@@ -255,6 +255,10 @@
 "Privacy" = "개인정보 보호";
 "Show events 5 minutes before they start" = "일정 시작 5분 전에 표시";
 "Show when an app uses the camera or microphone" = "앱이 카메라나 마이크를 사용하면 표시";
+"Show when a Focus turns on or off" = "집중 모드가 켜지거나 꺼지면 표시";
+"macOS asks to share Focus Status the first time. It only tells whether a Focus is on, not which one, and only while “Share Focus Status” is on in System Settings › Focus." = "처음에는 macOS가 집중 모드 상태 공유를 요청합니다. 집중 모드가 켜져 있는지만 알 수 있고 어떤 모드인지는 알 수 없으며, 시스템 설정 › 집중 모드에서 “집중 모드 상태 공유”가 켜져 있을 때만 읽을 수 있습니다.";
+"Focus on" = "집중 모드 켜짐";
+"Focus off" = "집중 모드 꺼짐";
 "Screen recording" = "화면 녹화";
 "Record microphone audio" = "마이크 소리 녹음";
 "Recordings are saved where screenshots go and added to the shelf. Screen Recording permission is needed the first time." = "녹화 파일은 스크린샷 저장 위치에 저장되고 선반에 추가됩니다. 처음에는 화면 기록 권한이 필요합니다.";

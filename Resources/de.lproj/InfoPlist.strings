@@ -6,3 +6,4 @@
 "NSDownloadsFolderUsageDescription" = "Zeigt an, wenn Downloads beginnen und enden.";
 "NSMicrophoneUsageDescription" = "Nimmt Mikrofonton zur Bildschirmaufnahme auf, wenn du das in den Einstellungen aktivierst.";
 "NSAudioCaptureUsageDescription" = "Ändert die Lautstärke einzelner Apps, wenn du die Lautstärke pro App einschaltest. Der Ton wird nur in der gewählten Lautstärke weitergegeben; nichts wird aufgenommen oder gespeichert.";
+"NSFocusStatusUsageDescription" = "Zeigt im Notch, wenn ein Fokus ein- oder ausgeschaltet wird, falls du das in den Einstellungen aktivierst. Gelesen wird nur, ob ein Fokus aktiv ist, nicht welcher.";

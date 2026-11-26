@@ -6,3 +6,4 @@
 "NSDownloadsFolderUsageDescription" = "ダウンロードの開始と完了をお知らせします。";
 "NSMicrophoneUsageDescription" = "設定でオンにした場合、画面収録にマイクの音声を録音します。";
 "NSAudioCaptureUsageDescription" = "アプリごとの音量をオンにしたときに、各アプリの音量を変更します。音声は選んだ音量でそのまま流すだけで、録音や保存はしません。";
+"NSFocusStatusUsageDescription" = "設定でオンにすると、集中モードがオン・オフになったときにノッチに表示します。読み取るのは集中モードがオンかどうかだけで、どのモードかは読み取りません。";

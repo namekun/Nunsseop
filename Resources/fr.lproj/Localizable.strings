@@ -230,6 +230,10 @@
 "Privacy" = "Confidentialité";
 "Show events 5 minutes before they start" = "Afficher les événements 5 minutes avant leur début";
 "Show when an app uses the camera or microphone" = "Afficher quand une app utilise la caméra ou le micro";
+"Show when a Focus turns on or off" = "Afficher quand un mode de concentration s'active ou se désactive";
+"macOS asks to share Focus Status the first time. It only tells whether a Focus is on, not which one, and only while “Share Focus Status” is on in System Settings › Focus." = "macOS demande à partager l'état de concentration la première fois. Il indique seulement si un mode est actif, pas lequel, et uniquement tant que « Partager l'état de concentration » est activé dans Réglages Système › Concentration.";
+"Focus on" = "Concentration activée";
+"Focus off" = "Concentration désactivée";
 "Screen recording" = "Enregistrement de l’écran";
 "Record microphone audio" = "Enregistrer le son du micro";
 "Recordings are saved where screenshots go and added to the shelf. Screen Recording permission is needed the first time." = "Les enregistrements sont sauvegardés à l’emplacement des captures d’écran et ajoutés à l’étagère. L’autorisation d’enregistrement de l’écran est nécessaire la première fois.";
