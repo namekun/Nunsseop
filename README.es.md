@@ -79,7 +79,7 @@ En una instalación nueva, el notch también se abre solo al cabo de un segundo 
 - **HUDs del sistema.** Volumen, brillo (incluidas las pantallas externas DDC), retroiluminación del teclado, carga, Bloq Mayús y batería de los AirPods aparecen en el notch. Puede quedarse con las teclas de volumen y brillo para que no salga el HUD del sistema.
 - **Estadísticas del sistema y baterías.** CPU, memoria, disco, red y la batería de este Mac en paneles, además del ratón, el teclado y el trackpad, con un aviso cuando alguno tiene la batería baja.
 - **Indicador de cámara y micrófono.** Un punto en el notch mientras cualquier app los usa.
-- **Herramientas.** Cambia la salida de audio, ajusta el volumen de cada app (experimental, macOS 14.2+), silencia el micrófono, mantén el Mac activo, graba la pantalla, expulsa discos, toma un color de cualquier punto de la pantalla y copia el texto de cualquier zona de la pantalla.
+- **Herramientas.** Cambia la salida de audio, ajusta el volumen de cada app (experimental, macOS 14.2+), silencia el micrófono, activa o desactiva el Wi‑Fi y el Bluetooth, mantén el Mac activo, graba la pantalla, expulsa discos, toma un color de cualquier punto de la pantalla y copia el texto de cualquier zona de la pantalla.
 - **El tiempo, las descargas, el espejo y las apps del Dock**, a un gesto del puntero. El tiempo es una fila al pie de Inicio.
 
 **📞 Incluso plegado**
@@ -243,6 +243,7 @@ Nunsseop pide la mayoría de los permisos solo la primera vez que usas la funci�
 | Mostrar llamadas de Google Meet, Zoom y Teams en un navegador, y los botones de silencio y cámara de Meet | Automatización (ese navegador) | La primera vez que un navegador usa el micrófono |
 | Añadir capturas nuevas al Estante, avisos de descargas | Carpetas Escritorio y Descargas | La primera vez que se inicia Nunsseop, macOS puede preguntar (vigila la carpeta de capturas, por defecto el Escritorio, y la de Descargas) |
 | Volumen por app | Grabación del audio del sistema | La primera vez que bajas el volumen de una app en la pestaña Herramientas |
+| Activar o desactivar el Bluetooth | Bluetooth | La primera vez que usas el interruptor de Bluetooth en la pestaña Herramientas |
 | Botón de silencio en llamadas de Zoom y FaceTime, botón de cámara en Zoom | Accesibilidad | Nunca la pide por sí solo: los botones aparecen cuando Nunsseop tiene permiso de Accesibilidad (por ejemplo, con la opción de las teclas de volumen de arriba) |
 | Escribir mensajes en sesiones de agentes, ir a la pestaña de una sesión, reanudar conversaciones en una pestaña nueva (solo iTerm2 y Ghostty) | Automatización (Terminal, iTerm2, Ghostty) | La primera vez que lo haces en esa app; en Ghostty, también cuando la pestaña Agentes lista por primera vez una sesión que corre en él |
 | Abrir al iniciar sesión | Ítems de inicio | Al activarlo en Ajustes |

@@ -20,6 +20,9 @@ final class ToolsModel: ObservableObject {
     @Published private(set) var currentOutput: AudioDeviceID = 0
     @Published private(set) var micMuted = false
     @Published private(set) var keepAwake = false
+    /// Nil when this Mac has no such radio.
+    @Published private(set) var wifiOn: Bool?
+    @Published private(set) var bluetoothOn: Bool?
     @Published private(set) var drives: [Drive] = []
     @Published private(set) var ejectError: String?
     /// Hex codes of recently picked colors, newest first.
@@ -31,9 +34,14 @@ final class ToolsModel: ObservableObject {
     private var assertionID: IOPMAssertionID = 0
     private var observers: [NSObjectProtocol] = []
     private let mountedDrives: () -> [Drive]
+    private let wireless: WirelessControl
+    private let bluetoothSettle: TimeInterval
 
-    init(mountedDrives: @escaping () -> [Drive] = ToolsModel.externalDrives) {
+    init(mountedDrives: @escaping () -> [Drive] = ToolsModel.externalDrives, wireless: WirelessControl = .system,
+         bluetoothSettle: TimeInterval = 2) {
         self.mountedDrives = mountedDrives
+        self.wireless = wireless
+        self.bluetoothSettle = bluetoothSettle
     }
 
     func start() {
@@ -196,6 +204,47 @@ final class ToolsModel: ObservableObject {
         return AudioObjectSetPropertyData(device, &address, 0, nil, UInt32(MemoryLayout<Float32>.size), &volume) == noErr
     }
 
+    // MARK: Wi-Fi and Bluetooth
+
+    /// Read when the Tools tab opens and after each switch; nothing watches them in between. Off the main thread:
+    /// Bluetooth is read through `system_profiler`, which takes about a second.
+    func refreshWireless() {
+        let control = wireless
+        DispatchQueue.global(qos: .userInitiated).async {
+            let (wifi, bluetooth) = (control.wifiPower(), control.bluetoothPower())
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { self.wifiOn = wifi; self.bluetoothOn = bluetooth }
+            }
+        }
+    }
+
+    func setWifi(_ on: Bool) {
+        guard wifiOn != nil else { return }
+        wifiOn = on
+        let set = wireless.setWifiPower
+        flip(settle: 0) { set(on) }
+    }
+
+    func setBluetooth(_ on: Bool) {
+        guard bluetoothOn != nil else { return }
+        bluetoothOn = on
+        let set = wireless.setBluetoothPower
+        flip(settle: bluetoothSettle) { set(on) }
+    }
+
+    /// Flips a radio off the main thread (macOS can take a moment). The switch shows the new state at once, and
+    /// `settle` seconds after the flip it shows what the radio really is, which puts it back when macOS refused
+    /// (Bluetooth can refuse without saying so, when its access was denied).
+    private func flip(settle: TimeInterval, _ work: @escaping @Sendable () -> Bool) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let accepted = work()
+            guard !accepted || settle > 0 else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + (accepted ? settle : 0)) {
+                MainActor.assumeIsolated { self.refreshWireless() }
+            }
+        }
+    }
+
     // MARK: Keep awake
 
     func toggleKeepAwake() {
@@ -317,19 +366,21 @@ struct ToolsTab: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PanelColumns([0, 1, 2]) { column in
+            PanelColumns([0, 1, 2, 3]) { column in
                 switch column {
                 case 0: output
                 case 1: microphone
-                default: keepAwake
+                case 2: wifi
+                default: bluetooth
                 }
             }
             .frame(maxHeight: .infinity, alignment: .top)
             PanelHLine()
-            PanelColumns([0, 1, 2]) { column in
+            PanelColumns([0, 1, 2, 3]) { column in
                 switch column {
-                case 0: record
-                case 1: capture
+                case 0: keepAwake
+                case 1: record
+                case 2: capture
                 default: drives
                 }
             }
@@ -342,6 +393,7 @@ struct ToolsTab: View {
         // The lists are read when the tab opens: a device or a drive that came after the app started is there too.
         .onAppear {
             tools.refreshAudio()
+            tools.refreshWireless()
             tools.refreshDrives()
         }
     }
@@ -376,6 +428,28 @@ struct ToolsTab: View {
     private var microphone: some View {
         ToolPanel(symbol: tools.micMuted ? "mic.slash.fill" : "mic.fill", title: String(localized: "Microphone")) {
             PanelOnOff(isOn: Binding(get: { !tools.micMuted }, set: { _ in tools.toggleMic() }), title: "Microphone")
+        }
+    }
+
+    private var wifi: some View {
+        ToolPanel(symbol: tools.wifiOn == false ? "wifi.slash" : "wifi", title: String(localized: "Wi-Fi")) {
+            radioSwitch(tools.wifiOn, title: "Wi-Fi") { tools.setWifi($0) }
+        }
+    }
+
+    private var bluetooth: some View {
+        ToolPanel(symbol: "dot.radiowaves.left.and.right", title: String(localized: "Bluetooth")) {
+            radioSwitch(tools.bluetoothOn, title: "Bluetooth") { tools.setBluetooth($0) }
+        }
+    }
+
+    /// The switch, or a dash when this Mac has no such radio.
+    @ViewBuilder
+    private func radioSwitch(_ isOn: Bool?, title: LocalizedStringKey, set: @escaping (Bool) -> Void) -> some View {
+        if let isOn {
+            PanelOnOff(isOn: Binding(get: { isOn }, set: set), title: title)
+        } else {
+            Text.panel("—", size: 14, weight: .semibold)
         }
     }
 

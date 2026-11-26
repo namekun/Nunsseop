@@ -168,6 +168,8 @@
 "On" = "켜짐";
 "Off" = "꺼짐";
 "Keep awake" = "잠자기 방지";
+"Wi-Fi" = "Wi-Fi";
+"Bluetooth" = "블루투스";
 "Drives" = "드라이브";
 "No external drives" = "외장 드라이브 없음";
 "Eject" = "꺼내기";

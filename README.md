@@ -79,7 +79,7 @@ On a fresh install the notch also opens by itself after a second and walks you t
 - **System HUDs.** Volume, brightness (including DDC external displays), keyboard backlight, charging, Caps Lock and AirPods battery appear in the notch. It can take over the volume and brightness keys so the system HUD stays away.
 - **System stats and batteries.** CPU, memory, disk, network and this Mac's battery as panels, plus your mouse, keyboard and trackpad, with a warning when one runs low.
 - **Camera and mic indicator.** A dot on the notch while any app uses them.
-- **Tools.** Switch audio output, set each app's volume (experimental, macOS 14.2+), mute the mic, keep the Mac awake, record the screen, eject drives, pick a color from anywhere on screen, and copy the text out of any part of the screen.
+- **Tools.** Switch audio output, set each app's volume (experimental, macOS 14.2+), mute the mic, turn Wi-Fi and Bluetooth on or off, keep the Mac awake, record the screen, eject drives, pick a color from anywhere on screen, and copy the text out of any part of the screen.
 - **Weather, downloads, mirror and Dock apps**, one hover away. Weather is a row at the bottom of Home.
 
 **📞 Even when it's closed**
@@ -243,6 +243,7 @@ Nunsseop asks for most permissions only when you first use the feature that need
 | Showing Google Meet, Zoom and Teams calls in a browser, and Meet's mute and camera buttons | Automation (that browser) | When a browser first uses the microphone |
 | Adding new screenshots to the shelf, download alerts | Desktop and Downloads folders | macOS may ask when Nunsseop first starts (it watches the screenshot folder, the Desktop by default, and Downloads) |
 | Per-app volume | System audio recording | The first time you turn an app down in the Tools tab |
+| Turning Bluetooth on or off | Bluetooth | The first time you flip the Bluetooth switch in the Tools tab |
 | Mute button for Zoom and FaceTime calls, camera button for Zoom | Accessibility | Never asked for by itself: the buttons appear once Nunsseop is allowed in Accessibility (for example through the volume key option above) |
 | Typing messages into agent sessions, going to a session's tab, resuming in a new tab (iTerm2 and Ghostty only) | Automation (Terminal, iTerm2, Ghostty) | The first time you do one in that app; for Ghostty also when the Agents tab first lists a session running in it |
 | Launch at login | Login Items | When you turn it on in Settings |

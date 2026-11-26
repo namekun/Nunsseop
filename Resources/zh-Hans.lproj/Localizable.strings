@@ -143,6 +143,8 @@
 "On" = "开";
 "Off" = "关";
 "Keep awake" = "保持唤醒";
+"Wi-Fi" = "Wi-Fi";
+"Bluetooth" = "蓝牙";
 "Drives" = "磁盘";
 "No external drives" = "没有外接磁盘";
 "Eject" = "推出";

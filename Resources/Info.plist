@@ -36,6 +36,8 @@
 	<string>Shows what Music, Spotify and your browsers are playing and controls playback. Also types your messages into agent sessions in Terminal, iTerm2 and Ghostty, and opens conversations in new tabs of iTerm2 and Ghostty.</string>
 	<key>NSAudioCaptureUsageDescription</key>
 	<string>Changes the volume of individual apps when you turn on per-app volume. Audio is only passed through at the level you choose; nothing is recorded or saved.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Turns Bluetooth on or off when you flip its switch in the Tools tab. Nothing else is read from your Bluetooth devices.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Shows today's and this week's events on the notch's Home tab.</string>
 	<key>NSCameraUsageDescription</key>

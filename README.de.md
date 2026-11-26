@@ -79,7 +79,7 @@ Bei einer frischen Installation öffnet sich die Notch nach einer Sekunde außer
 - **System-HUDs.** Lautstärke, Helligkeit (auch bei externen DDC-Bildschirmen), Tastaturbeleuchtung, Ladevorgang, Feststelltaste und AirPods-Akku erscheinen in der Notch. Die App kann die Tasten für Lautstärke und Helligkeit übernehmen, damit das System-HUD ausbleibt.
 - **Systemwerte und Akkus.** CPU, Speicher, Festplatte, Netzwerk und der Akku dieses Macs als Panels sowie deine Maus, Tastatur und dein Trackpad, mit einer Warnung bei niedrigem Akkustand.
 - **Kamera- und Mikrofonanzeige.** Ein Punkt auf der Notch, solange eine App sie verwendet.
-- **Werkzeuge.** Audioausgabe wechseln, die Lautstärke jeder App einstellen (experimentell, macOS 14.2+), das Mikrofon stummschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe an beliebiger Stelle des Bildschirms auswählen und den Text aus jedem Bereich des Bildschirms kopieren.
+- **Werkzeuge.** Audioausgabe wechseln, die Lautstärke jeder App einstellen (experimentell, macOS 14.2+), das Mikrofon stummschalten, WLAN und Bluetooth ein- und ausschalten, den Mac wach halten, den Bildschirm aufnehmen, Laufwerke auswerfen, eine Farbe an beliebiger Stelle des Bildschirms auswählen und den Text aus jedem Bereich des Bildschirms kopieren.
 - **Wetter, Downloads, Spiegel und Dock-Apps**, nur einen Hover entfernt. Das Wetter ist eine Zeile unten im Start-Tab.
 
 **📞 Auch wenn sie geschlossen ist**
@@ -243,6 +243,7 @@ Nunsseop bittet um die meisten Berechtigungen erst, wenn du die Funktion zum ers
 | Google-Meet-, Zoom- und Teams-Anrufe im Browser anzeigen, Stumm- und Kamera-Tasten für Meet | Automation (dieser Browser) | Wenn ein Browser zum ersten Mal das Mikrofon nutzt |
 | Neue Screenshots zur Ablage hinzufügen, Download-Hinweise | Ordner Schreibtisch und Downloads | Beim ersten Start von Nunsseop kann macOS fragen (es beobachtet den Screenshot-Ordner, standardmäßig der Schreibtisch, und den Downloads-Ordner) |
 | Lautstärke pro App | Systemaudio-Aufnahme | Wenn du im Tab „Werkzeuge“ zum ersten Mal die Lautstärke einer App senkst |
+| Bluetooth ein- und ausschalten | Bluetooth | Wenn du im Tab „Werkzeuge“ zum ersten Mal den Bluetooth-Schalter betätigst |
 | Stummtaste bei Zoom- und FaceTime-Anrufen, Kamera-Taste bei Zoom | Bedienungshilfen | Wird nie von selbst angefragt: Die Tasten erscheinen, sobald Nunsseop unter Bedienungshilfen erlaubt ist (etwa über die Option für die Lautstärketasten oben) |
 | Nachrichten in Agenten-Sitzungen tippen, zum Tab einer Sitzung wechseln, Gespräche in einem neuen Tab fortsetzen (nur iTerm2 und Ghostty) | Automation (Terminal, iTerm2, Ghostty) | Beim ersten Mal in der jeweiligen App; bei Ghostty auch, sobald der Agenten-Tab zum ersten Mal eine darin laufende Sitzung auflistet |
 | Bei der Anmeldung öffnen | Anmeldeobjekte | Wenn du es in den Einstellungen einschaltest |
